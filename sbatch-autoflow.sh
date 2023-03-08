@@ -2,7 +2,7 @@
 # Leave only one comment symbol on selected options
 # Those with two commets will be ignored:
 # The name to show in queue lists for this job:
-##SBATCH -J sbatch-mkfast.sh
+##SBATCH -J sbatch-autoflow.sh
 
 # Number of desired cpus (can be in any node):
 #SBATCH --ntasks=1
@@ -11,7 +11,7 @@
 ##SBATCH --cpus-per-task=1
 
 # Amount of RAM needed for this job:
-#SBATCH --mem=4gb
+#SBATCH --mem=2gb
 
 # The time the job will be running:
 #SBATCH --time=10:00:00
@@ -38,8 +38,9 @@
 
 # To load some software (you can show the list with 'module avail'):
 # module load software
+module load autoflow/last
 module load bcl2fastq/2.20
 module load cellranger/7.0.0
 
 # the program to execute with its parameters:
-time ./test-mkfast.sh
+time AutoFlow -w AutoFlow_mkfastq -o autoflow_out

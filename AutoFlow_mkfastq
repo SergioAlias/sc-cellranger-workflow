@@ -1,0 +1,7 @@
+demo_mkfastq) {
+# initialize
+# echo -e "Cell Ranger mkfastq \ t ’linea de comandos para obtener la version’" >> ../versions
+?
+./test-mkfastq.sh
+# main section
+}
