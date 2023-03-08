@@ -11,7 +11,7 @@
 ##SBATCH --cpus-per-task=1
 
 # Amount of RAM needed for this job:
-#SBATCH --mem=2gb
+#SBATCH --mem=4gb
 
 # The time the job will be running:
 #SBATCH --time=10:00:00
