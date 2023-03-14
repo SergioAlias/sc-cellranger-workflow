@@ -2,5 +2,5 @@
 
 This repo will contain a Cell Ranger workflow for going from FASTQ files to 10x input data. More info will be available soon.
 
-- ``test-mkfast.sh``: Bash script with some test on Cell Ranger ``mkfast``
-- ``sbatch-mkfast.sh``: SBATCH script for sending ``test-mkfast.sh`` to the Slurm queue system
+- ``test-mkfastq.sh``: Bash script with some test on Cell Ranger ``mkfastq``
+- ``sbatch-mkfastq.sh``: SBATCH script for sending ``test-mkfastq.sh`` to the Slurm queue system
