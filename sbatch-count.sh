@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# ######################
+# Sergio Alías, 20230315
+# Last modified 20230321
+# ######################
 # Leave only one comment symbol on selected options
 # Those with two commets will be ignored:
 # The name to show in queue lists for this job:
@@ -8,10 +12,10 @@
 #SBATCH --ntasks=1
 
 # Number of desired cpus (all in same node):
-##SBATCH --cpus-per-task=1
+##SBATCH --cpus-per-task=10
 
 # Amount of RAM needed for this job:
-#SBATCH --mem=4gb
+#SBATCH --mem=60gb
 
 # The time the job will be running:
 #SBATCH --time=10:00:00
