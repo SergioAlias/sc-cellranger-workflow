@@ -1,0 +1,7 @@
+################################### 
+## GLOBAL VARS ##
+################################### 
+
+######	EXECUTION VARIABLES	#######
+
+export launch_login=FALSE 	#-------#	Login execution mode. Set this variable to 'TRUE' to execute all modules at login.
