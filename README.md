@@ -3,6 +3,7 @@
 This repo will contain a Cell Ranger workflow for going from FASTQ files to 10x input data (incomplete). More info will be available soon.
 
 - `daemon.sh`: Daemon file for controlling the whole workflow (incomplete)
+- `config_daemon`: File with default and global variables (incomplete)
 - `test-mkfastq.sh`: Bash script with some test on Cell Ranger ``mkfastq``
 - `sbatch-mkfastq.sh`: SBATCH script for sending ``test-mkfastq.sh`` to the Slurm queue system
 - `test-count.sh`: Bash script with some test on Cell Ranger `count`
