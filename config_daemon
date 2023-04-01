@@ -4,4 +4,8 @@
 
 ######	EXECUTION VARIABLES	#######
 
+export aux_folder="aux_sh" #-------# Scripts folder
+
+export experiment_name="tiny-bcl"	#-------# Exp name
+
 export launch_login=FALSE 	#-------#	Login execution mode. Set this variable to 'TRUE' to execute all modules at login.
