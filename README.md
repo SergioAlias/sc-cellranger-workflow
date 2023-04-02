@@ -1,6 +1,6 @@
 # sc-cellranger-workflow
 
-## Workflow to perform single-cell RNA-seq analysis from raw fastq files
+## Workflow to perform single-cell RNA-seq analysis from raw BCL/FASTQ files
 
 This repo will contain a Cell Ranger workflow for going from FASTQ files to 10x input data (incomplete). More info will be available soon.
 
