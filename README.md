@@ -6,6 +6,7 @@ This repo will contain a Cell Ranger workflow for going from FASTQ files to 10x 
 
 - `daemon.sh`: Daemon file for controlling the whole workflow (incomplete)
 - `config_daemon`: File with default and global variables (incomplete)
+- `manage_input_files.sh`: For creating soft links to the input data (incomplete)
 - `aux_sh/`
     - `cellranger_mkfastq.sh`: Bash script for converting BCL files to FASTQ files using Cell Ranger `mkfastq`.
     - `cellranger_count.sh`: Bash script for converting FASTQ files to a proper format for single-cell analysis using Cell Ranger `count`.
