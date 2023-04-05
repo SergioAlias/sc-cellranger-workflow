@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # Sergio Alías, 20230401
-# Last modified 20230401
+# Last modified 20230405
 
 # STAGE 0 CONVERTING BCL FILES INTO FASTQ
 
@@ -22,8 +22,8 @@ EXP_ID=$1
 
 # Main
 
-cellranger mkfastq --id=$EXP_ID \
-                   --run=cellranger-tiny-bcl-1.2.0 \
-                   --csv=cellranger-tiny-bcl-simple-1.2.0.csv #\
-                   # --rc-i2-override=true
-                   # --samplesheet=cellranger-tiny-bcl-samplesheet-1.2.0.csv
+time cellranger mkfastq --id=$EXP_ID \
+                        --run=cellranger-tiny-bcl-1.2.0 \
+                        --csv=cellranger-tiny-bcl-simple-1.2.0.csv #\
+                        # --rc-i2-override=true
+                        # --samplesheet=cellranger-tiny-bcl-samplesheet-1.2.0.csv
