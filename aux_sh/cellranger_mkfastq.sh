@@ -7,8 +7,9 @@
 
 #SBATCH --ntasks=1
 #SBATCH --mem=4gb
-#SBATCH --error=bcl.%J.err
-#SBATCH --output=bcl.%J.out
+#SBATCH --constraint=cal
+#SBATCH --error=job.bcl.%J.err
+#SBATCH --output=job.bcl.%J.out
 
 
 # Picasso modules
