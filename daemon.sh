@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # Sergio Alías, 20230323
-# Last modified 20230401
+# Last modified 20230405
 
 # daemon.sh
 
@@ -33,3 +33,4 @@ elif [ "$module" == "1" ] ; then
 	else
 		sbatch $aux_folder/cellranger_count.sh $experiment_name
 	fi
+fi
