@@ -1,11 +1,11 @@
 #! /usr/bin/env bash
 
 # Sergio Alías, 20230401
-# Last modified 20230405
+# Last modified 20230406
 
 # STAGE 0 CONVERTING BCL FILES INTO FASTQ
 
-#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
 #SBATCH --mem=4gb
 #SBATCH --constraint=cal
 #SBATCH --error=job.bcl.%J.err
