@@ -2,10 +2,32 @@
 ## GLOBAL VARS ##
 ################################### 
 
-######	EXECUTION VARIABLES	#######
 
-export aux_folder="aux_sh" #-------# Scripts folder
+######  EXPERIMENT VARIABLES #######
 
-export experiment_name="tiny-bcl"	#-------# Exp name
+export experiment_name="tiny-bcl"    #-------#    Exp name
 
-export launch_login=FALSE 	#-------#	Login execution mode. Set this variable to 'TRUE' to execute all modules at login.
+
+######  EXECUTION VARIABLES #######
+
+export launch_login=FALSE   #-------#    Login execution mode. Set this variable to 'TRUE' to execute all modules at login.
+
+
+######  SAMPLES VARIABLES #######
+
+export read_path=$CODE_PATH'/raw_data'    #-------#    New path where samples were linked and renamed
+
+
+
+###################################
+## DAEMON STAGES ##
+###################################
+
+######  STAGE 0 CONVERTING BCL FILES INTO FASTQ #######
+
+if [ "$module" == "0" ] ; then
+    export bcl_folder=cellranger-tiny-bcl-1.2.0    #-------#    BCL directory
+    export bcl_simple_csv=cellranger-tiny-bcl-simple-1.2.0.csv    #-------#    Comment if you are using the sample sheet
+    export bcl_sample_sheet=cellranger-tiny-bcl-samplesheet-1.2.0.csv    #-------#    Ignore if you are using the simple CSV
+
+fi
