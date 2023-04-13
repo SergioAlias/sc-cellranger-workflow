@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # Sergio Alías, 20230323
-# Last modified 20230411
+# Last modified 20230413
 
 # daemon.sh
 
@@ -13,6 +13,7 @@ export CODE_PATH=$(readlink -f $framework_dir )
 CONFIG_DAEMON=$CODE_PATH'/config_daemon'
 export module=$1 # For setting global vars from config_daemon according to the stage
 source $CONFIG_DAEMON
+export PATH=$CODE_PATH'/aux_R:'$PATH
 export PATH=$CODE_PATH'/aux_sh:'$PATH
 
 
