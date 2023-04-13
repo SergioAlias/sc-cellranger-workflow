@@ -15,7 +15,7 @@ export launch_login=FALSE                 #-------#    Login execution mode. Set
 
 ######  SAMPLES VARIABLES #######
 
-export read_path=$CODE_PATH'/raw_data'    #-------#    New path where samples were linked and renamed
+export read_path=$CODE_PATH'/raw_data'    #-------#    New path where samples were linked and renamed (THIS WILL LIKELY BE DELETED IN FUTURE VERSIONS)
 
 
 
@@ -30,7 +30,18 @@ if [ "$module" == "0" ] ; then
     export bcl_simple_csv=cellranger-tiny-bcl-simple-1.2.0.csv           #-------#    Simple CSV file
     export bcl_use_sample_sheet=FALSE                                    #-------#    Set this variable to 'TRUE' to use the sample sheet CSV instead of the simple CSV
     export bcl_sample_sheet=cellranger-tiny-bcl-samplesheet-1.2.0.csv    #-------#    Sample sheet CSV file
+
+######  STAGE 1 OBTAINING COUNTS FROM FASTQ FILES #######
+
 elif [ "$module" == "1" ] ; then
     export count_transcriptome=refdata-gex-GRCh38-2020-A    #-------#    Transcriptome for reference
+
+######  STAGE 2 PREPROCESSING #######
+
 elif [ "$module" == "2" ] ; then
+    export preproc_dir=data/raw_feature_bc_matrix    #-------#    Input 10X directory
+    export preproc_outdir=outs/preprocessing         #-------#    Out directory
+    export preproc_assay=RNA                         #-------#    Main assay name
+    export preproc_min_cells=1                       #-------#    Threshold of the number of cells for which a feature was recorded
+    export preproc_min_feats=1                       #-------#    Threshold of the number of features for which a cell was recorded
 fi

@@ -1,5 +1,5 @@
 data
-aux_R/
+aux_R/OLD_preprocessing.R
 *.csv
 *.gz
 cellranger-tiny-bcl-1.2.0/
