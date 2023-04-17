@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 # Sergio Alías, 20230411
-# Last modified 20230414
+# Last modified 20230417
 
 #################################
 ###   STAGE 2 PREPROCESSING   ###
@@ -38,9 +38,19 @@ option_list <- list(
   make_option(c("-a", "--assay"), type = "character",
               help="Assay name"),
   make_option(c("-mc", "--mincells"), type = "int",
-              help="Threshold of the number of cells for which a feature was recorded"),
+              help="Min number of cells for which a feature was recorded"),
   make_option(c("-mf", "--minfeats"), type = "int",
-              help="Threshold of the number of features for which a cell was recorded")
+              help="Min number of features for which a cell was recorded"),
+  make_option(c("-xf", "--maxfeats"), type = "int",
+              help="Max number of features for which a cell was recorded"),
+  make_option(c("-xc", "--maxcounts"), type = "int",
+              help="Max number of features for which a cell was recorded"),
+  make_option(c("-mt", "--percentmt"), type = "int",
+              help="Max percentage of reads mapped to mitochondrial genes for which a cell is recorded"),
+  make_option(c("-nm", "--normalmethod"), type = "character",
+              help="Method for normalization. LogNormalize, CLR or RC"),
+  make_option(c("-sf", "--scalefactor"), type = "int",
+              help="Scale factor for cell-level normalization")
 )  
 
 opt <- parse_args(OptionParser(option_list = option_list))
@@ -79,38 +89,30 @@ VlnPlot(seu, features = c('nFeature_RNA', 'nCount_RNA', 'percent.mt'))
 
 ##### Filtering out cells #####
 
-pbmc.filtered <- subset(pbmc.seurat, 
-                        nFeature_RNA < 1250 &
-                        nCount_RNA < 4000 & 
-                        percent.mt < 5)
+seu <- subset(seu, 
+              nFeature_RNA < opt$maxfeats &
+              nCount_RNA < opt$maxcounts & 
+              percent.mt < opt$percentmt)
 
-# TODO add variables to config_daemon and to preprocess.sh
+
+#### Normalization ####
+
+seu <- NormalizeData(seu,
+                     normalization.method = opt$normalmethod,
+                     scale.factor = opt$scalefactor)
+
+seu <- ScaleData(seu)
 
 ######################################
 ######################################
 ######################################
+
+
+
 
 # Caution!!!!!!!!!!!!! #
 # The following code is not from Seurat and will be deleted after finding the best Seurat alternative to it #####
 # Take care!!!!!!!!!!! #
-
-## QC
-
-sce <- scuttle::addPerCellQCMetrics(sce) # adds QC to colData
-reasons <- scuttle::perCellQCFilters(colData(sce))
-# colSums(as.matrix(reasons)) # for visualization
-sce <- sce[, !reasons$discard]
-
-
-## Normalization
-
-set.seed(100)
-clust <- scran::quickCluster(sce)
-# table(clust) # for visualization
-# deconv.sf <- scran::calculateSumFactors(sce, cluster = clust) # for visualization
-# summary(deconv.sf) # for visualization
-sce <- scran::computeSumFactors(sce, cluster = clust)
-sce <- scuttle::logNormCounts(sce)
 
 
 ## Feature selection

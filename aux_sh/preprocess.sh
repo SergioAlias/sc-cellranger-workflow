@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # Sergio Alías, 20230411
-# Last modified 20230414
+# Last modified 20230417
 
 # STAGE 2 PREPROCESSING
 
@@ -18,4 +18,9 @@ time preprocessing.R --input $preproc_dir \
                      --name $experiment_name \
                      --assay $preproc_assay \
                      --mincells $preproc_min_cells \
-                     --minfeats $preproc_min_feats
+                     --minfeats $preproc_min_feats \
+                     --maxfeats $preproc_max_feats \
+                     --maxcounts $preproc_max_counts \
+                     --percentmt $preproc_max_percent_mt \
+                     --normalmethod $preproc_norm_method \
+                     --scalefactor $preproc_scale_factor

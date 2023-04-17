@@ -15,7 +15,7 @@ export launch_login=FALSE                 #-------#    Login execution mode. Set
 
 ######  SAMPLES VARIABLES #######
 
-export read_path=$CODE_PATH'/raw_data'    #-------#    New path where samples were linked and renamed (THIS WILL LIKELY BE DELETED IN FUTURE VERSIONS)
+export read_path=$CODE_PATH'/raw_data'    #-------#    New path where samples were linked and renamed (THIS IS LIKELY TO BE DELETED IN FUTURE VERSIONS)
 
 
 
@@ -42,6 +42,11 @@ elif [ "$module" == "2" ] ; then
     export preproc_dir=data/raw_feature_bc_matrix    #-------#    Input 10X directory
     export preproc_outdir=outs/preprocessing         #-------#    Out directory
     export preproc_assay=RNA                         #-------#    Main assay name
-    export preproc_min_cells=1                       #-------#    Threshold of the number of cells for which a feature was recorded
-    export preproc_min_feats=1                       #-------#    Threshold of the number of features for which a cell was recorded
+    export preproc_min_cells=1                       #-------#    Min number of cells for which a feature is recorded
+    export preproc_min_feats=1                       #-------#    Min number of features for which a cell is recorded
+    export preproc_max_feats=1250                    #-------#    Max number of features for which a cell is recorded
+    export preproc_max_counts=4000                   #-------#    Max number of counts for which a cell is recorded
+    export preproc_max_percent_mt=5                  #-------#    Max percentage of reads mapped to mitochondrial genes for which a cell is recorded
+    export preproc_norm_method=LogNormalize          #-------#    Seurat normalization method: LogNormalize, CLR, RC
+    export preproc_scale_factor=10000                #-------#    Seurat scale factor for cell-level normalization
 fi
