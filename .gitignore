@@ -3,3 +3,4 @@ aux_R/OLD_preprocessing.R
 *.csv
 *.gz
 cellranger-tiny-bcl-1.2.0/
+refdata-gex-GRCh38-2020-A

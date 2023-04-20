@@ -5,7 +5,7 @@
 
 ######  EXPERIMENT VARIABLES #######
 
-export experiment_name="tiny-bcl"         #-------#    Exp name
+export experiment_name="CRR073022"        #-------#    Exp name
 
 
 ######  EXECUTION VARIABLES #######
@@ -15,7 +15,7 @@ export launch_login=FALSE                 #-------#    Login execution mode. Set
 
 ######  SAMPLES VARIABLES #######
 
-export read_path=$CODE_PATH'/raw_data'    #-------#    New path where samples were linked and renamed (THIS IS LIKELY TO BE DELETED IN FUTURE VERSIONS)
+export read_path=/mnt/home/users/bio_267_uma/sergioalias/test/lung/raw_data    #-------#    New path where samples were linked and renamed (THIS IS LIKELY TO BE DELETED IN FUTURE VERSIONS)
 
 
 
