@@ -121,8 +121,10 @@ fs_plot <- LabelPoints(plot = fs_plot,
 # TODO plot to the report
 # TODO set an option for selecting a % of features, not an absolute number
 
+#### PCA ####
 
-
+seu <- RunPCA(seu,
+              features = VariableFeatures(object = seu))
 
 ######################################
 ######################################
