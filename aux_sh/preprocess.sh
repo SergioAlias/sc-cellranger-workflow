@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # Sergio Alías, 20230411
-# Last modified 20230417
+# Last modified 20230420
 
 # STAGE 2 PREPROCESSING
 
@@ -23,4 +23,5 @@ time preprocessing.R --input $preproc_dir \
                      --maxcounts $preproc_max_counts \
                      --percentmt $preproc_max_percent_mt \
                      --normalmethod $preproc_norm_method \
-                     --scalefactor $preproc_scale_factor
+                     --scalefactor $preproc_scale_factor \
+                     --hvgs $preproc_select_hvgs

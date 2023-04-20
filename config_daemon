@@ -49,4 +49,5 @@ elif [ "$module" == "2" ] ; then
     export preproc_max_percent_mt=5                  #-------#    Max percentage of reads mapped to mitochondrial genes for which a cell is recorded
     export preproc_norm_method=LogNormalize          #-------#    Seurat normalization method: LogNormalize, CLR, RC
     export preproc_scale_factor=10000                #-------#    Seurat scale factor for cell-level normalization
+    export preproc_select_hvgs=1000                  #-------#    Number of HVG to be selected (feature selection)
 fi

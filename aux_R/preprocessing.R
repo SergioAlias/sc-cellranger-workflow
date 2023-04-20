@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 # Sergio Alías, 20230411
-# Last modified 20230417
+# Last modified 20230420
 
 #################################
 ###   STAGE 2 PREPROCESSING   ###
@@ -50,7 +50,9 @@ option_list <- list(
   make_option(c("-nm", "--normalmethod"), type = "character",
               help="Method for normalization. LogNormalize, CLR or RC"),
   make_option(c("-sf", "--scalefactor"), type = "int",
-              help="Scale factor for cell-level normalization")
+              help="Scale factor for cell-level normalization"),
+  make_option(c("-fs", "--hvgs"), type = "int",
+              help="Number of HVG to be selected")
 )  
 
 opt <- parse_args(OptionParser(option_list = option_list))
@@ -86,6 +88,7 @@ seu[["percent.mt"]] <- PercentageFeatureSet(seu, pattern = "^MT-")
 VlnPlot(seu, features = c('nFeature_RNA', 'nCount_RNA', 'percent.mt'))
 
 # TODO think about best way of putting all plots in a future HTML report
+# Maybe plotting before and after (?)
 
 ##### Filtering out cells #####
 
@@ -103,6 +106,24 @@ seu <- NormalizeData(seu,
 
 seu <- ScaleData(seu)
 
+
+#### Feature selection (HVG) ####
+
+seu <- FindVariableFeatures(seu,
+                            nfeatures = opt$hvgs)
+
+fs_plot <- VariableFeaturePlot(pbmc.filtered)
+fs_plot <- LabelPoints(plot = fs_plot, 
+                     points = head(VariableFeatures(pbmc.filtered),
+                                   10), 
+                     repel = TRUE)
+
+# TODO plot to the report
+# TODO set an option for selecting a % of features, not an absolute number
+
+
+
+
 ######################################
 ######################################
 ######################################
@@ -113,17 +134,6 @@ seu <- ScaleData(seu)
 # Caution!!!!!!!!!!!!! #
 # The following code is not from Seurat and will be deleted after finding the best Seurat alternative to it #####
 # Take care!!!!!!!!!!! #
-
-
-## Feature selection
-
-dec <- scran::modelGeneVar(sce)
-sce.original <- sce
-chosen <- scran::getTopHVGs(dec, prop=0.1)
-sce <- sce[chosen,]
-altExp(sce, "original") <- sce.original
-rm(sce.original)
-
 
 ## Dimensionality reduction (PCA)
 

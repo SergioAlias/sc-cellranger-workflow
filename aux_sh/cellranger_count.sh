@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # Sergio Alías, 20230406
-# Last modified 20230411
+# Last modified 20230420
 
 # STAGE 1 OBTAINING COUNTS FROM FASTQ FILES
 
@@ -19,6 +19,7 @@ module load cellranger/7.0.0
 # Main
 
 time cellranger count --id=$experiment_name \
+                      --sample=$experiment_name \
                       --transcriptome=$count_transcriptome \
                       --fastqs=$read_path \
                       --localcores=10 \
