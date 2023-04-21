@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 # Sergio Alías, 20230411
-# Last modified 20230420
+# Last modified 20230421
 
 #################################
 ###   STAGE 2 PREPROCESSING   ###
@@ -52,7 +52,11 @@ option_list <- list(
   make_option(c("-sf", "--scalefactor"), type = "int",
               help="Scale factor for cell-level normalization"),
   make_option(c("-fs", "--hvgs"), type = "int",
-              help="Number of HVG to be selected")
+              help="Number of HVG to be selected"),
+  make_option(c("-nd", "--ndims"), type = "int",
+              help="Number of PC to be plotted on the heatmap"),
+  make_option(c("-ph", "--dimheatmapcells"), type = "int",
+              help="Heatmap plots the 'extreme' cells on both ends of the spectrum")  
 )  
 
 opt <- parse_args(OptionParser(option_list = option_list))
@@ -126,21 +130,30 @@ fs_plot <- LabelPoints(plot = fs_plot,
 seu <- RunPCA(seu,
               features = VariableFeatures(object = seu))
 
-######################################
-######################################
-######################################
+VizDimLoadings(seu, dims = 1:2, reduction = "pca")
+
+DimPlot(seu, reduction = "pca")
+
+DimHeatmap(seu,
+           dims = 1:opt$ndims,
+           cells = opt$dimheatmapcells,
+           balanced = TRUE)
+
+# TODO plots to the report
+
+ElbowPlot(pbmc)
+
+# TODO reconsirer adding JackStraw method
 
 
+######################################
+######################################
+######################################
 
 
 # Caution!!!!!!!!!!!!! #
 # The following code is not from Seurat and will be deleted after finding the best Seurat alternative to it #####
 # Take care!!!!!!!!!!! #
-
-## Dimensionality reduction (PCA)
-
-set.seed(100)
-sce <- scran::fixedPCA(sce, subset.row = NULL)
 
 
 ## Clustering

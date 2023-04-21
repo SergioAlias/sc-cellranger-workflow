@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # Sergio Alías, 20230411
-# Last modified 20230420
+# Last modified 20230421
 
 # STAGE 2 PREPROCESSING
 
@@ -24,4 +24,6 @@ time preprocessing.R --input $preproc_dir \
                      --percentmt $preproc_max_percent_mt \
                      --normalmethod $preproc_norm_method \
                      --scalefactor $preproc_scale_factor \
-                     --hvgs $preproc_select_hvgs
+                     --hvgs $preproc_select_hvgs \
+                     --ndims $preproc_pca_n_dims \
+                     --dimheatmapcells $preproc_pca_n_cells
