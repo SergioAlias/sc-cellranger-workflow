@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # Sergio Alías, 20230406
-# Last modified 20230420
+# Last modified 20230421
 
 # STAGE 1 OBTAINING COUNTS FROM FASTQ FILES
 
@@ -24,3 +24,6 @@ time cellranger count --id=$experiment_name \
                       --fastqs=$read_path \
                       --localcores=10 \
                       --localmem=30
+
+
+# time count_table.R --input $experiment_name

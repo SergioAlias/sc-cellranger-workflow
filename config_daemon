@@ -5,7 +5,7 @@
 
 ######  EXPERIMENT VARIABLES #######
 
-export experiment_name="CRR073022"        #-------#    Exp name
+export experiment_name=CRR073022        #-------#    Exp name
 
 
 ######  EXECUTION VARIABLES #######
