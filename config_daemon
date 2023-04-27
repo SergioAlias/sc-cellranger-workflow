@@ -10,13 +10,9 @@ export experiment_name=CRR073022        #-------#    Exp name
 
 ######  EXECUTION VARIABLES #######
 
-export launch_login=FALSE                 #-------#    Login execution mode. Set this variable to 'TRUE' to execute all modules at login.
-
-
-######  SAMPLES VARIABLES #######
-
+export launch_login=FALSE                                                      #-------#    Login execution mode. Set this variable to 'TRUE' to execute all modules at login.
+export project_folder=`pwd`'/project_execution'                                #-------#    Global execution folder
 export read_path=/mnt/home/users/bio_267_uma/sergioalias/test/lung/raw_data    #-------#    New path where samples were linked and renamed (THIS IS LIKELY TO BE DELETED IN FUTURE VERSIONS)
-
 
 
 ###################################
