@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # Sergio Alías, 20230323
-# Last modified 20230421
+# Last modified 20230516
 
 # daemon.sh
 
@@ -33,11 +33,12 @@ if [ "$module" == "0" ] ; then
 elif [ "$module" == "1" ] ; then
     #STAGE 1 OBTAINING COUNTS FROM FASTQ FILES
     echo "Launching stage 1: Obtaining counts from FASTQ files"
-    if [ $launch_login == TRUE ]; then  
-        cellranger_count.sh
-    else
-        sbatch cellranger_count.sh
-    fi
+    # if [ $launch_login == TRUE ]; then  
+    #     cellranger_count.sh
+    # else
+    #     sbatch cellranger_count.sh
+    # fi
+    autoflow_count.sh
 elif [ "$module" == "2" ] ; then
     #STAGE 2 PREPROCESSING
     echo "Launching stage 2: Preprocessing"

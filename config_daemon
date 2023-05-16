@@ -10,9 +10,17 @@ export experiment_name=CRR073022        #-------#    Exp name
 
 ######  EXECUTION VARIABLES #######
 
-export launch_login=FALSE                                                      #-------#    Login execution mode. Set this variable to 'TRUE' to execute all modules at login.
-export project_folder=`pwd`'/project_execution'                                #-------#    Global execution folder
-export read_path=/mnt/home/users/bio_267_uma/sergioalias/test/lung/raw_data    #-------#    New path where samples were linked and renamed (THIS IS LIKELY TO BE DELETED IN FUTURE VERSIONS)
+export RESOURCES="-c 2 -t 10:00:00 -m 10"                      #-------#    AutoFlow resources setting 
+export launch_login=FALSE                                      #-------#    Login execution mode. Set this variable to 'TRUE' to execute all modules at login.
+export project_folder=$FSCRATCH"/NGS_projects"                   #-------#    Global execution folder
+export COUNT_RESULTS_FOLDER=$project_folder"/count_results"    #-------#    Count execution path
+export TEMPLATE=$CODE_PATH"/templates/count_template.txt"      #-------#    AutoFlow count template. It is advisable not to modify this variable
+
+
+######  SAMPLES VARIABLES #######
+
+export SAMPLES_FILE=$CODE_PATH"/samples_to_process.lst"    #-------#    A list with sample names. File name must be unique and in must not include paired-end information or file extension. (e.g. For file "sample_ex_1.fastq.gz" and "sample_ex_2.fastq.gz", filename is "sample_ex")
+export read_path=$HOME"/test/lung/raw_data"                  #-------#    New path where samples were linked and renamed
 
 
 ###################################
