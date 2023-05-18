@@ -1,5 +1,5 @@
 # Sergio Alías, 20230323
-# Last modified 20230517
+# Last modified 20230518
 
 # config_daemon
 
@@ -10,16 +10,16 @@
 
 ######  EXPERIMENT VARIABLES #######
 
-export experiment_name=CRR073022    #-------#    Exp name (WILL BE REMOVED SOON BECAUSE samples_to_process.lst HAS THE SAME PURPOSE)
+export experiment_name=LUAD    #-------#    Expermient name
 
 
 ######  EXECUTION VARIABLES #######
 
-export RESOURCES="-c 10 -t 10:00:00 -m 30"                     #-------#    AutoFlow resources general setting 
-export launch_login=FALSE                                      #-------#    Login execution mode. Set this variable to 'TRUE' to execute all modules at login.
-export project_folder=$FSCRATCH"/NGS_projects"                 #-------#    Global execution folder
-export COUNT_RESULTS_FOLDER=$project_folder"/count_results"    #-------#    Count execution path
-export TEMPLATE=$CODE_PATH"/templates/count_template.txt"      #-------#    AutoFlow count template. It is advisable not to modify this variable
+export RESOURCES="-c 10 -t '2-00:00:00' -m '30'"                                  #-------#    AutoFlow resources general setting 
+export launch_login=FALSE                                                         #-------#    Login execution mode. Set this variable to 'TRUE' to execute all modules at login.
+export project_folder=$FSCRATCH"/NGS_projects"                                    #-------#    Global execution folder
+export COUNT_RESULTS_FOLDER=$project_folder"/"$experiment_name"/count_results"    #-------#    Count execution path
+export TEMPLATE=$CODE_PATH"/templates/count_template.txt"                         #-------#    AutoFlow count template. It is advisable not to modify this variable
 
 
 ######  SAMPLES VARIABLES #######
