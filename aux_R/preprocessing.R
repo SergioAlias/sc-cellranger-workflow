@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 # Sergio Alías, 20230411
-# Last modified 20230421
+# Last modified 20230518
 
 #################################
 ###   STAGE 2 PREPROCESSING   ###
@@ -9,8 +9,6 @@
 #################################
 
 ################  DISCLAIMER  ###################
-#                                               #
-#          This script is incomplete            #
 #                                               #
 # This script has not been tried in Picasso yet #
 #                                               #
@@ -125,6 +123,7 @@ fs_plot <- LabelPoints(plot = fs_plot,
 # TODO plot to the report
 # TODO set an option for selecting a % of features, not an absolute number
 
+
 #### PCA ####
 
 seu <- RunPCA(seu,
@@ -141,27 +140,29 @@ DimHeatmap(seu,
 
 # TODO plots to the report
 
-ElbowPlot(pbmc)
+ElbowPlot(seu)
 
 # TODO reconsirer adding JackStraw method
 
 
-######################################
-######################################
-######################################
+#### Clustering ####
+
+seu <- FindNeighbors(seu, dims = 1:10)
+seu <- FindClusters(seu, resolution = 0.5)
 
 
-# Caution!!!!!!!!!!!!! #
-# The following code is not from Seurat and will be deleted after finding the best Seurat alternative to it #####
-# Take care!!!!!!!!!!! #
+#### Non-linear dimensional reduction: UMAP, tSNE ####
+
+# Maybe we need to install UMAP
+# reticulate::py_install(packages = 'umap-learn')
+
+seu <- RunUMAP(seu, dims = 1:10)
+
+DimPlot(seu, reduction = "umap")
+
+# TODO Add tSNE
 
 
-## Clustering
+#### Saving object as RDS ####
 
-nn.clusters <- scran::clusterCells(sce, use.dimred = "PCA")
-colLabels(sce) <- nn.clusters
-
-
-## Saving sce as RDS
-
-saveRDS(sce, paste0(name, ".sce.RDS"))
+saveRDS(seu, paste0(name, ".seu.RDS"))
