@@ -1,5 +1,5 @@
 # Sergio Alías, 20230516
-# Last modified 20230518
+# Last modified 20230524
 
 # STAGE 1 OBTAINING COUNTS FROM FASTQ FILES
 
