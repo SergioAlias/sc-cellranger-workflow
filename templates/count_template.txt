@@ -1,31 +1,30 @@
 # Sergio Alías, 20230516
-# Last modified 20230525
+# Last modified 20230526
 
 ####################
 ### Count template. Parametres can be customized at config_deamon
 
 
-%before_fastqc_[R1;R2]){
+before_fastqc_[R1;R2]){
  resources: -c 5 -t 2-00:00:00 -m '50gb'
  module load fastqc/0.11.9
  echo [cpu]
  ?
  fastqc --noextract \
-        --nogroup \
+        # --nogroup \
         $read_path"/"$sample"_S1_L001_"(*)"_001.fastq.gz" \
-        -o $COUNT_RESULTS_FOLDER/$sample # \
+        -o . # $COUNT_RESULTS_FOLDER/$sample # \
         # -t [cpu]
 }
 
-@FR=none
-before_metrics_[R1;R2]){
- resources: -c 1 -t 2-00:00:00 -m 500
+%before_metrics){
+ resources: -c 1 -t 0-01:00:00 -m 50
  . ~soft_bio_267/initializes/init_ruby
  echo [cpu]
  ?
- # env_manager "FR=_(*)"
- get_fastqc_data.rb -i $COUNT_RESULTS_FOLDER/$sample/$sample"_S1_L001_"(*)"_001.fastqc.gz" -T -H | awk '{print "$sample$FR" "\tinitial_" $0 }' >> ../../metrics
- echo (*) >> ../../metrics
+ get_fastqc_data.rb -i $COUNT_RESULTS_FOLDER/$sample/$sample"_S1_L001_R1_001.fastqc.gz" -T -H | awk '{print "$sample" "_R1" "\tinitial_" $0 }' >> ../../metrics
+ get_fastqc_data.rb -i $COUNT_RESULTS_FOLDER/$sample/$sample"_S1_L001_R2_001.fastqc.gz" -T -H | awk '{print "$sample" "_R2" "\tinitial_" $0 }' >> ../../metrics
+
 } 
 
 %run_count){
