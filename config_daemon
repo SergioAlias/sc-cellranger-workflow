@@ -1,5 +1,5 @@
 # Sergio Alías, 20230323
-# Last modified 20230525
+# Last modified 20230528
 
 # config_daemon
 
@@ -20,6 +20,7 @@ export launch_login=FALSE                                                       
 export project_folder=$FSCRATCH"/NGS_projects"                                    #-------#    Global execution folder
 export COUNT_RESULTS_FOLDER=$project_folder"/"$experiment_name"/count_results"    #-------#    Count execution path
 export TEMPLATE=$CODE_PATH"/templates/count_template.txt"                         #-------#    AutoFlow count template. It is advisable not to modify this variable
+export TRIM_TEMPLATE="transcriptomics.txt"                                        #-------#    Trimming template
 export LAB_SCRIPTS="/mnt/home/soft/soft_bio_267/programs/x86_64/scripts"          #-------#    Folder with the lab scripts
 
 ######  SAMPLES VARIABLES #######

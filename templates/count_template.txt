@@ -5,6 +5,20 @@
 ### Count template. Parametres can be customized at config_deamon
 
 
+
+qc_seqtrimbb){
+ resources: -c 5 -t 2-00:00:00 -m '30gb'
+ module unload java
+ source ~soft_bio_267/initializes/init_stbb  
+ ?
+ seqtrimbb -t $trim_template \
+           -Q $read_path"/"$sample"_S1_L001_R1_001.fastq.gz,"$read_path"/"$sample"_S1_L001_R2_001.fastq.gz" \
+           -P "minlength=65" \
+           -w [cpu] \
+           --full_throttle \
+           -O output_files
+}
+
 %before_fastqc_[R1;R2]){
  resources: -c 1 -t 2-00:00:00 -m '30gb'
  module load fastqc/0.11.9
@@ -17,7 +31,8 @@
         # -t [cpu]
 }
 
-before_metrics){
+
+%before_metrics){
  resources: -c 1 -t 0-01:00:00 -m 50
  . ~soft_bio_267/initializes/init_ruby
  echo [cpu]
