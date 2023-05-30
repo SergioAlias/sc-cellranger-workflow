@@ -1,5 +1,5 @@
 # Sergio Alías, 20230323
-# Last modified 20230528
+# Last modified 20230530
 
 # config_daemon
 
@@ -15,7 +15,7 @@ export experiment_name=LUAD    #-------#    Expermient name
 
 ######  EXECUTION VARIABLES #######
 
-export RESOURCES="-c 10 -t '2-00:00:00' -m '30'"                                  #-------#    AutoFlow resources general setting 
+export RESOURCES="-c 10 -t '2-00:00:00' -m '30gb'"                                #-------#    AutoFlow resources general setting 
 export launch_login=FALSE                                                         #-------#    Login execution mode. Set this variable to 'TRUE' to execute all modules at login.
 export project_folder=$FSCRATCH"/NGS_projects"                                    #-------#    Global execution folder
 export COUNT_RESULTS_FOLDER=$project_folder"/"$experiment_name"/count_results"    #-------#    Count execution path
@@ -27,6 +27,11 @@ export LAB_SCRIPTS="/mnt/home/soft/soft_bio_267/programs/x86_64/scripts"        
 
 export SAMPLES_FILE=$CODE_PATH"/samples_to_process.lst"    #-------#    A list with sample names. File name must be unique and in must not include paired-end information or file extension. (e.g. For file "sample_ex_1.fastq.gz" and "sample_ex_2.fastq.gz", filename is "sample_ex")
 export read_path=$HOME"/test/lung/raw_data"                #-------#    New path where samples were linked and renamed
+
+######  REPORT VARIABLES #######
+
+export REPORT_TEMPLATES_FOLDER=$CODE_PATH'/reports'       #-------#    Report templates path
+export report_folder=$project_folder'/mapping_reports'    #-------#    Reports output path
 
 
 ###################################
@@ -46,9 +51,9 @@ if [ "$module" == "0" ] ; then
 elif [ "$module" == "1" ] ; then
     export count_transcriptome=$HOME"/test/lung/sc-cellranger-workflow/refdata-gex-GRCh38-2020-A"    #-------#    Transcriptome for reference
 
-######  STAGE 2 PREPROCESSING #######
+######  STAGE 3 PREPROCESSING #######
 
-elif [ "$module" == "2" ] ; then
+elif [ "$module" == "3" ] ; then
     export preproc_dir=data/raw_feature_bc_matrix    #-------#    Input 10X directory
     export preproc_outdir=outs/preprocessing         #-------#    Out directory
     export preproc_assay=RNA                         #-------#    Main assay name

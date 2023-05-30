@@ -3,7 +3,7 @@
 # Sergio Alías, 20230411
 # Last modified 20230427
 
-# STAGE 2 PREPROCESSING
+# STAGE 3 PREPROCESSING
 
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=20gb

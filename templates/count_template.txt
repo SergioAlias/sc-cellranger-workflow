@@ -6,7 +6,7 @@
 
 
 
-qc_seqtrimbb){
+%qc_seqtrimbb){
  resources: -c 5 -t 2-00:00:00 -m '30gb'
  module unload java
  source ~soft_bio_267/initializes/init_stbb  
@@ -32,13 +32,13 @@ qc_seqtrimbb){
 }
 
 
-%before_metrics){
+before_metrics){
  resources: -c 1 -t 0-01:00:00 -m 50
  . ~soft_bio_267/initializes/init_ruby
  echo [cpu]
  ?
- get_fastqc_data.rb -i $COUNT_RESULTS_FOLDER/$sample"/fastqc_0000/"$sample"_S1_L001_R1_001.fastqc.gz" -T -H | awk '{print "$sample" "_R1" "\tinitial_" $0 }' >> ../../metrics
- get_fastqc_data.rb -i $COUNT_RESULTS_FOLDER/$sample"/fastqc_0001/"$sample"_S1_L001_R2_001.fastqc.gz" -T -H | awk '{print "$sample" "_R2" "\tinitial_" $0 }' >> ../../metrics
+ get_fastqc_data.rb -i $COUNT_RESULTS_FOLDER/$sample"/fastqc_0000/"$sample"_S1_L001_R1_001_fastqc.zip" -T -H | awk '{print "$sample" "_R1" "\tinitial_" $0 }' >> ../../metrics
+ get_fastqc_data.rb -i $COUNT_RESULTS_FOLDER/$sample"/fastqc_0001/"$sample"_S1_L001_R2_001_fastqc.zip" -T -H | awk '{print "$sample" "_R2" "\tinitial_" $0 }' >> ../../metrics
 
 } 
 

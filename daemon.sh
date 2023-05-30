@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # Sergio Alías, 20230323
-# Last modified 20230516
+# Last modified 20230530
 
 # daemon.sh
 
@@ -39,9 +39,19 @@ elif [ "$module" == "1" ] ; then
     #     sbatch cellranger_count.sh
     # fi
     autoflow_count.sh
+
 elif [ "$module" == "2" ] ; then
-    #STAGE 2 PREPROCESSING
-    echo "Launching stage 2: Preprocessing"
+    #STAGE 2 SAMPLES COMPARISON
+    echo "Launching stage 2: Samples comparison"
+    if [ $launch_login == TRUE ]; then  
+        compare_samples.sh
+    else
+        sbatch compare_samples.sh
+    fi
+
+elif [ "$module" == "3" ] ; then
+    #STAGE 3 PREPROCESSING
+    echo "Launching stage 3: Preprocessing"
     if [ $launch_login == TRUE ]; then  
         preprocess.sh
     else

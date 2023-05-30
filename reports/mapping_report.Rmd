@@ -1,0 +1,587 @@
+---
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    df_print: paged
+    fig_width: 12
+---
+
+<style type='text/css'>
+    body .main-container {
+        max-width: 90%;
+    }
+
+    .plot_real_size {
+    	overflow: scroll;
+  		max-height: 600px;
+  	}
+
+    .plot_real_size img{
+    	max-width: none;
+    	max-height: none;
+    }
+
+    embed {
+   
+  }   
+</style>
+
+```{r prior_proc, results='asis', echo=FALSE, warning=FALSE, message=FALSE}
+	suppressPackageStartupMessages(library(reshape2))
+	suppressPackageStartupMessages(require(gplots))
+	suppressPackageStartupMessages(library(ggplot2))
+	suppressPackageStartupMessages(library(DESeq2))
+	suppressPackageStartupMessages(library(edgeR))
+	suppressPackageStartupMessages(library(WGCNA))
+	suppressPackageStartupMessages(library(stringr))
+
+	metric_table <- data[['metric_table']]
+	targets <- data[names(data)[grepl("_target.txt", names(data))]] 
+	execute_clustering <- TRUE
+	out_clustering <- NULL
+	if(length(targets) == 0){
+		execute_clustering <- FALSE	
+	}
+	count_data <- data[['all_counts']]
+	rownames(count_data) <- count_data[[1]]
+	count_data[[1]] <- NULL
+	
+	metric_dictionary <- list(
+		"initial_total_sequences" = "Total Reads Before Trimming", 
+		"adapter_filter_passed" = "Remaining reads after adapters filter",
+		"no_contaminants_reads"= "Remaining reads after contaminants filter",
+		"final_total_sequences" = "Total Reads After Trimming",
+		"Uniquely_mapped_reads_." = "Unique Map %",
+		"multi_map" = "Multi-mapping %",
+		"X._of_reads_mapped_to_multiple_loci" = "Multi Map %",
+		"X._of_reads_mapped_to_too_many_loci" = "Multi Map-too many %",
+		"X._of_reads_unmapped._too_short" = "Unmapped: Too Short %",
+		"X._of_reads_unmapped._too_many_mismatches" = "Unmapped: To many mismatches %", 
+		"X._of_reads_unmapped._other" = "Unmapped: Other %",
+		"Uniquely_mapped_reads_number" = "Unique Map",
+		"aligned_to_feature" = "Aligned to Genomic Feature",
+		"initial_mean_qual_per_base" = "Average Base Quality",
+		"initial_min_qual_per_base_in_10th_decile" = "Min Qual per Base (Tenth Decile)",
+		"initial_min_qual_per_base_in_lower_quartile" = "Min Qual per Base (Lower Quartile)",
+		"initial_weigthed_qual_per_sequence" = "Weighted Sequence Quality",
+		"number_duplicatedreads.estimated." = "Estimated Duplicated Reads",
+		"final_mean_qual_per_base" = "Average Base Quality",
+		"final_min_qual_per_base_in_10th_decile" = "Min Qual per Base (Tenth Decile)",
+		"final_min_qual_per_base_in_lower_quartile" = "Min Qual per Base (Lower Quartile)",
+		"final_weigthed_qual_per_sequence" = "Weighted Sequence Quality",
+		"bowtie1_mapped_per" = "Aligned reads %",
+		"bowtie1_unmapped_per" = "Unaligned reads %",
+		"bowtie1_multimapping_per" = "Reads supressed by multimapping %",
+		"bowtie1_mapped" = "Mapped reads",
+		"bowtie1_filtered_reads" = "Filtered reads",
+		"bowtie2_unmapped_per" = "Unmapped reads %",
+		"bowtie2_multimapping_per" = "Reads aligned more than once %",
+		"bowtie2_uniq_mapped_per" = "Reads aligned once %",
+		"initial_sequence_length_distribution" = "Read length distribution before trimming",
+		"final_sequence_length_distribution" = "Read length distribution after trimming"
+		)
+
+	metric_table$no_contaminants_reads <- metric_table$adapter_filter_passed - metric_table$contaminants_reads
+
+	metric_var_2_legend_name <- data.frame(
+		metric_var = names(metric_dictionary),
+		legend_name = unlist(metric_dictionary)
+	)
+
+	create_clustering <- function(target, all_metrics, metrics_to_process, count_data, metric_var_2_legend_name, method = "complete"){ #Use of 'complete' clustering method as default, as same as DEgenesHunter
+		metrics_to_process <- c(metrics_to_process, "sample")	
+		samples <- target$sample
+		samples_metrics <- all_metrics[all_metrics$sample %in% samples,colnames(all_metrics) %in% metrics_to_process]
+		rownames(samples_metrics) <- samples_metrics$sample
+		samples_metrics$sample <- NULL
+		samples_metrics_corrected <- sapply(samples_metrics, function(x) as.numeric(gsub("\\%", "", x)))
+		samples_metrics_corrected <- data.frame(samples_metrics_corrected)
+		samples_count_data <- count_data[,colnames(count_data) %in% samples]
+		normalized_counts <- t(filter_and_perform_DESeq_norm(target, samples_count_data))
+		sampleTree = hclust(dist(normalized_counts), method = "complete") 
+		col<- colorRampPalette(c("#FFFFCC", "#FD8D3C", "#800026"))(20)
+		traitColors = numbers2colors(samples_metrics_corrected, signed = FALSE, colors = col)
+		readable_labels <- metric_var_2_legend_name[match(names(samples_metrics_corrected), metric_var_2_legend_name$metric_var), "legend_name" ]
+		plotDendroAndColors(sampleTree, traitColors,
+							cex.colorLabels = 0.5,
+							groupLabels = readable_labels,
+		                    main = "Sample dendrogram and trait heatmap")
+
+	}
+
+	filter_and_perform_DESeq_norm <- function(target, samples_count_data){
+		index_control_cols <- as.character(subset(target, treat == "Ctrl", select = sample, drop = TRUE))
+		index_treatmn_cols <- as.character(subset(target, treat == "Treat", select = sample, drop = TRUE))
+		to_keep_control <- rowSums(edgeR::cpm(samples_count_data[index_control_cols]) > 2) >= 2
+	    	to_keep_treatment <- rowSums(edgeR::cpm(samples_count_data[index_treatmn_cols]) > 2) >= 2
+    		keep_cpm <- to_keep_control | to_keep_treatment
+		samples_count_data <- samples_count_data[keep_cpm, ]
+		samples_count_data <- samples_count_data[c(index_control_cols,index_treatmn_cols)]
+		dds <- DESeqDataSetFromMatrix(countData = samples_count_data,
+							colData = target,
+                            design = formula("~ treat"))
+		dds <- DESeq(dds)
+		normalized_counts <- as.data.frame(counts(dds, normalized=TRUE)) # Getting normalized values
+		normalized_counts <- data.frame(log10(data.matrix(normalized_counts) + 1)) # Data normalization
+		return(normalized_counts)
+	}
+
+	####################################################
+
+	make_stacked_barchart_from_df <- function(df, id, other_vars, legend_names=FALSE) {
+		reduced_df <- df[,c(id, other_vars)]
+		melt_df <- melt(reduced_df, id.vars = id)
+
+		if(FALSE %in% legend_names & length(legend_names) == 1) {
+			legend_names <- other_vars
+		}
+
+		g <- ggplot(melt_df, aes_string(x=id, y="value", fill="variable"))
+		g + geom_bar(stat='identity') + theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+		scale_fill_discrete(labels = legend_names) +
+		theme(legend.position="bottom", legend.title = element_blank())
+	}
+
+	make_stacked_barchart_from_df_dodge <- function(df, id, other_vars, legend_names=FALSE) {
+		reduced_df <- df[,c(id, other_vars)]
+		melt_df <- melt(reduced_df, id.vars = id)
+
+		if(FALSE %in% legend_names & length(legend_names) == 1) {
+			legend_names <- other_vars
+		}
+		g <- ggplot(melt_df, aes_string(x=id, y="value", fill="variable"))
+		g + geom_bar(stat='identity', position=position_dodge()) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+		scale_fill_discrete(labels = legend_names) +
+		theme(legend.position="bottom", legend.title = element_blank())
+	}
+
+	make_scatterplot_from_df <- function(df, var1, var2, axis_lab_name1=FALSE, axis_lab_name2=FALSE) {
+		if(axis_lab_name1 == FALSE) axis_lab_name1 <- var1
+		if(axis_lab_name2 == FALSE) axis_lab_name2 <- var2
+		g <- ggplot(df, aes_string(x=var1, y=var2))
+		g + geom_point() +
+		theme(legend.position="bottom") +
+		xlab(axis_lab_name1) + ylab(axis_lab_name2) + ylim(0,NA)
+	}
+
+	# this is a little like a barplot, but the absolute values are shown, with a line connecting them.
+	make_vert_line_plot_from_df <- function(df, id, other_vars, legend_names=FALSE){
+		reduced_df <- df[,c(id, other_vars)]
+		melt_df <- melt(reduced_df, id.vars = id)
+
+		if(FALSE %in% legend_names & length(legend_names) == 1) {
+			legend_names <- other_vars
+		}
+
+		ggplot(melt_df, aes(x = sample, y = value, color = variable, group = variable)) + 
+		theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+     	geom_point() + geom_line() + scale_color_discrete(labels=legend_names) +
+		theme(legend.position="bottom", legend.title = element_blank()) + ylim(0,NA)
+	}
+
+	column_str_to_numeric <- function(column){
+    numeric_column <- as.numeric(unlist(lapply(column, function(line){
+            num_line <- unlist(strsplit(as.character(line), '-'))[1]
+            return(num_line)
+          })
+    ))
+    return(numeric_column)
+  }
+
+	make_violin_plot <- function(data_frame, title = "", y_lab = "", x_lab = ""){
+		u_labels <- unique(data_frame$metric)
+		labels_df <- data.frame(
+		  breaks = column_str_to_numeric(u_labels),
+		  labels = u_labels
+		)
+		data_frame$metric <- column_str_to_numeric(data_frame$metric)
+		plot <- ggplot(data_frame, aes(y = metric, weight = count, x = pair_name, fill = sample_name)) + 
+			geom_violin(scale = "width", adjust = 1/15) +
+        	scale_y_continuous(
+				breaks = labels_df$breaks,
+				labels = labels_df$labels
+        	) + 
+        	 theme(axis.text.x = element_text(angle = 30, size = 8, hjust = 1), legend.text = element_text(size = 8)) +
+        	scale_fill_discrete(name = "Sample") +
+       		ggtitle(title) + ylab(y_lab) + xlab(x_lab) 
+       		paired <- length(unique(data_frame$pair)) / length(unique(data_frame$sample))
+       		if(paired == 1 ){
+       			plot <- plot + scale_x_discrete(name = "")
+       		}else if(paired == 2){
+       			plot <- plot + scale_x_discrete(name = "Paired-end Name")
+       		}
+       		plot
+	}
+
+	make_top_n_expression_table <- function(count_data, n=5) {
+		top_n_index <- order(rowSums(count_data), decreasing=TRUE)[1:n]
+		sample_totals <- colSums(count_data)
+		top_n_count <- count_data[top_n_index, ]
+		top_n_perc <- apply(top_n_count, 1, function(x) { 
+			round(x / sample_totals * 100, 3)
+		})
+		knitr::kable(t(top_n_perc))
+	}
+
+	parse_ditributions_to_df <- function(all_metrics, column_name){
+		samples <- seq(nrow(all_metrics))
+		all_distribution_parsed <- as.data.frame(do.call(rbind, lapply(samples, function(sample_index){
+			sample <- all_metrics$sample[sample_index]
+			sample_distribution_str <- as.character(all_metrics[[column_name]][sample_index])
+			pairs_distribution_str <- unlist(strsplit(sample_distribution_str, ";"))
+			if(length(pairs_distribution_str) == 2){
+				pairs <- c(1,2)
+				sample_parsed_distribution <- as.data.frame(do.call(rbind, 
+					lapply(pairs, function(pair){
+						parsed_distribution <- parse_distribution(
+							distribution = pairs_distribution_str[pair], 
+							sample = sample,
+							pair = pair
+						)
+						return(parsed_distribution)
+					})
+				))
+			} else if(length(pairs_distribution_str) == 1){
+				sample_parsed_distribution <- parse_distribution(
+					distribution = sample_distribution_str,
+					sample = sample
+				)
+			}
+			return(sample_parsed_distribution)
+		})))
+		return(all_distribution_parsed)
+	}
+
+	parse_distribution <- function(distribution, sample = NULL, pair = FALSE){
+		sample_name_str <- ""
+		pair_name_str <- ""
+		if(!is.null(sample)){
+			sample_name_str <- sample
+			if(pair){
+				pair_name_str <- paste(sample, pair, sep = "_")
+			}else{
+				pair_name_str <- sample
+			}
+		}
+
+		df_distribution <- as.data.frame(do.call(rbind, 
+			lapply(unlist(strsplit(distribution, ":")), function(row_str){
+				parsed_row <- unlist(strsplit(row_str, ","))
+				df_row <- data.frame(
+					metric = parsed_row[1],
+					count = as.numeric(parsed_row[2]),
+					sample_name= sample_name_str,
+					pair_name = pair_name_str,
+					stringsAsFactors = FALSE
+				)
+				return(df_row)
+			})
+		))
+		return(df_distribution)		
+	}
+
+	plot_in_div <- function(g, fig_height=7, fig_width=12) {
+
+		cat('\n<div class="plot_real_size">\n')
+		g_deparsed <- paste0(deparse(function() {g}), collapse = '')
+		sub_chunk <- paste0("\n```{r sub_chunk_", floor(runif(1) * 10000), ", fig.height=", fig_height, ", fig.width=", fig_width, ", echo=FALSE, message= FALSE, warning= FALSE}", "\n(", g_deparsed, ")()\n```\n\n\n") 
+		cat(knitr::knit(text = knitr::knit_expand(text = sub_chunk), quiet = TRUE))
+		cat('\n</div>\n')
+	}
+	calc_width_samples <- function(elements, multiplier = 0.3){
+		width <- elements * multiplier
+		return(width)
+	}
+
+	chunks <- function(code, options = ""){paste(paste("```{r ",options,"}",sep = ""),code,"```",sep="\n")}
+	render <- function(text){paste(knit(text = paste(text,collapse = "\n")),collapse = "\n")}
+
+	###############################
+	## CONTROL VARIABLES
+	##############################
+	vars_trimming <- c("initial_total_sequences", "adapter_filter_passed", "no_contaminants_reads", "final_total_sequences")
+	execute_trimming <- all(vars_trimming %in% colnames(metric_table))
+	vars_qual_scores_init<- c("initial_min_qual_per_base_in_10th_decile", "initial_min_qual_per_base_in_lower_quartile", "initial_mean_qual_per_base", "initial_weigthed_qual_per_sequence")
+	execute_qual_scores_init <- all(vars_qual_scores_init %in% colnames(metric_table))
+	vars_qual_scores <- c("final_min_qual_per_base_in_10th_decile", "final_min_qual_per_base_in_lower_quartile", "final_mean_qual_per_base", "final_weigthed_qual_per_sequence")
+	execute_qual_scores <- all(vars_qual_scores %in% colnames(metric_table))
+	vars_aligned_v_qual <- c("aligned_to_feature", "initial_weigthed_qual_per_sequence")
+	execute_aligned_v_qual <- all(vars_aligned_v_qual %in% colnames(metric_table))
+	vars_STAR_mapping <- c("Uniquely_mapped_reads_.", "X._of_reads_mapped_to_multiple_loci", "X._of_reads_mapped_to_too_many_loci", "X._of_reads_unmapped._too_short", "X._of_reads_unmapped._too_many_mismatches", "X._of_reads_unmapped._other")
+	execute_STAR_mapping <- all(vars_STAR_mapping %in% colnames(metric_table))
+	vars_STAR_feature_overlap <- c("Uniquely_mapped_reads_number", "aligned_to_feature")
+	execute_STAR_feature_overlap <- all(vars_STAR_feature_overlap %in% colnames(metric_table))
+	############ Correcting_metrics for paired samples
+	if (execute_STAR_feature_overlap) {
+		metric_table[,vars_STAR_feature_overlap] <- metric_table[,vars_STAR_feature_overlap] * metric_table$pair_layout
+	} 
+	vars_STAR_feature_overlap <- c("final_total_sequences", vars_STAR_feature_overlap)
+	###############
+	vars_mirna_mapping <- c("bowtie1_mapped_per", "bowtie1_multimapping_per", "bowtie1_unmapped_per")
+	execute_mirna_mapping <- all(vars_mirna_mapping %in% colnames(metric_table))
+	vars_mirna_mapping_abs <- c("final_total_sequences", "bowtie1_filtered_reads", "bowtie1_mapped")
+	execute_mirna_mapping_abs <- all(vars_mirna_mapping_abs %in% colnames(metric_table))
+	vars_bowtie2_mapping <- c("bowtie2_uniq_mapped_per", "bowtie2_multimapping_per","bowtie2_unmapped_per")
+	execute_bowtie2_mapping <- all(vars_bowtie2_mapping %in% colnames(metric_table))
+	vars_bowtie2_feature_overlap <- c("final_total_sequences", "aligned_to_feature")
+	execute_bowtie2_feature_overlap <- all(c(vars_bowtie2_feature_overlap, "bowtie2_uniq_mapped_per")  %in% colnames(metric_table))
+	vars_length_trimming <- c("initial_sequence_length_distribution", "final_sequence_length_distribution")
+	execute_length_trimming <- all(vars_length_trimming %in% colnames(metric_table))
+	vars_clustering <- c("initial_total_sequences", "final_total_sequences", "Uniquely_mapped_reads_.", "multi_map", "X._of_reads_mapped_to_multiple_loci","X._of_reads_mapped_to_too_many_loci","X._of_reads_unmapped._too_short","X._of_reads_unmapped._other","Uniquely_mapped_reads_number","aligned_to_feature","initial_weigthed_qual_per_sequence","number_duplicatedreads.estimated.","final_mean_qual_per_base","final_min_qual_per_base_in_10th_decile","final_min_qual_per_base_in_lower_quartile","final_weigthed_qual_per_sequence","bowtie1_mapped_per","bowtie1_unmapped_per","bowtie1_multimapping_per","bowtie1_mapped","bowtie1_filtered_reads","bowtie2_unmapped_per","bowtie2_multimapping_per","bowtie2_uniq_mapped_per")
+	vars_clustering <- vars_clustering[vars_clustering %in% colnames(metric_table)]	
+	#vars_clustering <- c("initial_total_sequences", "final_total_sequences")
+```
+
+```{r length_before_trimming, eval=execute_length_trimming, results='asis', echo=FALSE, warning=FALSE, message=FALSE}
+
+	##############################
+	## REPORT BEGINING
+	##############################
+
+	cat("# **QC and Alignment Report**\n\n")
+
+	##################################################
+	###	GLOBAL PLOTS
+	##################################################
+
+	cat("\n\n## **Length distribution before trimming**\n\n")
+	cat("\n\n### **Comprarison of samples length distribution before trimming**\n\n")
+	
+	 initial_length_distribution_df <- parse_ditributions_to_df(metric_table, 
+	 	column_name = "initial_sequence_length_distribution"
+ 	)
+	width <- calc_width_samples(nrow(initial_length_distribution_df), 0.25)
+	if(width < 12){
+		width <- 12
+	} else if(width > 50 ){
+		width <- 50
+	}
+
+	if(length(unique(initial_length_distribution_df$metric)) == 1){
+		cat(paste(c("\n\n All reads of all samples has", unique(initial_length_distribution_df$metric), "nt of length\n\n"), sep = ""))
+	}else{
+		pp <- make_violin_plot(data_frame = initial_length_distribution_df,
+		 	title = "Length distributions before trimming",
+		 	x_lab = "",
+		 	y_lab = "Length"
+		 	)
+		plot_in_div(pp, fig_width= width)
+	}
+```
+
+
+```{r qual_scores_initial, results='asis', echo=FALSE, warning=FALSE, message=FALSE, eval=execute_qual_scores_init}
+	cat("\n\n### **Quality scores for samples - lowest scores (min/10th decile) and weighted average BEFORE trimming**\n\nThe weighted average is the weighted average  quality score per sequence. Other scores represent the minimum (10th percentile) score and average score per base")
+	vars_qual_scores_legend_names_init <- metric_var_2_legend_name[match(vars_qual_scores_init, metric_var_2_legend_name$metric_var), "legend_name" ]
+	make_vert_line_plot_from_df(
+		df = metric_table, 
+		id = "sample", 
+		other_vars = vars_qual_scores,
+		legend_names = vars_qual_scores_legend_names_init
+	)
+```
+
+
+
+```{r length_after_trimming, results='asis', echo=FALSE, warning=FALSE, message=FALSE, eval=execute_length_trimming}
+
+	cat("\n\n## **Length distribution after trimming**\n\n")
+	cat("\n\n### **Comprarison of samples length distribution after trimming**\n\n")
+	
+	final_length_distribution_df <- parse_ditributions_to_df(metric_table, 
+	 	column_name = "final_sequence_length_distribution"
+ 	)
+ 
+ 	pp <- make_violin_plot(data_frame = final_length_distribution_df,
+						 	title = "Length distributions after trimming",
+						 	x_lab = "",
+						 	y_lab = "Length"
+						 	)
+ 	width <- calc_width_samples(nrow(initial_length_distribution_df), 0.25)
+ 	if(width < 12){
+		width <- 12
+	} else if(width > 50 ){
+		width <- 50
+	}
+	plot_in_div(pp, fig_width= width)
+```
+
+```{r trimming, results='asis', echo=FALSE, warning=FALSE, message=FALSE, eval=execute_trimming}
+	
+	cat("\n\n## **QC of reads before alignment**\n\n")
+	cat("\n\n### **Total num bers of reads before and after trimming**\n\n")
+	
+	# look up these vars in the legend table using match
+	vars_trimming_legend_names <- metric_var_2_legend_name[match(vars_trimming, metric_var_2_legend_name$metric_var), "legend_name" ]
+	make_stacked_barchart_from_df_dodge(
+		df = metric_table, 
+        id = "sample", 
+        other_vars = vars_trimming,
+        legend_names = vars_trimming_legend_names
+    )
+```
+
+
+```{r qual_scores, results='asis', echo=FALSE, warning=FALSE, message=FALSE, eval=execute_qual_scores}
+	cat("\n\n### **Quality scores for samples - lowest scores (min/10th decile) and weighted average**\n\nThe weighted average is the weighted average  quality score per sequence. Other scores represent the minimum (10th percentile) score and average score per base")
+	vars_qual_scores_legend_names <- metric_var_2_legend_name[match(vars_qual_scores, metric_var_2_legend_name$metric_var), "legend_name" ]
+	make_vert_line_plot_from_df(
+		df = metric_table, 
+		id = "sample", 
+		other_vars = vars_qual_scores,
+		legend_names = vars_qual_scores_legend_names
+	)
+```
+
+
+```{r aligned_v_qual, results='asis', echo=FALSE, warning=FALSE, message=FALSE, eval=execute_aligned_v_qual}
+	##################################################
+	###	STAR PLOTS
+	##################################################
+	cat("\n\n### **Reads aligning to genes vs sequence quality scores**\n\nHere we plot the number of reads aligning to genomic features against the sequence quality scores")
+	vars_aligned_v_qual_legend_names <- metric_var_2_legend_name[match(vars_aligned_v_qual, metric_var_2_legend_name$metric_var), "legend_name"]
+
+    make_scatterplot_from_df(
+		df = metric_table,
+		var1 = vars_aligned_v_qual[1],
+		var2 = vars_aligned_v_qual[2],
+		axis_lab_name1 = vars_aligned_v_qual_legend_names[1],
+		axis_lab_name2 = vars_aligned_v_qual_legend_names[2]
+	)
+```
+
+
+
+```{r STAR_mapping, results='asis', echo=FALSE, warning=FALSE, message=FALSE, eval=execute_STAR_mapping}
+	cat("\n\n## **Alignment Details**\n\n### **Trimmed reads mapping to the genome uniquely, non-uniquely, and not at all**\n\n")
+	cat("\n\nSTAR mapper used for this execution. All reads that maps more than once were rejected")
+	
+	mapping_metric_table <- metric_table[, vars_STAR_mapping]
+	mapping_metric_table <- sapply(mapping_metric_table, function(x) as.numeric(gsub("\\%", "", x)))
+	mapping_metric_table <- data.frame(metric_table["sample"], mapping_metric_table)
+	# Sum multimapping
+	mapping_metric_table[, "multi_map"] <- mapping_metric_table[,"X._of_reads_mapped_to_multiple_loci"] + mapping_metric_table[,"X._of_reads_mapped_to_too_many_loci"]
+	# Reselect table
+	vars_STAR_mapping <- c("Uniquely_mapped_reads_.", "multi_map", "X._of_reads_unmapped._too_short", "X._of_reads_unmapped._too_many_mismatches", "X._of_reads_unmapped._other")
+	mapping_metric_table <- mapping_metric_table[, vars_STAR_mapping]
+	mapping_metric_table <- data.frame(metric_table["sample"], mapping_metric_table)
+
+    vars_STAR_mapping_legend_names <- metric_var_2_legend_name[match(vars_STAR_mapping, metric_var_2_legend_name$metric_var), "legend_name" ]
+    make_stacked_barchart_from_df(
+		df = mapping_metric_table, 
+        id = "sample", 
+        other_vars = vars_STAR_mapping,
+        legend_names = vars_STAR_mapping_legend_names
+    )
+```
+
+```{r bowtie2_mapping, results='asis', echo=FALSE, warning=FALSE, message=FALSE, eval=execute_bowtie2_mapping}
+	##################################################
+	###	BOWTIE2 PLOTS
+	##################################################
+	cat("\n\n## **Alignment Details**\n\n### **Trimmed reads mapping to the genome uniquely, non-uniquely, and not at all**\n\n")
+	cat("\n\nBowtie 2 mapper used for this execution. For reads that map more than once, only best alignment is selected")	
+	bowtie2_mapping_metric_table <- metric_table[, vars_bowtie2_mapping]
+	bowtie2_mapping_metric_table <- data.frame(metric_table["sample"], bowtie2_mapping_metric_table)
+    vars_bowtie2_mapping_legend_names <- metric_var_2_legend_name[match(vars_bowtie2_mapping, metric_var_2_legend_name$metric_var), "legend_name" ]
+    make_stacked_barchart_from_df(
+		df = bowtie2_mapping_metric_table, 
+        id = "sample", 
+        other_vars = vars_bowtie2_mapping,
+        legend_names = vars_bowtie2_mapping_legend_names
+    )
+```
+
+```{r STAR_feature_overlap, results='asis', echo=FALSE, warning=FALSE, message=FALSE, eval=execute_STAR_feature_overlap}
+	cat("\n\n### **Overlap of the mapped reads with genomic features**\n\n")
+	cat("\n\nSTAR mapper used for this execution. Reads were aligned to whole genome so mapped reads can not map to genomic features")	
+	
+
+	vars_STAR_feature_overlap_legend_names <- metric_var_2_legend_name[match(vars_STAR_feature_overlap, metric_var_2_legend_name$metric_var), "legend_name" ]
+
+    make_stacked_barchart_from_df_dodge(
+		df = metric_table, 
+        id = "sample", 
+        other_vars = vars_STAR_feature_overlap,
+        legend_names = vars_STAR_feature_overlap_legend_names
+    )
+```
+
+```{r bowtie2_feature_overlap, results='asis', echo=FALSE, warning=FALSE, message=FALSE, eval=execute_bowtie2_feature_overlap}
+	cat("\n\n### **Overlap of the mapped reads with genomic features**\n\n")
+	cat("\n\nBowtie 2 mapper used for this execution. Reads were aligned to transcriptome or custom fasta so mapped reads always overlap with genomic features")	
+	vars_bowtie2_feature_overlap_legend_names <- metric_var_2_legend_name[match(vars_bowtie2_feature_overlap, metric_var_2_legend_name$metric_var), "legend_name" ]
+
+    make_stacked_barchart_from_df_dodge(
+		df = metric_table, 
+        id = "sample", 
+        other_vars = vars_bowtie2_feature_overlap,
+        legend_names = vars_bowtie2_feature_overlap_legend_names
+    )
+```
+
+```{r mirna_mapping, results='asis', echo=FALSE, warning=FALSE, message=FALSE, eval=execute_mirna_mapping}
+	##################################################
+	###	miRNASEQ PLOTS
+	##################################################
+	cat("\n\n## **Alignment Details**\n\n### **Trimmed reads mapping to the genome almost once, reads mapping suppresed by multimapping threshold, and not mapped at all**\n\n")
+	cat("\n\nBowtie 1 mapper was used. Reads that mapped more than 7 times onto genome were rejected.\n\n")
+	bowtie2_mapping_metric_table <- metric_table[, vars_mirna_mapping]
+	bowtie2_mapping_metric_table <- data.frame(metric_table["sample"], bowtie2_mapping_metric_table)
+    vars_mirna_mapping_legend_names <- metric_var_2_legend_name[match(vars_mirna_mapping, metric_var_2_legend_name$metric_var), "legend_name" ]
+    make_stacked_barchart_from_df(
+		df = bowtie2_mapping_metric_table, 
+        id = "sample", 
+        other_vars = vars_mirna_mapping,
+        legend_names = vars_mirna_mapping_legend_names
+    )
+```
+
+```{r mirna_mapping_abs, results='asis', echo=FALSE, warning=FALSE, message=FALSE, eval=execute_mirna_mapping_abs}
+	cat("\n\n### **Raw reads count mapping summary **\n\n")
+	cat("\n\nSummary: smallRNAseq reads mapped onto genome using Bowtie1. A filtering step was performed before mapping, and reads smaller than 18 bp.\n\n")
+	vars_mirna_mapping_abs_legend_names <- metric_var_2_legend_name[match(vars_mirna_mapping_abs, metric_var_2_legend_name$metric_var), "legend_name" ]
+
+    make_stacked_barchart_from_df_dodge(
+		df = metric_table, 
+        id = "sample", 
+        other_vars = vars_mirna_mapping_abs,
+        legend_names = vars_mirna_mapping_abs_legend_names
+    )
+```
+```{r top_n_expression, results='asis', echo=FALSE, warning=FALSE, message=FALSE, eval=execute_clustering}
+	cat("\n\n### **Percentages of reads per sample mapping to the most highly expressed genes **\n\n")
+	make_top_n_expression_table(count_data=count_data, n=5)
+```
+
+```{r samples_clustering, results='asis', echo=FALSE, warning=FALSE, message=FALSE, eval = execute_clustering}
+invisible(lapply(names(targets),function(target_name){
+	# Take results
+	# Check and generate info
+	#######################3
+	### REMOVE
+	#######################
+
+	body <- "
+	target_readable <- str_remove('{{target_name}}', '_target.txt')
+	cat(paste(c('\n\n### **Sample clustering for ', target_readable, ' comparison **\n\n'),collapse = ''))
+	target_obj <- targets[['{{target_name}}']]
+	sample_counts <- length(target_obj)
+	
+
+#######################
+#############
+
+	create_clustering(target_obj, metric_table, vars_clustering, count_data, metric_var_2_legend_name) #Nor recommended to set dinamic sizes
+	
+	"
+
+	out_clustering <<- c(out_clustering,paste(knit_expand(text = paste(
+															chunks(body, options = "echo = FALSE, results='asis', message= FALSE, warning= FALSE"),
+										 					"\n",sep = "\n")),
+															sep = "\n"))
+}))
+```
+
+`r paste(knit(text = paste(out_clustering,collapse = "\n")),collapse = "\n")`

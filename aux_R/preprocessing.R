@@ -4,7 +4,7 @@
 # Last modified 20230518
 
 #################################
-###   STAGE 2 PREPROCESSING   ###
+###   STAGE 3 PREPROCESSING   ###
 ###   preprocessing.R         ###
 #################################
 
