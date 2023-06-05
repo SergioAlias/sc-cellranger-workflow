@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # Sergio Alías, 20230323
-# Last modified 20230530
+# Last modified 20230605
 
 # daemon.sh
 
@@ -27,7 +27,7 @@ if [ "$module" == "0" ] ; then
     if [ $launch_login == TRUE ]; then  
         cellranger_mkfastq.sh
     else
-        sbatch cellranger_mkfastq.sh
+        sbatch aux_sh/cellranger_mkfastq.sh
     fi
 
 elif [ "$module" == "1" ] ; then
@@ -46,8 +46,7 @@ elif [ "$module" == "2" ] ; then
     if [ $launch_login == TRUE ]; then  
         compare_samples.sh
     else
-        # sbatch compare_samples.sh
-        echo $PATH
+        sbatch aux_sh/compare_samples.sh
     fi
 
 elif [ "$module" == "3" ] ; then
@@ -56,6 +55,6 @@ elif [ "$module" == "3" ] ; then
     if [ $launch_login == TRUE ]; then  
         preprocess.sh
     else
-        sbatch preprocess.sh
+        sbatch aux_sh/preprocess.sh
     fi
 fi
