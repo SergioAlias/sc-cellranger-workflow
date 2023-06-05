@@ -46,7 +46,8 @@ elif [ "$module" == "2" ] ; then
     if [ $launch_login == TRUE ]; then  
         compare_samples.sh
     else
-        sbatch compare_samples.sh
+        # sbatch compare_samples.sh
+        echo $PATH
     fi
 
 elif [ "$module" == "3" ] ; then
