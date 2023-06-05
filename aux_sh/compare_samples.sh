@@ -13,10 +13,6 @@
 #SBATCH --error=job.comp.%J.err
 #SBATCH --output=job.comp.%J.out
 
-# Picasso modules
-
-module load R
-
 # Setup
 
 hostname

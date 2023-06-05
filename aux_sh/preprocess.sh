@@ -11,11 +11,15 @@
 #SBATCH --error=job.preproc.%J.err
 #SBATCH --output=job.preproc.%J.out
 
+
+mkdir -p $preproc_outdir
+. ~soft_bio_267/initializes/init_R
+
 # Main
 
 /usr/bin/time preprocessing.R --input $preproc_dir \
                               --output $preproc_outdir \
-                              --name $experiment_name \
+                              --name "CRR073022" \
                               --assay $preproc_assay \
                               --mincells $preproc_min_cells \
                               --minfeats $preproc_min_feats \

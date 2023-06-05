@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 # Sergio Alías, 20230411
-# Last modified 20230518
+# Last modified 20230605
 
 #################################
 ###   STAGE 3 PREPROCESSING   ###
@@ -85,6 +85,10 @@ seu <- CreateSeuratObject(counts = mtx,
 
 seu[["percent.mt"]] <- PercentageFeatureSet(seu, pattern = "^MT-")
 
+# Save for report
+
+saveRDS(seu, file.path(opt$output, paste0(name, ".before.seu.RDS")))
+
 # We can visualize metrics:
 
 VlnPlot(seu, features = c('nFeature_RNA', 'nCount_RNA', 'percent.mt'))
@@ -165,4 +169,4 @@ DimPlot(seu, reduction = "umap")
 
 #### Saving object as RDS ####
 
-saveRDS(seu, paste0(name, ".seu.RDS"))
+saveRDS(seu, file.path(opt$output, paste0(name, ".after.seu.RDS")))
