@@ -1,11 +1,11 @@
 #!/usr/bin/env Rscript
 
 # Sergio Alías, 20230411
-# Last modified 20230605
+# Last modified 20230606
 
 #################################
 ###   STAGE 3 PREPROCESSING   ###
-###   preprocessing.R         ###
+###   raw_preprocessing.R     ###
 #################################
 
 ################  DISCLAIMER  ###################

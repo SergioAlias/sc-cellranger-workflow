@@ -9,8 +9,8 @@ output:
     fig_width: 12
 ---
 
-# Sergio Alías, 20230606
-# Last modified 20230606
+<!-- Sergio Alías, 20230606 -->
+<!-- Last modified 20230606 -->
 
 <style type='text/css'>
     body .main-container {
@@ -33,8 +33,11 @@ output:
   }   
 </style>
 
-
+## This part is NOT a child Rmd
 ```{r config}
 x <- rnorm(20)
 x
+```
+
+```{r child="test.Rmd"}
 ```

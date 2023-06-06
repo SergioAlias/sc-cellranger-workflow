@@ -19,7 +19,7 @@ export RESOURCES="-c 10 -t '2-00:00:00' -m '30gb'"                              
 export launch_login=FALSE                                                         #-------#    Login execution mode. Set this variable to 'TRUE' to execute all modules at login.
 export project_folder=$FSCRATCH"/NGS_projects"                                    #-------#    Global execution folder
 export COUNT_RESULTS_FOLDER=$project_folder"/"$experiment_name"/count_results"    #-------#    Count execution path
-export TEMPLATE=$CODE_PATH"/autoflow/count_template.txt"                         #-------#    AutoFlow count template. It is advisable not to modify this variable
+export TEMPLATE=$CODE_PATH"/autoflow/count_template.txt"                          #-------#    AutoFlow count template. It is advisable not to modify this variable
 export TRIM_TEMPLATE="transcriptomics.txt"                                        #-------#    Trimming template
 export LAB_SCRIPTS="/mnt/home/soft/soft_bio_267/programs/x86_64/scripts"          #-------#    Folder with the lab scripts
 
@@ -30,8 +30,8 @@ export read_path=$HOME"/test/lung/raw_data"                #-------#    New path
 
 ######  REPORT VARIABLES #######
 
-export REPORT_TEMPLATES_FOLDER=$CODE_PATH'/templates'       #-------#    Report templates path
-export report_folder=$project_folder'/mapping_reports'    #-------#    Reports output path
+export REPORT_TEMPLATES_FOLDER=$CODE_PATH'/templates'    #-------#    Report templates path
+export report_folder=$project_folder'/reports'           #-------#    Reports output path
 
 
 ###################################
