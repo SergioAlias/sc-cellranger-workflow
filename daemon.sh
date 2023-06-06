@@ -14,7 +14,7 @@ CONFIG_DAEMON=$CODE_PATH'/config_daemon'
 export module=$1 # For setting global vars from config_daemon according to the stage
 source $CONFIG_DAEMON
 export PATH=$CODE_PATH'/reports:'$PATH
-export PATH=$CODE_PATH'/aux_R:'$PATH
+export PATH=$CODE_PATH'/scripts:'$PATH
 export PATH=$CODE_PATH'/aux_sh:'$PATH
 
 

@@ -1,5 +1,7 @@
----
-output:
+---  
+title: "scRNA-seq: Pre-processing Report"
+author: "SysBioLab"
+output: 
   html_document:
     toc: true
     toc_float: true
@@ -7,19 +9,23 @@ output:
     fig_width: 12
 ---
 
+# Sergio Alías, 20230606
+# Last modified 20230606
+
 <style type='text/css'>
     body .main-container {
         max-width: 90%;
+
     }
 
     .plot_real_size {
-    	overflow: scroll;
-  		max-height: 600px;
-  	}
+      overflow: scroll;
+      max-height: 600px;
+    }
 
     .plot_real_size img{
-    	max-width: none;
-    	max-height: none;
+      max-width: none;
+      max-height: none;
     }
 
     embed {
@@ -27,11 +33,8 @@ output:
   }   
 </style>
 
-```{r prior_proc}
-	suppressPackageStartupMessages(library(Seurat))
+
+```{r config}
+x <- rnorm(20)
+x
 ```
-
-```{r}
-
-```
-
