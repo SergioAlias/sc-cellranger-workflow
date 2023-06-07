@@ -33,11 +33,7 @@ output:
   }   
 </style>
 
-## This part is NOT a child Rmd
-```{r config}
-x <- rnorm(20)
-x
-```
+# Sample `r opt$name` of project `r Sys.getenv("experiment_name")`
 
 ```{r child="test.Rmd"}
 ```

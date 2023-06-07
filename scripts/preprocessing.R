@@ -1,7 +1,7 @@
 #! /usr/bin/env Rscript
 
 # Sergio Alías, 20230606
-# Last modified 20230606
+# Last modified 20230607
 
 #################################
 ###   STAGE 3 PREPROCESSING   ###
@@ -33,7 +33,7 @@ option_list <- list(
   make_option(c("-o", "--output"), type = "character",
               help="Output folder"),
   make_option(c("-n", "--name"), type = "character",
-              help="Project name"),
+              help="Sample name"),
   make_option(c("-a", "--assay"), type = "character",
               help="Assay name"),
   make_option(c("--mincells"), type = "integer",
@@ -67,20 +67,27 @@ opt <- parse_args(OptionParser(option_list = option_list))
 
 samples <- readLines(file.path(root_path, "samples_to_process.lst"))
 
-results <- append_message(samples)
+report_folder <- Sys.getenv("report_folder") # config_daemon
 
-outdir <- Sys.getenv("report_folder") # config_daemon
-int_files <- file.path(outdir, "int_files")
+aux_plots <- file.path(report_folder, "aux_plots")
 
-if (!file.exists(int_files)){
-  dir.create(int_files)
-}
+experiment_name <- Sys.getenv("experiment_name") # config_daemon
 
-rmarkdown::render(file.path(root_path, 
-                            "templates",
-                            "preprocessing_report.Rmd"),
-                  output_file = file.path(outdir,
-                                          paste0(Sys.getenv("experiment_name"), # config_daemon
-                                                 "_preprocessing_report.html")), 
-                  clean = TRUE,
-                  intermediates_dir = int_files)
+results <- main_preprocessing_analysis(aux_plots = aux_plots,
+                                       name = opt$name,
+                                       experiment = experiment_name,
+                                       input = opt$input,
+                                       assay = opt$assay,
+                                       mincells = opt$mincells,
+                                       minfeats = opt$minfeats,
+                                       maxfeats = opt$maxfeats,
+                                       maxcounts = opt$maxcounts,
+                                       percentmt = opt$percentmt)
+
+write_preprocessing_report(name = opt$name,
+                           experiment = experiment_name,
+                           template = file.path(root_path, 
+                                                "templates",
+                                                "preprocessing_report.Rmd"),
+                           outdir = report_folder,
+                           intermediate_files = "int_files")
