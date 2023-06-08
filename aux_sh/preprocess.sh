@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # Sergio Alías, 20230411
-# Last modified 20230427
+# Last modified 20230608
 
 # STAGE 3 PREPROCESSING
 
@@ -20,7 +20,6 @@ mkdir -p $preproc_outdir
 /usr/bin/time preprocessing.R --input $preproc_dir \
                               --output $preproc_outdir \
                               --name "CRR073022" \
-                              --assay $preproc_assay \
                               --mincells $preproc_min_cells \
                               --minfeats $preproc_min_feats \
                               --maxfeats $preproc_max_feats \

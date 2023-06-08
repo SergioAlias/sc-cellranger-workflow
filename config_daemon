@@ -56,7 +56,6 @@ elif [ "$module" == "1" ] ; then
 elif [ "$module" == "3" ] ; then
     export preproc_dir=$COUNT_RESULTS_FOLDER"/CRR073022/cellranger_0000/CRR073022/outs/raw_feature_bc_matrix"    #-------#    Input 10X directory
     export preproc_outdir=$project_folder"/"$experiment_name"/preprocessing_results"                             #-------#    Preprocessing outdir
-    export preproc_assay=scRNAseq                    #-------#    Main assay name
     export preproc_min_cells=3                       #-------#    Min number of cells for which a feature is recorded
     export preproc_min_feats=200                     #-------#    Min number of features for which a cell is recorded
     export preproc_max_feats=1250                    #-------#    Max number of features for which a cell is recorded

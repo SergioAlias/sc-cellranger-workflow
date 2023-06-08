@@ -1,5 +1,5 @@
 # Sergio Alías, 20230606
-# Last modified 20230607
+# Last modified 20230608
 
 ##########################################################################
 ########################## PRE-PROCESSING LIBRARY ########################
@@ -26,18 +26,17 @@ append_message <- function(name, message = "Hello World") {paste(name, message)}
 #'
 #' @param name: sample name
 #' @param input: directory with the single-cell data
-#' @param assay: assay name for the Seurat object (not really important)
 #' @param mincells: min number of cells for which a feature is recorded
 #' @param minfeats: min number of features for which a cell is recorded
 #' 
 #' @keywords preprocessing, input
 #' 
 #' @return Seurat object
-read_input <- function(name, input, assay, mincells, minfeats){
+read_input <- function(name, input, mincells, minfeats){
   mtx <- Read10X(input)
   seu <- CreateSeuratObject(counts = mtx,
                             project = name, 
-                            assay = assay, 
+                            assay = "scRNAseq", 
                             min.cells = mincells, 
                             min.features = minfeats
                             )
@@ -70,19 +69,27 @@ do_qc <- function(aux_plots, pdf_prefix, seu, maxfeats, maxcounts, percentmt){
   
   seu[["percent.mt"]] <- PercentageFeatureSet(seu, pattern = "^MT-")
   
+  # We can define ribosomal proteins (their names start with RPS or RPL)
+  
+  seu[["percent.rb"]] <- PercentageFeatureSet(seu, pattern = "^RP[SL]")
+  
   pdf(file.path(aux_plots, paste0(pdf_prefix, "VlnPlot_before.pdf")))
-  VlnPlot(seu, features = c('nFeature_RNA', 'nCount_RNA', 'percent.mt'))
+  VlnPlot(seu,
+          features = c('nFeature_scRNAseq', 'nCount_scRNAseq', 'percent.mt', 'percent.rb'),
+          ncol = 4)
   dev.off()
 
   ##### Filtering out cells #####
   
   seu <- subset(seu, 
-                nFeature_RNA < maxfeats &
-                  nCount_RNA < maxcounts & 
+                nFeature_scRNAseq < maxfeats &
+                  nCount_scRNAseq < maxcounts & 
                   percent.mt < percentmt)
   
   pdf(file.path(aux_plots, paste0(pdf_prefix, "VlnPlot_after.pdf")))
-  VlnPlot(seu, features = c('nFeature_RNA', 'nCount_RNA', 'percent.mt'))
+  VlnPlot(seu,
+          features = c('nFeature_scRNAseq', 'nCount_scRNAseq', 'percent.mt', 'percent.rb'),
+          ncol = 4)
   dev.off()
   
   return(seu)
@@ -99,14 +106,13 @@ do_qc <- function(aux_plots, pdf_prefix, seu, maxfeats, maxcounts, percentmt){
 #' @param name: sample name
 #' @param expermient: experiment name
 #' @param input: directory with the single-cell data
-#' @param assay: assay name for the Seurat object (not really important)
 #' @param mincells: min number of cells for which a feature is recorded
 #' @param minfeats: min number of features for which a cell is recorded
 #' 
 #' @keywords preprocessing, main
 #' 
 #' @return Seurat object
-main_preprocessing_analysis <- function(aux_plots, name, experiment, input, assay, mincells, minfeats, maxfeats, maxcounts, percentmt){
+main_preprocessing_analysis <- function(aux_plots, name, experiment, input, mincells, minfeats, maxfeats, maxcounts, percentmt){
   
   if (!file.exists(aux_plots)){
     dir.create(aux_plots)
@@ -116,7 +122,6 @@ main_preprocessing_analysis <- function(aux_plots, name, experiment, input, assa
   
   seu <- read_input(name = name, 
                     input = input,
-                    assay = assay,
                     mincells = mincells,
                     minfeats = minfeats)
   

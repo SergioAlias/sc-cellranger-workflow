@@ -1,7 +1,7 @@
 #! /usr/bin/env Rscript
 
 # Sergio Alías, 20230606
-# Last modified 20230607
+# Last modified 20230609
 
 #################################
 ###   STAGE 3 PREPROCESSING   ###
@@ -34,8 +34,6 @@ option_list <- list(
               help="Output folder"),
   make_option(c("-n", "--name"), type = "character",
               help="Sample name"),
-  make_option(c("-a", "--assay"), type = "character",
-              help="Assay name"),
   make_option(c("--mincells"), type = "integer",
               help="Min number of cells for which a feature was recorded"),
   make_option(c("--minfeats"), type = "integer",
