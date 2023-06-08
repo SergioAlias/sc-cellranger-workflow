@@ -73,6 +73,8 @@ do_qc <- function(aux_plots, pdf_prefix, seu, maxfeats, maxcounts, percentmt){
   
   seu[["percent.rb"]] <- PercentageFeatureSet(seu, pattern = "^RP[SL]")
   
+  # Violin plot before filtering
+  
   pdf(file.path(aux_plots, paste0(pdf_prefix, "VlnPlot_before.pdf")))
   VlnPlot(seu,
           features = c('nFeature_scRNAseq', 'nCount_scRNAseq', 'percent.mt', 'percent.rb'),
@@ -80,6 +82,14 @@ do_qc <- function(aux_plots, pdf_prefix, seu, maxfeats, maxcounts, percentmt){
   dev.off()
 
   ##### Filtering out cells #####
+  
+  # seu[['QC']] <- ifelse(seu@meta.data$Is_doublet == 'True','Doublet','Pass')
+  seu[['QC']] <- ifelse(seu@meta.data$nFeature_scRNAseq < maxfeats & seu@meta.data$QC == 'Pass','Low_nFeature',seu@meta.data$QC)
+  seu[['QC']] <- ifelse(seu@meta.data$nFeature_scRNAseq < maxfeats & seu@meta.data$QC != 'Pass' & seu@meta.data$QC != 'Low_nFeature',paste('Low_nFeature',seu@meta.data$QC,sep = ','),seu@meta.data$QC)
+  seu[['QC']] <- ifelse(seu@meta.data$percent.mt > percentmt & seu@meta.data$QC == 'Pass','High_MT',seu@meta.data$QC)
+  seu[['QC']] <- ifelse(seu@meta.data$nFeature_scRNAseq < maxfeats & seu@meta.data$QC != 'Pass' & seu@meta.data$QC != 'High_MT',paste('High_MT',seu@meta.data$QC,sep = ','),seu@meta.data$QC)
+  # table(seu[['QC']])
+  
   
   seu <- subset(seu, 
                 nFeature_scRNAseq < maxfeats &
