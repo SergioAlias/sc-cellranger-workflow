@@ -40,6 +40,7 @@ read_input <- function(name, input, mincells, minfeats){
                             min.cells = mincells, 
                             min.features = minfeats
                             )
+  mtx <- NULL
   return(seu)
 }
 
@@ -89,12 +90,6 @@ do_qc <- function(aux_plots, pdf_prefix, seu, maxfeats, maxcounts, percentmt){
   seu[['QC']] <- ifelse(seu@meta.data$percent.mt > percentmt & seu@meta.data$QC == 'Pass','High_MT',seu@meta.data$QC)
   seu[['QC']] <- ifelse(seu@meta.data$nFeature_scRNAseq < maxfeats & seu@meta.data$QC != 'Pass' & seu@meta.data$QC != 'High_MT',paste('High_MT',seu@meta.data$QC,sep = ','),seu@meta.data$QC)
   # table(seu[['QC']])
-  
-  
-  seu <- subset(seu, 
-                nFeature_scRNAseq < maxfeats &
-                  nCount_scRNAseq < maxcounts & 
-                  percent.mt < percentmt)
   
   pdf(file.path(aux_plots, paste0(pdf_prefix, "VlnPlot_after.pdf")))
   VlnPlot(seu,
