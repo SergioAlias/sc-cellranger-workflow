@@ -1,0 +1,43 @@
+# Sergio Alías, 20230612
+# Last modified 20230612
+
+####################
+### QC template. Parametres can be customized at config_deamon
+
+
+qc_seqtrimbb){
+ resources: -c 5 -t 2-00:00:00 -m '30gb'
+ module unload java
+ source ~soft_bio_267/initializes/init_stbb  
+ ?
+ seqtrimbb -t $TRIM_TEMPLATE \
+           # -Q $FSCRATCH"/LUAD_sc/"$sample"_S1_L001_R1_001.fastq.gz,"$FSCRATCH"/LUAD_sc/"$sample"_S1_L001_R2_001.fastq.gz" \
+           -Q $read_path"/"$sample"_S1_L001_R1_001.fastq.gz,"$read_path"/"$sample"_S1_L001_R2_001.fastq.gz" \
+           -P "minlength=65" \
+           -w [cpu] \
+           --full_throttle \
+           -O output_files
+}
+
+%before_fastqc_[R1;R2]){
+ resources: -c 1 -t 2-00:00:00 -m '30gb'
+ module load fastqc/0.11.9
+ echo [cpu]
+ ?
+ fastqc --noextract \
+        # --nogroup \
+        $read_path"/"$sample"_S1_L001_"(*)"_001.fastq.gz" \
+        -o . # $COUNT_RESULTS_FOLDER/$sample # \
+        # -t [cpu]
+}
+
+
+%before_metrics){
+ resources: -c 1 -t 0-01:00:00 -m 50
+ . ~soft_bio_267/initializes/init_ruby
+ echo [cpu]
+ ?
+ get_fastqc_data.rb -i $RESULTS_FOLDER/$sample"/fastqc_0000/"$sample"_S1_L001_R1_001_fastqc.zip" -T -H | awk '{print "$sample" "_R1" "\tinitial_" $0 }' >> ../../metrics
+ get_fastqc_data.rb -i $RESULTS_FOLDER/$sample"/fastqc_0001/"$sample"_S1_L001_R2_001_fastqc.zip" -T -H | awk '{print "$sample" "_R2" "\tinitial_" $0 }' >> ../../metrics
+
+}
