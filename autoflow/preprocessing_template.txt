@@ -1,0 +1,26 @@
+# Sergio Alías, 20230612
+# Last modified 20230612
+
+####################
+### Preprocessing template. Parametres can be customized at config_deamon
+
+
+sc_preprocessing){
+ resources: -c 2 -t 2-00:00:00 -m '20gb'
+ mkdir -p $RESULTS_FOLDER
+ . ~soft_bio_267/initializes/init_R 
+ ?
+ preprocessing.R --input $COUNT_RESULTS_FOLDER"/"$sample"/cellranger_0000/"$sample"/outs/raw_feature_bc_matrix" \
+                 --output $RESULTS_FOLDER \
+                 --name $sample \
+                 --mincells $preproc_min_cells \
+                 --minfeats $preproc_min_feats \
+                 --maxfeats $preproc_max_feats \
+                 --maxcounts $preproc_max_counts \
+                 --percentmt $preproc_max_percent_mt \
+                 --normalmethod $preproc_norm_method \
+                 --scalefactor $preproc_scale_factor \
+                 --hvgs $preproc_select_hvgs \
+                 --ndims $preproc_pca_n_dims \
+                 --dimheatmapcells $preproc_pca_n_cells
+}

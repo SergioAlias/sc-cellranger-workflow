@@ -52,9 +52,6 @@ elif [ "$module" == "2b" ] ; then
 elif [ "$module" == "3" ] ; then
     # STAGE 3 PREPROCESSING
     echo "Launching stage 3: Preprocessing"
-    if [ $launch_login == TRUE ]; then  
-        preprocess.sh
-    else
-        sbatch aux_sh/preprocess.sh
-    fi
+    autoflow_launcher.sh preproc
+
 fi

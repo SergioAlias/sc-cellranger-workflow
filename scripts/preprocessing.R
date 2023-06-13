@@ -1,7 +1,7 @@
 #! /usr/bin/env Rscript
 
 # Sergio Alías, 20230606
-# Last modified 20230609
+# Last modified 20230613
 
 #################################
 ###   STAGE 3 PREPROCESSING   ###
@@ -75,7 +75,6 @@ results <- main_preprocessing_analysis(aux_plots = aux_plots,
                                        name = opt$name,
                                        experiment = experiment_name,
                                        input = opt$input,
-                                       assay = opt$assay,
                                        mincells = opt$mincells,
                                        minfeats = opt$minfeats,
                                        maxfeats = opt$maxfeats,

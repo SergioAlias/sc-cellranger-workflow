@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # Sergio Alías, 20230411
-# Last modified 20230608
+# Last modified 20230612
 
 # STAGE 3 PREPROCESSING
 
@@ -12,13 +12,13 @@
 #SBATCH --output=job.preproc.%J.out
 
 
-mkdir -p $preproc_outdir
+mkdir -p $PREPROC_RESULTS_FOLDER
 . ~soft_bio_267/initializes/init_R
 
 # Main
 
 /usr/bin/time preprocessing.R --input $preproc_dir \
-                              --output $preproc_outdir \
+                              --output $PREPROC_RESULTS_FOLDER \
                               --name "CRR073022" \
                               --mincells $preproc_min_cells \
                               --minfeats $preproc_min_feats \

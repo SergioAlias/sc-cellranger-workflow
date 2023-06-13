@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # Sergio Alias, 20230530
-# Last modified 20230531
+# Last modified 20230612
 
 # STAGE 2 SAMPLES COMPARISON
 
@@ -21,7 +21,7 @@ mkdir -p $report_folder
 
 . ~soft_bio_267/initializes/init_ruby
 . ~soft_bio_267/initializes/init_R
-create_metric_table.rb $COUNT_RESULTS_FOLDER'/metrics' sample $report_folder'/metric_table'
+create_metric_table.rb $QC_RESULTS_FOLDER'/metrics' sample $report_folder'/metric_table'
 all_report_files=$report_folder/metric_table
 headers="t"
 

@@ -10,20 +10,23 @@
 
 ######  EXPERIMENT VARIABLES #######
 
-export experiment_name=LUAD    #-------#    Expermient name
+export experiment_name=LUAD    #-------#    Experiment name
 
 
 ######  EXECUTION VARIABLES #######
 
-export RESOURCES="-c 10 -t '2-00:00:00' -m '30gb'"                                #-------#    AutoFlow resources general setting 
-export launch_login=FALSE                                                         #-------#    Login execution mode. Set this variable to 'TRUE' to execute all modules at login.
-export project_folder=$FSCRATCH"/NGS_projects"                                    #-------#    Global execution folder
-export COUNT_RESULTS_FOLDER=$project_folder"/"$experiment_name"/count_results"    #-------#    Count execution path
-export QC_RESULTS_FOLDER=$project_folder"/"$experiment_name"/QC_results"          #-------#    QC execution path
-export COUNT_TEMPLATE=$CODE_PATH"/autoflow/count_template.txt"                    #-------#    AutoFlow count template. It is advisable not to modify this variable
-export QC_TEMPLATE=$CODE_PATH"/autoflow/QC_template.txt"                          #-------#    AutoFlow QC template. It is advisable not to modify this variable
-export TRIM_TEMPLATE="transcriptomics.txt"                                        #-------#    Trimming template
-export LAB_SCRIPTS="/mnt/home/soft/soft_bio_267/programs/x86_64/scripts"          #-------#    Folder with the lab scripts in Picasso (bio_267)
+export RESOURCES="-c 10 -t '2-00:00:00' -m '30gb'"                          #-------#    AutoFlow resources general setting 
+export launch_login=FALSE                                                   #-------#    Login execution mode. Set this variable to 'TRUE' to execute all modules at login.
+export project_folder=$FSCRATCH"/NGS_projects"                              #-------#    Global execution folder
+export experiment_folder=$project_folder"/"$experiment_name                 #-------#    Experiment execution folder
+export COUNT_RESULTS_FOLDER=$experiment_folder"/count_results"              #-------#    Count execution path
+export QC_RESULTS_FOLDER=$experiment_folder"/QC_results"                    #-------#    QC execution path
+export PREPROC_RESULTS_FOLDER=$experiment_folder"/preprocessing_results"    #-------#    Pre-processing execution path
+export COUNT_TEMPLATE=$CODE_PATH"/autoflow/count_template.txt"              #-------#    AutoFlow count template. It is advisable not to modify this variable
+export QC_TEMPLATE=$CODE_PATH"/autoflow/QC_template.txt"                    #-------#    AutoFlow QC template. It is advisable not to modify this variable
+export PREPROC_TEMPLATE=$CODE_PATH"/autoflow/preprocessing_template.txt"    #-------#    AutoFlow pre-processing template. It is advisable not to modify this variable
+export TRIM_TEMPLATE="transcriptomics.txt"                                  #-------#    Trimming template
+export LAB_SCRIPTS="/mnt/home/soft/soft_bio_267/programs/x86_64/scripts"    #-------#    Folder with the lab scripts in Picasso (bio_267)
 
 ######  SAMPLES VARIABLES #######
 
@@ -33,7 +36,7 @@ export read_path=$HOME"/test/lung/raw_data"                #-------#    New path
 ######  REPORT VARIABLES #######
 
 export REPORT_TEMPLATES_FOLDER=$CODE_PATH'/templates'    #-------#    Report templates path
-export report_folder=$project_folder'/reports'           #-------#    Reports output path
+export report_folder=$experiment_folder'/reports'        #-------#    Reports output path
 
 
 ###################################
@@ -57,7 +60,6 @@ elif [ "$module" == "1" ] ; then
 
 elif [ "$module" == "3" ] ; then
     export preproc_dir=$COUNT_RESULTS_FOLDER"/CRR073022/cellranger_0000/CRR073022/outs/raw_feature_bc_matrix"    #-------#    Input 10X directory
-    export preproc_outdir=$project_folder"/"$experiment_name"/preprocessing_results"                             #-------#    Preprocessing outdir
     export preproc_min_cells=3                       #-------#    Min number of cells for which a feature is recorded
     export preproc_min_feats=200                     #-------#    Min number of features for which a cell is recorded
     export preproc_max_feats=1250                    #-------#    Max number of features for which a cell is recorded
