@@ -10,20 +10,29 @@ This repo will contain a Cell Ranger workflow for going from BCL/FASTQ/10x files
 
 - `manage_input_files.sh`: For creating soft links to the input data. It must be edited manually
 
+- `samples_to_process.lst`: File with samples sames, one per row
+
+- `R/` -> R libraries
+    - `preprocessing_library.R`: R functions for performing pre-processing of scRNA-seq feature-barcode matrices
+
+- `autoflow/` -> [AutoFlow](https://github.com/seoanezonjic/autoflow) templates
+    - `QC_template.txt`: Template for Quality Control with FastQC
+    - `count_template.txt`: Template for converting FASTQ files to feature-barcode matrices using Cell Ranger `count`
+    - `preprocessing_template.txt`: Template for pre-processing analysis with `Seurat`
+
 - `aux_sh/` -> Bash scripts for each stage of the workflow
+    - `autoflow_launcher.sh`: Generic [AutoFlow](https://github.com/seoanezonjic/autoflow) launcher for templates in `autoflow/`
+    - `cellranger_count.sh`: **[Deprecated]** Bash script for stage 1: converting FASTQ files to a proper format for single-cell analysis using Cell Ranger `count`
     - `cellranger_mkfastq.sh`: Bash script for stage 0: converting BCL files to FASTQ files using Cell Ranger `mkfastq`
-    - `cellranger_count.sh`: Bash script for stage 1: converting FASTQ files to a proper format for single-cell analysis using Cell Ranger `count`
-     - `preprocess.sh`: Bash script for stage 2: preprocessing using R package `Seurat` (incomplete)
+    - `compare_samples.sh`: Bash script for stage 2b: samples comparison
+    - `preprocess.sh`: **[Deprecated]** Bash script for stage 2: preprocessing using R package `Seurat`
 
-- `aux_R/` -> R scripts for some stages of the workflow
-    - `preprocessing.R`: R script implementing `Seurat` preprocessing (incomplete)
+- `scripts/` -> Scripts for some stages of the workflow
+    - `count_table.R`: **[On pause]** R script for generating a table with basic FASTQ metrics
+    - `preprocessing.R`: R script for applying `Seurat` preprocessing and creating a report
+    - `raw_preprocessing.R`: **[Deprecated]** Old file with some non organized pre-processing code
 
----
-
-- `deprecated/` -> Deprecated scripts (will be removed soon)
-    - `test-mkfastq.sh`: Bash script with some test on Cell Ranger ``mkfastq``
-    - `sbatch-mkfastq.sh`: SBATCH script for sending ``test-mkfastq.sh`` to the Slurm queue system
-    - `test-count.sh`: Bash script with some test on Cell Ranger `count`
-    - `sbatch-count.sh`: SBATCH script for sending `test-count.sh` to the Slurm queue system
-    - `AutoFlow_mkfastq`: Cell Ranger `mkfastq` wrapped in the [AutoFlow](https://github.com/seoanezonjic/autoflow) system
-    - `sbatch-autoflow.sh`: SBATCH script fo sending `AutoFlow_mkfastq` to the Slurm queue system
+- `templates/` -> R Markdown templates for reports
+    - `mapping_report.Rmd`: **[Imported from DEG workflow]** Template for mapping report after using [SeqTrimBB](https://github.com/rafnunser/seqtrimbb)
+    - `preprocessing_report.Rmd`: Template for pre-processing report
+    - `test.Rmd`: **[Deprecated]** Test template
