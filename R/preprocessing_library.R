@@ -1,5 +1,5 @@
 # Sergio Alías, 20230606
-# Last modified 20230608
+# Last modified 20230613
 
 ##########################################################################
 ########################## PRE-PROCESSING LIBRARY ########################
@@ -117,10 +117,22 @@ do_qc <- function(aux_plots, pdf_prefix, seu, maxfeats, maxcounts, percentmt){
 #' @keywords preprocessing, main
 #' 
 #' @return Seurat object
-main_preprocessing_analysis <- function(aux_plots, name, experiment, input, mincells, minfeats, maxfeats, maxcounts, percentmt){
+main_preprocessing_analysis <- function(report_folder, name, experiment, input, filter, mincells, minfeats, maxfeats, maxcounts, percentmt){
+  
+  if (!file.exists(report_folder)){
+    dir.create(report_folder)
+  }
+  
+  aux_plots <- file.path(report_folder, "aux_plots")
   
   if (!file.exists(aux_plots)){
     dir.create(aux_plots)
+  }
+  
+  if (filter == "TRUE"){
+    input <- file.path(input, "filtered_feature_bc_matrix")
+  } else {
+    input <- file.path(input, "raw_feature_bc_matrix")
   }
   
   pdf_prefix <- paste0(experiment, "_", name, "_")

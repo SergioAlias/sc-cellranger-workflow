@@ -1,5 +1,5 @@
 # Sergio Alías, 20230516
-# Last modified 20230612
+# Last modified 20230614
 
 # Generic Autoflow launcher
 
@@ -12,7 +12,7 @@ if [ "$1" == "count" ] ; then # STAGE 1 OBTAINING COUNTS FROM FASTQ FILES
 elif [ "$1" == "qc" ] ; then # STAGE 2 QUALITY CONTROL AND TRIMMING
     export RESULTS_FOLDER=$QC_RESULTS_FOLDER
     export TEMPLATE=$QC_TEMPLATE
-elif [ "$1" == "preproc" ] ; then # STAGE 2 QUALITY CONTROL AND TRIMMING
+elif [ "$1" == "preproc" ] ; then # STAGE 3 PREPROCESSING
     export RESULTS_FOLDER=$PREPROC_RESULTS_FOLDER
     export TEMPLATE=$PREPROC_TEMPLATE
 fi

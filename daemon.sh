@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # Sergio Alías, 20230323
-# Last modified 20230612
+# Last modified 20230614
 
 # daemon.sh
 
@@ -36,8 +36,8 @@ elif [ "$module" == "1" ] ; then
     autoflow_launcher.sh count
 
 elif [ "$module" == "2a" ] ; then
-    # STAGE 2 QUALITY CONTROL AND TRIMMING
-    echo "Launching stage 2: Quality control and trimming"
+    # STAGE 2 QUALITY CONTROL
+    echo "Launching stage 2: Quality control"
     autoflow_launcher.sh qc
 
 elif [ "$module" == "2b" ] ; then

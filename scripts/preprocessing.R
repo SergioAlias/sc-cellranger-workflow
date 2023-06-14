@@ -1,7 +1,7 @@
 #! /usr/bin/env Rscript
 
 # Sergio Alías, 20230606
-# Last modified 20230613
+# Last modified 20230614
 
 #################################
 ###   STAGE 3 PREPROCESSING   ###
@@ -34,6 +34,8 @@ option_list <- list(
               help="Output folder"),
   make_option(c("-n", "--name"), type = "character",
               help="Sample name"),
+  make_option(c("--filter"), type = "character",
+              help="TRUE for using only detected cell-associated barcodes, FALSE for using all detected barcodes"),
   make_option(c("--mincells"), type = "integer",
               help="Min number of cells for which a feature was recorded"),
   make_option(c("--minfeats"), type = "integer",
@@ -67,14 +69,13 @@ samples <- readLines(file.path(root_path, "samples_to_process.lst"))
 
 report_folder <- Sys.getenv("report_folder") # config_daemon
 
-aux_plots <- file.path(report_folder, "aux_plots")
-
 experiment_name <- Sys.getenv("experiment_name") # config_daemon
 
-results <- main_preprocessing_analysis(aux_plots = aux_plots,
+results <- main_preprocessing_analysis(report_folder = report_folder,
                                        name = opt$name,
                                        experiment = experiment_name,
                                        input = opt$input,
+                                       filter = opt$filter,
                                        mincells = opt$mincells,
                                        minfeats = opt$minfeats,
                                        maxfeats = opt$maxfeats,
