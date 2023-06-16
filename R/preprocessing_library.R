@@ -110,7 +110,7 @@ do_qc <- function(aux_plots, pdf_prefix, seu, minqcfeats, percentmt){
 #' @param name: sample name
 #' @param expermient: experiment name
 #' @param input: directory with the single-cell data
-#' @param filter:
+#' @param filter: TRUE for using only detected cell-associated barcodes, FALSE for using all detected barcodes
 #' @param mincells: min number of cells for which a feature is recorded
 #' @param minfeats: min number of features for which a cell is recorded
 #' @param minqcfeats: min number of features for which a cell is selected
@@ -149,6 +149,8 @@ main_preprocessing_analysis <- function(report_folder, name, experiment, input, 
                seu = seu,
                minqcfeats = minqcfeats, 
                percentmt = percentmt)
+  
+  saveRDS(seu, paste0(experiment, ".", name, ".seu.RDS"))
 }
 
 
