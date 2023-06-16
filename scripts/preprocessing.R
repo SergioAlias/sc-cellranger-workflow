@@ -1,7 +1,8 @@
 #! /usr/bin/env Rscript
 
 # Sergio Alías, 20230606
-# Last modified 20230614
+# Last modified 20230616
+
 
 #################################
 ###   STAGE 3 PREPROCESSING   ###
@@ -40,10 +41,8 @@ option_list <- list(
               help="Min number of cells for which a feature was recorded"),
   make_option(c("--minfeats"), type = "integer",
               help="Min number of features for which a cell was recorded"),
-  make_option(c("--maxfeats"), type = "integer",
-              help="Max number of features for which a cell was recorded"),
-  make_option(c("--maxcounts"), type = "integer",
-              help="Max number of features for which a cell was recorded"),
+  make_option(c("--minqcfeats"), type = "integer",
+              help="Min number of features for which a cell was selected in QC"),
   make_option(c("--percentmt"), type = "integer",
               help="Max percentage of reads mapped to mitochondrial genes for which a cell is recorded"),
   make_option(c("--normalmethod"), type = "character",
@@ -78,8 +77,7 @@ results <- main_preprocessing_analysis(report_folder = report_folder,
                                        filter = opt$filter,
                                        mincells = opt$mincells,
                                        minfeats = opt$minfeats,
-                                       maxfeats = opt$maxfeats,
-                                       maxcounts = opt$maxcounts,
+                                       minqcfeats = opt$minqcfeats,
                                        percentmt = opt$percentmt)
 
 write_preprocessing_report(name = opt$name,

@@ -1,5 +1,5 @@
 # Sergio Alías, 20230612
-# Last modified 20230614
+# Last modified 20230616
 
 ####################
 ### Preprocessing template. Parametres can be customized at config_deamon
@@ -14,10 +14,9 @@ sc_preprocessing){
                  --output $RESULTS_FOLDER \
                  --name $sample \
                  --filter $preproc_filter \
-                 --mincells $preproc_min_cells \
-                 --minfeats $preproc_min_feats \
-                 --maxfeats $preproc_max_feats \
-                 --maxcounts $preproc_max_counts \
+                 --mincells $preproc_init_min_cells \
+                 --minfeats $preproc_init_min_feats \
+                 --minqcfeats $preproc_qc_min_feats \
                  --percentmt $preproc_max_percent_mt \
                  --normalmethod $preproc_norm_method \
                  --scalefactor $preproc_scale_factor \
