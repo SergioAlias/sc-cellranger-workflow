@@ -10,7 +10,7 @@ output:
 ---
 
 <!-- Sergio Alías, 20230606 -->
-<!-- Last modified 20230606 -->
+<!-- Last modified 20230616 -->
 
 <style type='text/css'>
     body .main-container {
@@ -35,5 +35,5 @@ output:
 
 # Sample `r opt$name` of project `r Sys.getenv("experiment_name")`
 
-```{r child="test.Rmd"}
+```{r child="qc.Rmd"}
 ```

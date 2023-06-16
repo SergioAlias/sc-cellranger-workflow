@@ -64,21 +64,18 @@ opt <- parse_args(OptionParser(option_list = option_list))
 ### Main ###
 ############
 
-samples <- readLines(file.path(root_path, "samples_to_process.lst"))
-
 report_folder <- Sys.getenv("report_folder") # config_daemon
 
 experiment_name <- Sys.getenv("experiment_name") # config_daemon
 
-results <- main_preprocessing_analysis(report_folder = report_folder,
-                                       name = opt$name,
-                                       experiment = experiment_name,
-                                       input = opt$input,
-                                       filter = opt$filter,
-                                       mincells = opt$mincells,
-                                       minfeats = opt$minfeats,
-                                       minqcfeats = opt$minqcfeats,
-                                       percentmt = opt$percentmt)
+main_preprocessing_analysis(name = opt$name,
+                            experiment = experiment_name,
+                            input = opt$input,
+                            filter = opt$filter,
+                            mincells = opt$mincells,
+                            minfeats = opt$minfeats,
+                            minqcfeats = opt$minqcfeats,
+                            percentmt = opt$percentmt)
 
 write_preprocessing_report(name = opt$name,
                            experiment = experiment_name,
@@ -86,4 +83,6 @@ write_preprocessing_report(name = opt$name,
                                                 "templates",
                                                 "preprocessing_report.Rmd"),
                            outdir = report_folder,
-                           intermediate_files = "int_files")
+                           intermediate_files = "int_files",
+                           minqcfeats = opt$minqcfeats,
+                           percentmt = opt$percentmt)

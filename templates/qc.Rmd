@@ -1,0 +1,54 @@
+## Quality Control
+
+<!-- Sergio Alías, 20230616 -->
+<!-- Last modified 20230616 -->
+
+```{r qc_setup, echo = FALSE}
+
+main_folder <- Sys.getenv("PREPROC_RESULTS_FOLDER")
+seu <- readRDS(file.path(main_folder,
+                         name,
+                         "preprocessing.R_0000",
+                         paste0(experiment,
+                                ".",
+                                name,
+                                ".seu.RDS")))
+
+```
+
+### Before filtering
+
+```{r violin_before, echo = FALSE}
+
+VlnPlot(seu,
+        features = c('nFeature_scRNAseq', 'nCount_scRNAseq', 'percent.mt', 'percent.rb'),
+        ncol = 4)
+```
+
+- **nFeature_scRNAseq**: number of expressed (detected) genes/features per cell
+- **nCount_scRNAseq**: number of reads per cell
+- **percent.mt**: percentage of mitochondrial counts per cell
+- **percent.rb**: percentage of ribosomal counts per cell
+
+### Filtering parameters
+
+```{r qc_filter, echo = FALSE}
+
+table(seu[['QC']])
+
+```
+
+- **High_MT**: Cells with more than **`r percentmt`%** of mitochondrial counts
+- **High_MT,Low_nFeature**: Cells with more than **`r percentmt`%** of mitochondrial counts AND less than **`r minqcfeats`** detected genes/features
+- **Pass**: Cells that passed the QC (less than **`r percentmt`%** of mitochondrial counts)
+
+### After filtering
+
+```{r violin_after, echo = FALSE}
+
+VlnPlot(subset(seu, subset = QC == 'Pass'),
+        features = c('nFeature_scRNAseq', 'nCount_scRNAseq', 'percent.mt', 'percent.rb'),
+        ncol = 4)
+```
+
+If the plots after filtering are not as good as expected, try changing the QC parameters at `config_daemon`

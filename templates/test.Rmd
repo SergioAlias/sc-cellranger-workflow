@@ -1,3 +1,6 @@
 ## This is in a child Rmd file (test.Rmd)
 
-`r results`
+<!-- Sergio Alías, 20230606 -->
+<!-- Last modified 20230616 -->
+
+`r rnorm(50)`

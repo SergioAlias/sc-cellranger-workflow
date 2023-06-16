@@ -6,9 +6,10 @@
 
 
 sc_preprocessing){
- resources: -c 2 -t 2-00:00:00 -m '20gb'
+ resources: -c 2 -t 2-00:00:00 -m '5gb'
  mkdir -p $RESULTS_FOLDER
  . ~soft_bio_267/initializes/init_R 
+ echo [cpu]
  ?
  preprocessing.R --input $COUNT_RESULTS_FOLDER"/"$sample"/cellranger_0000/"$sample"/outs" \
                  --output $RESULTS_FOLDER \

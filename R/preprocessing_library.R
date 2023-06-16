@@ -51,7 +51,6 @@ read_input <- function(name, input, mincells, minfeats){
 #' do_qc
 #' Perform Quality Control
 #'
-#' @param aux_plots: directory for plots implemented by Seurat
 #' @param pdf_prefix: prefix for PDF files containing Seurat plots
 #' @param seu: Seurat object
 #' @param minqcfeats: min number of features for which a cell is selected
@@ -60,7 +59,7 @@ read_input <- function(name, input, mincells, minfeats){
 #' @keywords preprocessing, qc
 #' 
 #' @return Seurat object
-do_qc <- function(aux_plots, pdf_prefix, seu, minqcfeats, percentmt){
+do_qc <- function(pdf_prefix, seu, minqcfeats, percentmt){
   #### QC ####
   
   ##### Reads mapped to mitochondrial genes #####
@@ -82,13 +81,15 @@ do_qc <- function(aux_plots, pdf_prefix, seu, minqcfeats, percentmt){
   # dev.off()
 
   ##### Filtering out cells #####
-  
+
   # seu[['QC']] <- ifelse(seu@meta.data$Is_doublet == 'True','Doublet','Pass')
+  seu[['QC']] <- ifelse(TRUE,'Pass','This should not happen') # provisional until I code the dublet detection stuff (see previous line)
   seu[['QC']] <- ifelse(seu@meta.data$nFeature_scRNAseq < minqcfeats & seu@meta.data$QC == 'Pass','Low_nFeature',seu@meta.data$QC)
   seu[['QC']] <- ifelse(seu@meta.data$nFeature_scRNAseq < minqcfeats & seu@meta.data$QC != 'Pass' & seu@meta.data$QC != 'Low_nFeature',paste('Low_nFeature',seu@meta.data$QC,sep = ','),seu@meta.data$QC)
   seu[['QC']] <- ifelse(seu@meta.data$percent.mt > percentmt & seu@meta.data$QC == 'Pass','High_MT',seu@meta.data$QC)
-  seu[['QC']] <- ifelse(seu@meta.data$nFeature_scRNAseq < maxfeats & seu@meta.data$QC != 'Pass' & seu@meta.data$QC != 'High_MT',paste('High_MT',seu@meta.data$QC,sep = ','),seu@meta.data$QC)
+  seu[['QC']] <- ifelse(seu@meta.data$nFeature_scRNAseq < minqcfeats & seu@meta.data$QC != 'Pass' & seu@meta.data$QC != 'High_MT',paste('High_MT',seu@meta.data$QC,sep = ','),seu@meta.data$QC)
   table(seu[['QC']])
+
   
   # pdf(file.path(aux_plots, paste0(pdf_prefix, "VlnPlot_after.pdf")))
   # VlnPlot(seu,
@@ -106,7 +107,6 @@ do_qc <- function(aux_plots, pdf_prefix, seu, minqcfeats, percentmt){
 #' main_preprocessing_analysis
 #' Main preprocessing function that performs all the analyses
 #'
-#' @param report_folder: directory for plots implemented by Seurat
 #' @param name: sample name
 #' @param expermient: experiment name
 #' @param input: directory with the single-cell data
@@ -119,18 +119,8 @@ do_qc <- function(aux_plots, pdf_prefix, seu, minqcfeats, percentmt){
 #' @keywords preprocessing, main
 #' 
 #' @return Seurat object
-main_preprocessing_analysis <- function(report_folder, name, experiment, input, filter, mincells, minfeats, minqcfeats, percentmt){
-  
-  if (!file.exists(report_folder)){
-    dir.create(report_folder)
-  }
-  
-  aux_plots <- file.path(report_folder, "aux_plots")
-  
-  if (!file.exists(aux_plots)){
-    dir.create(aux_plots)
-  }
-  
+main_preprocessing_analysis <- function(name, experiment, input, filter, mincells, minfeats, minqcfeats, percentmt){
+
   if (filter == "TRUE"){
     input <- file.path(input, "filtered_feature_bc_matrix")
   } else {
@@ -144,8 +134,7 @@ main_preprocessing_analysis <- function(report_folder, name, experiment, input, 
                     mincells = mincells,
                     minfeats = minfeats)
   
-  seu <- do_qc(aux_plots = aux_plots,
-               pdf_prefix = pdf_prefix,
+  seu <- do_qc(pdf_prefix = pdf_prefix,
                seu = seu,
                minqcfeats = minqcfeats, 
                percentmt = percentmt)
@@ -165,11 +154,13 @@ main_preprocessing_analysis <- function(report_folder, name, experiment, input, 
 #' @param template: Rmd template
 #' @param outdir: output directory
 #' @param intermediate_files: directory for saving intermediate files in case pandoc fails
+#' @param minqcfeats: min number of features for which a cell is selected
+#' @param percentmt: max percentage of reads mapped to mitochondrial genes for which a cell is selected
 #' 
 #' @keywords preprocessing, write, report
 #' 
 #' @return nothing
-write_preprocessing_report <- function(name, experiment, template, outdir, intermediate_files){
+write_preprocessing_report <- function(name, experiment, template, outdir, intermediate_files, minqcfeats, percentmt){
   int_files <- file.path(outdir, intermediate_files)
   if (!file.exists(int_files)){
     dir.create(int_files)
