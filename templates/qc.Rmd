@@ -1,7 +1,7 @@
 ## Quality Control
 
 <!-- Sergio Alías, 20230616 -->
-<!-- Last modified 20230616 -->
+<!-- Last modified 20230620 -->
 
 ```{r qc_setup, echo = FALSE}
 
@@ -30,11 +30,44 @@ VlnPlot(seu,
 - **percent.mt**: percentage of mitochondrial counts per cell
 - **percent.rb**: percentage of ribosomal counts per cell
 
+
+### Metadata features correlation
+
+
+#### Mito counts VS nº of reads
+
+```{r scatter1, echo = FALSE}
+
+FeatureScatter(seu, feature1 = "nCount_scRNAseq", feature2 = "percent.mt")
+```
+
+#### Nº of features VS nº of reads
+
+```{r scatter2, echo = FALSE}
+
+FeatureScatter(seu, feature1 = "nCount_scRNAseq", feature2 = "nFeature_scRNAseq")
+```
+
+#### Ribosomal counts VS nº of reads
+
+```{r scatter3, echo = FALSE}
+
+FeatureScatter(seu, feature1 = "nCount_scRNAseq", feature2 = "percent.rb")
+```
+
+#### Mito counts VS ribosomal counts
+
+```{r scatter4, echo = FALSE}
+
+FeatureScatter(seu, feature1 = "percent.rb", feature2 = "percent.mt")
+```
+
+
 ### Filtering parameters
 
 ```{r qc_filter, echo = FALSE}
 
-table(seu[['QC']])
+table(seu[['QC']]) # TODO use package for nice table
 
 ```
 
