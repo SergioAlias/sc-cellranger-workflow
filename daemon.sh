@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # Sergio Alías, 20230323
-# Last modified 20230614
+# Last modified 20230627
 
 # daemon.sh
 
@@ -49,9 +49,18 @@ elif [ "$module" == "2b" ] ; then
         sbatch aux_sh/compare_samples.sh
     fi
 
-elif [ "$module" == "3" ] ; then
+elif [ "$module" == "3a" ] ; then
     # STAGE 3 PREPROCESSING
     echo "Launching stage 3: Preprocessing"
     autoflow_launcher.sh preproc
+
+elif [ "$module" == "3b" ] ; then
+    # STAGE 3 GENERAL PREPROCESSING REPORT
+    echo "Launching stage 3: General preprocessing report"
+    if [ $launch_login == TRUE ]; then  
+        general_report.sh
+    else
+        sbatch aux_sh/general_report.sh
+    fi
 
 fi

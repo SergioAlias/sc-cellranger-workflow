@@ -1,5 +1,5 @@
 # Sergio Alías, 20230323
-# Last modified 20230616
+# Last modified 20230627
 
 # config_daemon
 
@@ -58,7 +58,7 @@ elif [ "$module" == "1" ] ; then
 
 ######  STAGE 3 PREPROCESSING #######
 
-elif [ "$module" == "3" ] ; then
+elif [ "$module" == "3a" ] || [ "$module" == "3b" ]; then
     export preproc_filter=TRUE                 #-------#    TRUE for using only detected cell-associated barcodes, FALSE for using all detected barcodes
     export preproc_init_min_cells=1            #-------#    Min number of cells for which a feature is recorded. Used when creating the Seurat object (recommended 3 for raw data)
     export preproc_init_min_feats=1            #-------#    Min number of features for which a cell is recorded. Used when creating the Seurat object (recommended 200 for raw data)

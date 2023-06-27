@@ -6,7 +6,7 @@
 
 
 run_count){
- resources: -c 5 -t 2-00:00:00 -m '15gb'
+ resources: -c 6 -t 2-00:00:00 -m '50gb'
  module load cellranger/7.0.0
  ?
  cellranger count --id=$sample \

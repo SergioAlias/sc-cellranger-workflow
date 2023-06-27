@@ -1,11 +1,12 @@
 ## Quality Control
 
 <!-- Sergio Alías, 20230616 -->
-<!-- Last modified 20230620 -->
+<!-- Last modified 20230627 -->
 
 ```{r qc_setup, echo = FALSE}
 
 main_folder <- Sys.getenv("PREPROC_RESULTS_FOLDER")
+
 seu <- readRDS(file.path(main_folder,
                          name,
                          "preprocessing.R_0000",
@@ -21,6 +22,7 @@ seu <- readRDS(file.path(main_folder,
 ```{r violin_before, echo = FALSE}
 
 VlnPlot(seu,
+        group.by= "orig.ident",
         features = c('nFeature_scRNAseq', 'nCount_scRNAseq', 'percent.mt', 'percent.rb'),
         ncol = 4)
 ```
@@ -38,28 +40,28 @@ VlnPlot(seu,
 
 ```{r scatter1, echo = FALSE}
 
-FeatureScatter(seu, feature1 = "nCount_scRNAseq", feature2 = "percent.mt")
+#FeatureScatter(seu, feature1 = "nCount_scRNAseq", feature2 = "percent.mt")
 ```
 
 #### Nº of features VS nº of reads
 
 ```{r scatter2, echo = FALSE}
 
-FeatureScatter(seu, feature1 = "nCount_scRNAseq", feature2 = "nFeature_scRNAseq")
+#FeatureScatter(seu, feature1 = "nCount_scRNAseq", feature2 = "nFeature_scRNAseq")
 ```
 
 #### Ribosomal counts VS nº of reads
 
 ```{r scatter3, echo = FALSE}
 
-FeatureScatter(seu, feature1 = "nCount_scRNAseq", feature2 = "percent.rb")
+#FeatureScatter(seu, feature1 = "nCount_scRNAseq", feature2 = "percent.rb")
 ```
 
 #### Mito counts VS ribosomal counts
 
 ```{r scatter4, echo = FALSE}
 
-FeatureScatter(seu, feature1 = "percent.rb", feature2 = "percent.mt")
+#FeatureScatter(seu, feature1 = "percent.rb", feature2 = "percent.mt")
 ```
 
 
@@ -80,6 +82,7 @@ table(seu[['QC']]) # TODO use package for nice table
 ```{r violin_after, echo = FALSE}
 
 VlnPlot(subset(seu, subset = QC == 'Pass'),
+        group.by= "orig.ident",
         features = c('nFeature_scRNAseq', 'nCount_scRNAseq', 'percent.mt', 'percent.rb'),
         ncol = 4)
 ```

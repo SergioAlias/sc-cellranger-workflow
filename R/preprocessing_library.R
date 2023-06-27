@@ -1,5 +1,5 @@
 # Sergio Alías, 20230606
-# Last modified 20230616
+# Last modified 20230627
 
 ##########################################################################
 ########################## PRE-PROCESSING LIBRARY ########################
@@ -40,7 +40,30 @@ read_input <- function(name, input, mincells, minfeats){
                             min.cells = mincells, 
                             min.features = minfeats
                             )
+  
+  seu[["orig.ident"]] <- rep.int(name, times = length(Cells(seu)))
   mtx <- NULL
+  return(seu)
+}
+
+
+##########################################################################
+
+
+#' merge_seurat
+#' Merge two Seurat objects
+#'
+#' @param seu1: First Seurat object
+#' @param name1: First sample name
+#' @param seu2: Second Seurat object
+#' @param name2: Second sample name
+
+#' @keywords preprocessing, merge
+#' 
+#' @return Seurat object
+merge_seurat <- function(seu1, name1, seu2, name2){
+  seu <- merge(seu1, seu2,
+               add.cell.ids = c(name1, name2))
   return(seu)
 }
 
@@ -156,15 +179,29 @@ main_preprocessing_analysis <- function(name, experiment, input, filter, mincell
 #' @param intermediate_files: directory for saving intermediate files in case pandoc fails
 #' @param minqcfeats: min number of features for which a cell is selected
 #' @param percentmt: max percentage of reads mapped to mitochondrial genes for which a cell is selected
+#' @param all_seu: NULL if creating an indiviual report (daemon 3a). A Seurat object if creating a general report (daemon 3b)
 #' 
 #' @keywords preprocessing, write, report
 #' 
 #' @return nothing
-write_preprocessing_report <- function(name, experiment, template, outdir, intermediate_files, minqcfeats, percentmt){
+write_preprocessing_report <- function(name, experiment, template, outdir, intermediate_files, minqcfeats, percentmt, all_seu = NULL){
   int_files <- file.path(outdir, intermediate_files)
   if (!file.exists(int_files)){
     dir.create(int_files)
   }
+  if (is.null(all_seu)){
+    main_folder <- Sys.getenv("PREPROC_RESULTS_FOLDER")
+    
+    seu <- readRDS(file.path(main_folder,
+                             name,
+                             "preprocessing.R_0000",
+                             paste0(experiment,
+                                    ".",
+                                    name,
+                                    ".seu.RDS")))
+  } else {
+    seu <- all_seu
+  }  
   rmarkdown::render(template,
                     output_file = file.path(outdir,
                                             paste0(experiment,
