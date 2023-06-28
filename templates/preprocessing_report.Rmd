@@ -10,7 +10,7 @@ output:
 ---
 
 <!-- Sergio Alías, 20230606 -->
-<!-- Last modified 20230616 -->
+<!-- Last modified 20230628 -->
 
 <style type='text/css'>
     body .main-container {
@@ -33,7 +33,33 @@ output:
   }   
 </style>
 
-# Sample `r opt$name` of project `r Sys.getenv("experiment_name")`
+<style>
+.dropdown-content {
+  display: none;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
+# `r name` of project `r experiment`
+
+```{r qc_setup, echo = FALSE}
+
+if (is.null(all_seu)){
+  seu <- readRDS(file.path(main_folder,
+                           name,
+                           "preprocessing.R_0000",
+                           paste0(experiment,
+                                  ".",
+                                  name,
+                                  ".seu.RDS")))
+} else {
+  seu <- all_seu
+}
+```
+
 
 ```{r child="qc.Rmd"}
 ```

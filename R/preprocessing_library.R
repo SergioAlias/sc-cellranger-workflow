@@ -7,7 +7,7 @@
 
 
 #' append_message
-#' Append experiments names with a Hello World message
+#' Append experiments names with a Hello World message. Useful for testing :D
 #'
 #' @param name: expermient name
 #' @param message: message to append. Default: "Hello World"
@@ -50,31 +50,9 @@ read_input <- function(name, input, mincells, minfeats){
 ##########################################################################
 
 
-#' merge_seurat
-#' Merge two Seurat objects
-#'
-#' @param seu1: First Seurat object
-#' @param name1: First sample name
-#' @param seu2: Second Seurat object
-#' @param name2: Second sample name
-
-#' @keywords preprocessing, merge
-#' 
-#' @return Seurat object
-merge_seurat <- function(seu1, name1, seu2, name2){
-  seu <- merge(seu1, seu2,
-               add.cell.ids = c(name1, name2))
-  return(seu)
-}
-
-
-##########################################################################
-
-
 #' do_qc
 #' Perform Quality Control
 #'
-#' @param pdf_prefix: prefix for PDF files containing Seurat plots
 #' @param seu: Seurat object
 #' @param minqcfeats: min number of features for which a cell is selected
 #' @param percentmt: max percentage of reads mapped to mitochondrial genes for which a cell is selected
@@ -82,7 +60,7 @@ merge_seurat <- function(seu1, name1, seu2, name2){
 #' @keywords preprocessing, qc
 #' 
 #' @return Seurat object
-do_qc <- function(pdf_prefix, seu, minqcfeats, percentmt){
+do_qc <- function(seu, minqcfeats, percentmt){
   #### QC ####
   
   ##### Reads mapped to mitochondrial genes #####
@@ -94,14 +72,6 @@ do_qc <- function(pdf_prefix, seu, minqcfeats, percentmt){
   # We can define ribosomal proteins (their names start with RPS or RPL)
   
   seu[["percent.rb"]] <- PercentageFeatureSet(seu, pattern = "^RP[SL]")
-  
-  # Violin plot before filtering
-  
-  # pdf(file.path(aux_plots, paste0(pdf_prefix, "VlnPlot_before.pdf")))
-  # VlnPlot(seu,
-  #         features = c('nFeature_scRNAseq', 'nCount_scRNAseq', 'percent.mt', 'percent.rb'),
-  #         ncol = 4)
-  # dev.off()
 
   ##### Filtering out cells #####
 
@@ -112,13 +82,28 @@ do_qc <- function(pdf_prefix, seu, minqcfeats, percentmt){
   seu[['QC']] <- ifelse(seu@meta.data$percent.mt > percentmt & seu@meta.data$QC == 'Pass','High_MT',seu@meta.data$QC)
   seu[['QC']] <- ifelse(seu@meta.data$nFeature_scRNAseq < minqcfeats & seu@meta.data$QC != 'Pass' & seu@meta.data$QC != 'High_MT',paste('High_MT',seu@meta.data$QC,sep = ','),seu@meta.data$QC)
   table(seu[['QC']])
-
   
-  # pdf(file.path(aux_plots, paste0(pdf_prefix, "VlnPlot_after.pdf")))
-  # VlnPlot(seu,
-  #         features = c('nFeature_scRNAseq', 'nCount_scRNAseq', 'percent.mt', 'percent.rb'),
-  #         ncol = 4)
-  # dev.off()
+  return(seu)
+}
+
+
+##########################################################################
+
+
+#' do_fsel
+#' Perform Feature Selection
+#'
+#' @param seu: Seurat object
+#' @param minqcfeats: min number of features for which a cell is selected
+#' @param percentmt: max percentage of reads mapped to mitochondrial genes for which a cell is selected
+#' 
+#' @keywords preprocessing, qc
+#' 
+#' @return Seurat object
+do_fsel <- function(seu, minqcfeats, percentmt){
+  #### Feature selection ####
+  
+
   
   return(seu)
 }
@@ -138,11 +123,12 @@ do_qc <- function(pdf_prefix, seu, minqcfeats, percentmt){
 #' @param minfeats: min number of features for which a cell is recorded
 #' @param minqcfeats: min number of features for which a cell is selected
 #' @param percentmt: max percentage of reads mapped to mitochondrial genes for which a cell is selected
+#' @param normalmethod: Normalization method
 #' 
 #' @keywords preprocessing, main
 #' 
 #' @return Seurat object
-main_preprocessing_analysis <- function(name, experiment, input, filter, mincells, minfeats, minqcfeats, percentmt){
+main_preprocessing_analysis <- function(name, experiment, input, filter, mincells, minfeats, minqcfeats, percentmt, normalmethod, scalefactor){
 
   if (filter == "TRUE"){
     input <- file.path(input, "filtered_feature_bc_matrix")
@@ -150,17 +136,16 @@ main_preprocessing_analysis <- function(name, experiment, input, filter, mincell
     input <- file.path(input, "raw_feature_bc_matrix")
   }
   
-  pdf_prefix <- paste0(experiment, "_", name, "_")
-  
   seu <- read_input(name = name, 
                     input = input,
                     mincells = mincells,
                     minfeats = minfeats)
   
-  seu <- do_qc(pdf_prefix = pdf_prefix,
-               seu = seu,
+  seu <- do_qc(seu = seu,
                minqcfeats = minqcfeats, 
                percentmt = percentmt)
+  
+  seu <- NormalizeData(seu, normalization.method = normalmethod, scale.factor = scalefactor)
   
   saveRDS(seu, paste0(experiment, ".", name, ".seu.RDS"))
 }

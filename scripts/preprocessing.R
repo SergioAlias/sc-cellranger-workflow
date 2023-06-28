@@ -61,6 +61,7 @@ option_list <- list(
               help="Experiment name")
 )  
 
+
 opt <- parse_args(OptionParser(option_list = option_list))
 
 
@@ -75,7 +76,9 @@ main_preprocessing_analysis(name = opt$name,
                             mincells = opt$mincells,
                             minfeats = opt$minfeats,
                             minqcfeats = opt$minqcfeats,
-                            percentmt = opt$percentmt)
+                            percentmt = opt$percentmt,
+                            normalmethod = opt$normalmethod,
+                            scalefactor = opt$scalefactor)
 
 write_preprocessing_report(name = opt$name,
                            experiment = opt$experiment_name,

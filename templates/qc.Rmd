@@ -1,21 +1,7 @@
 ## Quality Control
 
 <!-- Sergio Alías, 20230616 -->
-<!-- Last modified 20230627 -->
-
-```{r qc_setup, echo = FALSE}
-
-main_folder <- Sys.getenv("PREPROC_RESULTS_FOLDER")
-
-seu <- readRDS(file.path(main_folder,
-                         name,
-                         "preprocessing.R_0000",
-                         paste0(experiment,
-                                ".",
-                                name,
-                                ".seu.RDS")))
-
-```
+<!-- Last modified 20230628 -->
 
 ### Before filtering
 
@@ -27,11 +13,15 @@ VlnPlot(seu,
         ncol = 4)
 ```
 
+<div class="dropdown">
+  <span>🛈 Dropdown test</span>
+  <div class="dropdown-content">
 - **nFeature_scRNAseq**: number of expressed (detected) genes/features per cell
 - **nCount_scRNAseq**: number of reads per cell
 - **percent.mt**: percentage of mitochondrial counts per cell
 - **percent.rb**: percentage of ribosomal counts per cell
-
+  </div>
+</div>
 
 ### Metadata features correlation
 
