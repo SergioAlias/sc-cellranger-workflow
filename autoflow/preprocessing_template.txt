@@ -1,5 +1,5 @@
 # Sergio Alías, 20230612
-# Last modified 20230616
+# Last modified 20230628
 
 ####################
 ### Preprocessing template. Parametres can be customized at config_deamon
@@ -23,5 +23,7 @@ sc_preprocessing){
                  --scalefactor $preproc_scale_factor \
                  --hvgs $preproc_select_hvgs \
                  --ndims $preproc_pca_n_dims \
-                 --dimheatmapcells $preproc_pca_n_cells
+                 --dimheatmapcells $preproc_pca_n_cells \
+                 --report_folder $report_folder \
+                 --experiment_name $experiment_name
 }

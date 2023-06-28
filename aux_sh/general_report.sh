@@ -6,7 +6,7 @@
 # STAGE 3 PREPROCESSING
 
 #SBATCH --cpus-per-task=2
-#SBATCH --mem=20gb
+#SBATCH --mem=30gb
 #SBATCH --constraint=cal
 #SBATCH --error=job.genrep.%J.err
 #SBATCH --output=job.genrep.%J.out

@@ -1,7 +1,7 @@
 #! /usr/bin/env Rscript
 
 # Sergio Alías, 20230606
-# Last modified 20230616
+# Last modified 20230628
 
 
 #################################
@@ -21,7 +21,7 @@ library(Seurat)
 ### Custom libs ###
 ###################
 
-root_path <- Sys.getenv("CODE_PATH") # daemon
+root_path <- Sys.getenv("CODE_PATH") # daemon (TODO decide what to to with this)
 source(file.path(root_path, "R", "preprocessing_library.R"))
 
 ############
@@ -54,7 +54,11 @@ option_list <- list(
   make_option(c("--ndims"), type = "integer",
               help="Number of PC to be plotted on the heatmap"),
   make_option(c("--dimheatmapcells"), type = "integer",
-              help="Heatmap plots the 'extreme' cells on both ends of the spectrum")  
+              help="Heatmap plots the 'extreme' cells on both ends of the spectrum"),
+  make_option(c("--report_folder"), type = "character",
+              help="Folder where the report is written"),
+  make_option(c("--experiment_name"), type = "character",
+              help="Experiment name")
 )  
 
 opt <- parse_args(OptionParser(option_list = option_list))
@@ -64,12 +68,8 @@ opt <- parse_args(OptionParser(option_list = option_list))
 ### Main ###
 ############
 
-report_folder <- Sys.getenv("report_folder") # config_daemon
-
-experiment_name <- Sys.getenv("experiment_name") # config_daemon
-
 main_preprocessing_analysis(name = opt$name,
-                            experiment = experiment_name,
+                            experiment = opt$experiment_name,
                             input = opt$input,
                             filter = opt$filter,
                             mincells = opt$mincells,
@@ -78,11 +78,11 @@ main_preprocessing_analysis(name = opt$name,
                             percentmt = opt$percentmt)
 
 write_preprocessing_report(name = opt$name,
-                           experiment = experiment_name,
+                           experiment = opt$experiment_name,
                            template = file.path(root_path, 
                                                 "templates",
                                                 "preprocessing_report.Rmd"),
-                           outdir = report_folder,
+                           outdir = opt$report_folder,
                            intermediate_files = "int_files",
                            minqcfeats = opt$minqcfeats,
                            percentmt = opt$percentmt)

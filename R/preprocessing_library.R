@@ -1,5 +1,5 @@
 # Sergio Alías, 20230606
-# Last modified 20230627
+# Last modified 20230628
 
 ##########################################################################
 ########################## PRE-PROCESSING LIBRARY ########################
@@ -41,7 +41,7 @@ read_input <- function(name, input, mincells, minfeats){
                             min.features = minfeats
                             )
   
-  seu[["orig.ident"]] <- rep.int(name, times = length(Cells(seu)))
+  # seu[["orig.ident"]] <- rep.int(name, times = length(Cells(seu)))
   mtx <- NULL
   return(seu)
 }
