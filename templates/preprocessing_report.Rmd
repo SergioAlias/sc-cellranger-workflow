@@ -10,7 +10,7 @@ output:
 ---
 
 <!-- Sergio Alías, 20230606 -->
-<!-- Last modified 20230628 -->
+<!-- Last modified 20230629 -->
 
 <style type='text/css'>
     body .main-container {
@@ -45,21 +45,33 @@ output:
 
 # `r name` of project `r experiment`
 
-```{r qc_setup, echo = FALSE}
+Report of single-cell pre-processing using Seurat
 
-if (is.null(all_seu)){
-  seu <- readRDS(file.path(main_folder,
-                           name,
-                           "preprocessing.R_0000",
-                           paste0(experiment,
-                                  ".",
-                                  name,
-                                  ".seu.RDS")))
-} else {
-  seu <- all_seu
-}
+<details>
+<summary>General references</summary>
+
+1. [https://satijalab.org/seurat/](https://satijalab.org/seurat/)
+2. [https://nbisweden.github.io/workshop-scRNAseq/labs/compiled/seurat/seurat_01_qc.html](https://nbisweden.github.io/workshop-scRNAseq/labs/compiled/seurat/seurat_01_qc.html)
+3. [https://holab-hku.github.io/Fundamental-scRNA/downstream.html#standard-pre-processing-workflow](https://holab-hku.github.io/Fundamental-scRNA/downstream.html#standard-pre-processing-workflow)
+4. [https://www.singlecellcourse.org/single-cell-rna-seq-analysis-using-seurat.html#normalization-and-dimensionality-reduction](https://www.singlecellcourse.org/single-cell-rna-seq-analysis-using-seurat.html#normalization-and-dimensionality-reduction)
+
+</details>
+
+```{r setup, echo = FALSE}
+library(patchwork)
 ```
-
 
 ```{r child="qc.Rmd"}
 ```
+
+```{r child="feature_selection.Rmd"}
+```
+
+<details>
+<summary>**Session Info**</summary>
+
+```{r sessionInfo, echo = FALSE}
+sessionInfo()
+```
+
+</details>

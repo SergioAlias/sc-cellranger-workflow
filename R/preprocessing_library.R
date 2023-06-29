@@ -1,5 +1,5 @@
 # Sergio Alías, 20230606
-# Last modified 20230628
+# Last modified 20230629
 
 ##########################################################################
 ########################## PRE-PROCESSING LIBRARY ########################
@@ -40,8 +40,6 @@ read_input <- function(name, input, mincells, minfeats){
                             min.cells = mincells, 
                             min.features = minfeats
                             )
-  
-  # seu[["orig.ident"]] <- rep.int(name, times = length(Cells(seu)))
   mtx <- NULL
   return(seu)
 }
@@ -53,6 +51,8 @@ read_input <- function(name, input, mincells, minfeats){
 #' do_qc
 #' Perform Quality Control
 #'
+#' @param name: sample name
+#' @param expermient: experiment name
 #' @param seu: Seurat object
 #' @param minqcfeats: min number of features for which a cell is selected
 #' @param percentmt: max percentage of reads mapped to mitochondrial genes for which a cell is selected
@@ -60,7 +60,7 @@ read_input <- function(name, input, mincells, minfeats){
 #' @keywords preprocessing, qc
 #' 
 #' @return Seurat object
-do_qc <- function(seu, minqcfeats, percentmt){
+do_qc <- function(name, experiment, seu, minqcfeats, percentmt){
   #### QC ####
   
   ##### Reads mapped to mitochondrial genes #####
@@ -72,6 +72,10 @@ do_qc <- function(seu, minqcfeats, percentmt){
   # We can define ribosomal proteins (their names start with RPS or RPL)
   
   seu[["percent.rb"]] <- PercentageFeatureSet(seu, pattern = "^RP[SL]")
+  
+  # Save before version
+  
+  saveRDS(seu, paste0(experiment, ".", name, ".before.seu.RDS"))
 
   ##### Filtering out cells #####
 
@@ -90,21 +94,19 @@ do_qc <- function(seu, minqcfeats, percentmt){
 ##########################################################################
 
 
-#' do_fsel
-#' Perform Feature Selection
+#' do_dimred
+#' Perform linear (PCA) and non-linear (UMAP/tSNE) dimensionality reduction
 #'
 #' @param seu: Seurat object
-#' @param minqcfeats: min number of features for which a cell is selected
-#' @param percentmt: max percentage of reads mapped to mitochondrial genes for which a cell is selected
+#' @param ndims: Number of PC to be used for clustering / UMAP / tSNE
 #' 
-#' @keywords preprocessing, qc
+#' @keywords preprocessing, dimensionality, reduction, PCA, UMAP, tSNE
 #' 
 #' @return Seurat object
-do_fsel <- function(seu, minqcfeats, percentmt){
-  #### Feature selection ####
-  
-
-  
+do_dimred <- function(seu, ndims){
+  seu <- RunPCA(seu, features = VariableFeatures(object = seu))
+  seu <- RunUMAP(seu, dims = 1:ndims)
+  seu <- RunTSNE(seu, dims = 1:ndims)
   return(seu)
 }
 
@@ -124,28 +126,56 @@ do_fsel <- function(seu, minqcfeats, percentmt){
 #' @param minqcfeats: min number of features for which a cell is selected
 #' @param percentmt: max percentage of reads mapped to mitochondrial genes for which a cell is selected
 #' @param normalmethod: Normalization method
+#' @param hvgs: Number of HVGs to be selected
+#' @param ndims: Number of PC to be used for clustering / UMAP / tSNE
 #' 
 #' @keywords preprocessing, main
 #' 
 #' @return Seurat object
-main_preprocessing_analysis <- function(name, experiment, input, filter, mincells, minfeats, minqcfeats, percentmt, normalmethod, scalefactor){
+main_preprocessing_analysis <- function(name, experiment, input, filter, mincells, minfeats, minqcfeats,
+                                        percentmt, normalmethod, scalefactor, hvgs, ndims){
 
+  # Input selection
+  
   if (filter == "TRUE"){
     input <- file.path(input, "filtered_feature_bc_matrix")
   } else {
     input <- file.path(input, "raw_feature_bc_matrix")
   }
   
+  # Input reading
+  
   seu <- read_input(name = name, 
                     input = input,
                     mincells = mincells,
                     minfeats = minfeats)
   
-  seu <- do_qc(seu = seu,
+  # QC
+  
+  seu <- do_qc(name = name,
+               experiment = experiment,
+               seu = seu,
                minqcfeats = minqcfeats, 
                percentmt = percentmt)
   
+  # Normalization
+  
   seu <- NormalizeData(seu, normalization.method = normalmethod, scale.factor = scalefactor)
+  
+  # Feature selection
+  
+  seu <- FindVariableFeatures(seu, nfeatures = hvgs)
+  
+  # Data scaling
+  
+  seu <- ScaleData(seu, features = rownames(seu))
+  
+  # Dimensionality reduction (PCA/UMAP/tSNE)
+  
+  seu <- do_dimred(seu = seu,
+                   ndims = ndims)
+  
+  # Save final Seurat object
   
   saveRDS(seu, paste0(experiment, ".", name, ".seu.RDS"))
 }
@@ -164,12 +194,13 @@ main_preprocessing_analysis <- function(name, experiment, input, filter, mincell
 #' @param intermediate_files: directory for saving intermediate files in case pandoc fails
 #' @param minqcfeats: min number of features for which a cell is selected
 #' @param percentmt: max percentage of reads mapped to mitochondrial genes for which a cell is selected
-#' @param all_seu: NULL if creating an indiviual report (daemon 3a). A Seurat object if creating a general report (daemon 3b)
+#' @param hvgs: Number of HVGs to be selected
+#' @param all_seu: NULL if creating an indiviual report (daemon 3a). A list of 2 Seurat objects if creating a general report (daemon 3b)
 #' 
 #' @keywords preprocessing, write, report
 #' 
 #' @return nothing
-write_preprocessing_report <- function(name, experiment, template, outdir, intermediate_files, minqcfeats, percentmt, all_seu = NULL){
+write_preprocessing_report <- function(name, experiment, template, outdir, intermediate_files, minqcfeats, percentmt, hvgs, all_seu = NULL){
   int_files <- file.path(outdir, intermediate_files)
   if (!file.exists(int_files)){
     dir.create(int_files)
@@ -184,8 +215,17 @@ write_preprocessing_report <- function(name, experiment, template, outdir, inter
                                     ".",
                                     name,
                                     ".seu.RDS")))
+    before.seu <- readRDS(file.path(main_folder,
+                                    name,
+                                    "preprocessing.R_0000",
+                                    paste0(experiment,
+                                           ".",
+                                           name,
+                                           ".before.seu.RDS")))
+    
   } else {
-    seu <- all_seu
+    seu <- all_seu[[1]]
+    before.seu <- all_seu[[2]]
   }  
   rmarkdown::render(template,
                     output_file = file.path(outdir,

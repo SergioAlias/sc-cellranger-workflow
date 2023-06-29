@@ -1,5 +1,5 @@
 # Sergio Alías, 20230323
-# Last modified 20230627
+# Last modified 20230629
 
 # config_daemon
 
@@ -66,7 +66,7 @@ elif [ "$module" == "3a" ] || [ "$module" == "3b" ]; then
     export preproc_max_percent_mt=5            #-------#    Max percentage of reads mapped to mitochondrial genes for which a cell is selected
     export preproc_norm_method=LogNormalize    #-------#    Seurat normalization method: LogNormalize, CLR, RC
     export preproc_scale_factor=10000          #-------#    Seurat scale factor for cell-level normalization
-    export preproc_select_hvgs=1000            #-------#    Number of HVG to be selected (feature selection)
-    export preproc_pca_n_dims=2                #-------#    Number of PC to be plotted on the heatmap
+    export preproc_select_hvgs=2000            #-------#    Number of HVG to be selected (feature selection)
+    export preproc_pca_n_dims=20               #-------#   Number of PC to use for clustering / UMAP / tSNE
     export preproc_pca_n_cells=500             #-------#    Heatmap plots the 'extreme' cells on both ends of the spectrum -> dramatically speeds plotting for large datasets
 fi

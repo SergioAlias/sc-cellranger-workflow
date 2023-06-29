@@ -52,7 +52,7 @@ option_list <- list(
   make_option(c("--hvgs"), type = "integer",
               help="Number of HVG to be selected"),
   make_option(c("--ndims"), type = "integer",
-              help="Number of PC to be plotted on the heatmap"),
+              help="Number of PC to be used for clustering / UMAP / tSNE"),
   make_option(c("--dimheatmapcells"), type = "integer",
               help="Heatmap plots the 'extreme' cells on both ends of the spectrum"),
   make_option(c("--report_folder"), type = "character",
@@ -78,7 +78,9 @@ main_preprocessing_analysis(name = opt$name,
                             minqcfeats = opt$minqcfeats,
                             percentmt = opt$percentmt,
                             normalmethod = opt$normalmethod,
-                            scalefactor = opt$scalefactor)
+                            scalefactor = opt$scalefactor,
+                            hvgs = opt$hvgs,
+                            ndims = opt$ndims)
 
 write_preprocessing_report(name = opt$name,
                            experiment = opt$experiment_name,
@@ -88,4 +90,5 @@ write_preprocessing_report(name = opt$name,
                            outdir = opt$report_folder,
                            intermediate_files = "int_files",
                            minqcfeats = opt$minqcfeats,
-                           percentmt = opt$percentmt)
+                           percentmt = opt$percentmt,
+                           hvgs = opt$hvgs)

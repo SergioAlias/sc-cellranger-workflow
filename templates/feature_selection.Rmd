@@ -1,0 +1,30 @@
+## Feature selection
+
+<!-- Sergio Alías, 20230629 -->
+<!-- Last modified 20230629 -->
+
+```{r fsel_plot, echo = FALSE}
+
+top10 <- head(VariableFeatures(seu), 10)
+
+# plot variable features with and without labels
+featsel1 <- VariableFeaturePlot(seu) + # TODO for loop with metadata to get 1 plot per sample
+  theme(legend.position="top")
+featsel2 <- LabelPoints(plot = featsel1, points = top10, repel = TRUE) + 
+  theme(legend.position="none")
+featsel1 + featsel2
+```
+
+<details>
+<summary>🛈 **How to interpret**</summary>
+<br>
+
+High variable features (HVGs) selected: **`r hvgs`**
+
+In the feature selection step we calculate subset of features that exhibit high cell-to-cell variation in the dataset—they are highly expressed in some cells, and lowly expressed in others. Focusing on these genes in downstream analysis helps to highlight biological signal in single-cell datasets.<sup>1</sup>
+
+*References:*
+
+1. Brennecke, Philip, Simon Anders, Jong Kyoung Kim, Aleksandra A Kołodziejczyk, Xiuwei Zhang, Valentina Proserpio, Bianka Baying, et al. 2013. “Accounting for Technical Noise in Single-Cell Rna-Seq Experiments.” *Nature Methods* 10 (11): 1093–5.
+
+</details>

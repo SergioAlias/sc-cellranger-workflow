@@ -1,27 +1,39 @@
 ## Quality Control
 
 <!-- Sergio Alías, 20230616 -->
-<!-- Last modified 20230628 -->
+<!-- Last modified 20230629 -->
 
 ### Before filtering
 
 ```{r violin_before, echo = FALSE}
 
-VlnPlot(seu,
+VlnPlot(before.seu,
         group.by= "orig.ident",
         features = c('nFeature_scRNAseq', 'nCount_scRNAseq', 'percent.mt', 'percent.rb'),
         ncol = 4)
 ```
 
-<div class="dropdown">
-  <span>🛈 Dropdown test</span>
-  <div class="dropdown-content">
+<details>
+<summary>🛈 **How to interpret**</summary>
+<br>
+
 - **nFeature_scRNAseq**: number of expressed (detected) genes/features per cell
 - **nCount_scRNAseq**: number of reads per cell
 - **percent.mt**: percentage of mitochondrial counts per cell
 - **percent.rb**: percentage of ribosomal counts per cell
-  </div>
-</div>
+
+Some notes on when we should filter cells:
+
+- **Features**: Features are genes, we count the number of unique genes detected in each cell. Low-quality cells or empty droplets will often have very few genes.<sup>1</sup>
+- **Counts**: Counts are the total number of molecules detected within a cell. This should correlate strongly with the number of features. Cell doublets or multiplets may exhibit an aberrantly high gene count.<sup>1</sup>
+-**Mitochondrial counts**: The percentage of reads that map to the mitochondrial genome. Low-quality / dying cells often exhibit extensive mitochondrial contamination.<sup>1</sup>
+
+
+*References:*
+
+1. Ilicic, Tomislav, Jong Kyoung Kim, Aleksandra A Kolodziejczyk, Frederik Otzen Bagger, Davis James McCarthy, John C Marioni, and Sarah A Teichmann. 2016. “Classification of Low Quality Cells from Single-Cell Rna-Seq Data.” *Genome Biology* 17 (1): 1–15.
+
+</details>
 
 ### Metadata features correlation
 

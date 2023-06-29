@@ -1,7 +1,7 @@
 #! /usr/bin/env Rscript
 
 # Sergio Alías, 20230627
-# Last modified 20230628
+# Last modified 20230629
 
 
 ################################################
@@ -51,7 +51,7 @@ option_list <- list(
   make_option(c("--hvgs"), type = "integer",
               help="Number of HVG to be selected"),
   make_option(c("--ndims"), type = "integer",
-              help="Number of PC to be plotted on the heatmap"),
+              help="Number of PC to be used for clustering / UMAP / tSNE"),
   make_option(c("--dimheatmapcells"), type = "integer",
               help="Heatmap plots the 'extreme' cells on both ends of the spectrum"),
   make_option(c("--experiment_name"), type = "character",
@@ -68,6 +68,7 @@ opt <- parse_args(OptionParser(option_list = option_list))
 ############
 
 seu_list <- list()
+raw_seu_list <- list()
 rds_files <- scan(opt$input,
                   what = character())
 main_folder <- opt$results_folder
@@ -81,26 +82,39 @@ for (name in rds_files) {
                                          ".",
                                          name,
                                          ".seu.RDS")))
-  
   seu_list <- append(seu_list, rds_object)
+  
+  
+  raw_object <- readRDS(file.path(main_folder,
+                                  name,
+                                  "preprocessing.R_0000",
+                                  paste0(experiment_name,
+                                         ".",
+                                         name,
+                                         ".before.seu.RDS")))
+  raw_seu_list <- append(raw_seu_list, raw_object)
 }
 
 names(seu_list) <- rds_files
+names(raw_seu_list) <- rds_files
 
 while (length(seu_list) > 1){
-  seu_1 <- seu_list[[1]]
-  seu_2 <- seu_list[[2]]
-  name_1 <-names(seu_list)[1]
-  name_2 <-names(seu_list)[2]
-  #save(list = ls(all.names = TRUE), file = "~/test/environment/environment_no_hack.RData")
+  prov_seu <- merge(seu_list[[1]], seu_list[[2]], add.cell.ids = c(names(seu_list)[1], names(seu_list)[2]))
   seu_list <- seu_list[-c(1, 2)]
-  prov_seu <- merge(seu_1, seu_2, add.cell.ids = c(name_1, name_2))
   seu_list <- c(prov_seu, seu_list)
+  
+  raw_prov_seu <- merge(raw_seu_list[[1]], raw_seu_list[[2]], add.cell.ids = c(names(raw_seu_list)[1], names(raw_seu_list)[2]))
+  raw_seu_list <- raw_seu_list[-c(1, 2)]
+  raw_seu_list <- c(raw_prov_seu, raw_seu_list)
 }
 
 seu <- seu_list[[1]]
 rm(prov_seu)
 rm(seu_list)
+
+before.seu <- raw_seu_list[[1]]
+rm(raw_prov_seu)
+rm(raw_seu_list)
 
 write_preprocessing_report(name = "All samples",
                            experiment = experiment_name,
@@ -111,4 +125,5 @@ write_preprocessing_report(name = "All samples",
                            intermediate_files = "int_files",
                            minqcfeats = opt$minqcfeats,
                            percentmt = opt$percentmt,
-                           all_seu = seu)
+                           hvgs = opt$hvgs,
+                           all_seu = list(seu, before.seu))
