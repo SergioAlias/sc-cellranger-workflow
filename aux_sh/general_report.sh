@@ -30,4 +30,5 @@ mkdir -p $PREPROC_RESULTS_FOLDER
                                --ndims $preproc_pca_n_dims \
                                --dimheatmapcells $preproc_pca_n_cells \
                                --experiment_name $experiment_name \
-                               --results_folder $PREPROC_RESULTS_FOLDER
+                               --results_folder $PREPROC_RESULTS_FOLDER \
+                               --resolution $preproc_resolution

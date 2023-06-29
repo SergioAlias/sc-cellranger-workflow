@@ -98,7 +98,7 @@ do_qc <- function(name, experiment, seu, minqcfeats, percentmt){
 #' Perform linear (PCA) and non-linear (UMAP/tSNE) dimensionality reduction
 #'
 #' @param seu: Seurat object
-#' @param ndims: Number of PC to be used for clustering / UMAP / tSNE
+#' @param ndims: Number of PC to be used for UMAP / tSNE
 #' 
 #' @keywords preprocessing, dimensionality, reduction, PCA, UMAP, tSNE
 #' 
@@ -112,6 +112,27 @@ do_dimred <- function(seu, ndims){
 
 
 ##########################################################################
+
+
+#' do_clustering
+#' Perform clustering of cells
+#'
+#' @param seu: Seurat object
+#' @param ndims: Number of PC to be used for clustering
+#' @param: resolution: Granularity of the downstream clustering (higher values -> greater number of clusters)
+#' 
+#' @keywords preprocessing, clustering
+#' 
+#' @return Seurat object
+do_clustering <- function(seu, ndims, resolution){
+  seu <- FindNeighbors(seu, dims = 1:ndims)
+  seu <- FindClusters(seu, resolution = resolution)
+  return(seu)
+}
+
+
+##########################################################################
+
 
 
 #' main_preprocessing_analysis
@@ -128,12 +149,13 @@ do_dimred <- function(seu, ndims){
 #' @param normalmethod: Normalization method
 #' @param hvgs: Number of HVGs to be selected
 #' @param ndims: Number of PC to be used for clustering / UMAP / tSNE
+#' @param: resolution: Granularity of the downstream clustering (higher values -> greater number of clusters)
 #' 
 #' @keywords preprocessing, main
 #' 
 #' @return Seurat object
 main_preprocessing_analysis <- function(name, experiment, input, filter, mincells, minfeats, minqcfeats,
-                                        percentmt, normalmethod, scalefactor, hvgs, ndims){
+                                        percentmt, normalmethod, scalefactor, hvgs, ndims, resolution){
 
   # Input selection
   
@@ -175,6 +197,12 @@ main_preprocessing_analysis <- function(name, experiment, input, filter, mincell
   seu <- do_dimred(seu = seu,
                    ndims = ndims)
   
+  # Clustering
+  
+  seu <- do_clustering(seu = seu,
+                       ndims = ndims,
+                       resolution = resolution)
+  
   # Save final Seurat object
   
   saveRDS(seu, paste0(experiment, ".", name, ".seu.RDS"))
@@ -195,12 +223,13 @@ main_preprocessing_analysis <- function(name, experiment, input, filter, mincell
 #' @param minqcfeats: min number of features for which a cell is selected
 #' @param percentmt: max percentage of reads mapped to mitochondrial genes for which a cell is selected
 #' @param hvgs: Number of HVGs to be selected
+#' @param: resolution: Granularity of the downstream clustering (higher values -> greater number of clusters)
 #' @param all_seu: NULL if creating an indiviual report (daemon 3a). A list of 2 Seurat objects if creating a general report (daemon 3b)
 #' 
 #' @keywords preprocessing, write, report
 #' 
 #' @return nothing
-write_preprocessing_report <- function(name, experiment, template, outdir, intermediate_files, minqcfeats, percentmt, hvgs, all_seu = NULL){
+write_preprocessing_report <- function(name, experiment, template, outdir, intermediate_files, minqcfeats, percentmt, hvgs, resolution, all_seu = NULL){
   int_files <- file.path(outdir, intermediate_files)
   if (!file.exists(int_files)){
     dir.create(int_files)

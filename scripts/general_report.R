@@ -57,7 +57,9 @@ option_list <- list(
   make_option(c("--experiment_name"), type = "character",
               help="Experiment name"),
   make_option(c("--results_folder"), type = "character",
-              help="Folder with the preprocessing results")
+              help="Folder with the preprocessing results"),
+  make_option(c("--resolution"), type = "character",
+              help="Granularity of the clustering")
 )  
 
 opt <- parse_args(OptionParser(option_list = option_list))
@@ -126,4 +128,5 @@ write_preprocessing_report(name = "All samples",
                            minqcfeats = opt$minqcfeats,
                            percentmt = opt$percentmt,
                            hvgs = opt$hvgs,
+                           resolution = opt$resolution,
                            all_seu = list(seu, before.seu))

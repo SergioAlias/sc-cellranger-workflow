@@ -67,6 +67,7 @@ elif [ "$module" == "3a" ] || [ "$module" == "3b" ]; then
     export preproc_norm_method=LogNormalize    #-------#    Seurat normalization method: LogNormalize, CLR, RC
     export preproc_scale_factor=10000          #-------#    Seurat scale factor for cell-level normalization
     export preproc_select_hvgs=2000            #-------#    Number of HVG to be selected (feature selection)
-    export preproc_pca_n_dims=20               #-------#   Number of PC to use for clustering / UMAP / tSNE
+    export preproc_pca_n_dims=20               #-------#    Number of PC to use for clustering / UMAP / tSNE
+    export preproc_resolution=0.5              #-------#    Granularity of the clustering (higher values -> greater number of clusters)
     export preproc_pca_n_cells=500             #-------#    Heatmap plots the 'extreme' cells on both ends of the spectrum -> dramatically speeds plotting for large datasets
 fi

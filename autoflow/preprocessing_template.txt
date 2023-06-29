@@ -25,5 +25,6 @@ sc_preprocessing){
                  --ndims $preproc_pca_n_dims \
                  --dimheatmapcells $preproc_pca_n_cells \
                  --report_folder $report_folder \
-                 --experiment_name $experiment_name
+                 --experiment_name $experiment_name \
+                 --resolution $preproc_resolution
 }

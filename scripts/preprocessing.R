@@ -58,7 +58,9 @@ option_list <- list(
   make_option(c("--report_folder"), type = "character",
               help="Folder where the report is written"),
   make_option(c("--experiment_name"), type = "character",
-              help="Experiment name")
+              help="Experiment name"),
+  make_option(c("--resolution"), type = "character",
+              help="Granularity of the clustering")
 )  
 
 
@@ -80,7 +82,8 @@ main_preprocessing_analysis(name = opt$name,
                             normalmethod = opt$normalmethod,
                             scalefactor = opt$scalefactor,
                             hvgs = opt$hvgs,
-                            ndims = opt$ndims)
+                            ndims = opt$ndims,
+                            resolution = opt$resolution)
 
 write_preprocessing_report(name = opt$name,
                            experiment = opt$experiment_name,
@@ -91,4 +94,5 @@ write_preprocessing_report(name = opt$name,
                            intermediate_files = "int_files",
                            minqcfeats = opt$minqcfeats,
                            percentmt = opt$percentmt,
-                           hvgs = opt$hvgs)
+                           hvgs = opt$hvgs,
+                           resolution = opt$resolution)
