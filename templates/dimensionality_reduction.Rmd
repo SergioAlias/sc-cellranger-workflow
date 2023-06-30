@@ -38,7 +38,7 @@ Principal component analysis (PCA) discovers axes in high-dimensional space that
 
 ### t-Distributed Stochastic Neighbor Embedding (t-SNE)
 
-```{r pca, echo = FALSE}
+```{r pctsneecho = FALSE}
 
 DimPlot(seu, reduction = "tsne")
 ```
@@ -53,7 +53,7 @@ t-Distributed Stochastic Neighbor Embedding (t-SNE)
 
 ### Uniform Manifold Approximation and Projection (UMAP)
 
-```{r pca, echo = FALSE}
+```{r pcaumapcho = FALSE}
 
 DimPlot(seu, reduction = "umap")
 ```
