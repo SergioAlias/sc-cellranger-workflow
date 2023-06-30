@@ -1,7 +1,7 @@
 #! /usr/bin/env Rscript
 
 # Sergio Alías, 20230606
-# Last modified 20230628
+# Last modified 20230630
 
 
 #################################
@@ -59,7 +59,7 @@ option_list <- list(
               help="Folder where the report is written"),
   make_option(c("--experiment_name"), type = "character",
               help="Experiment name"),
-  make_option(c("--resolution"), type = "character",
+  make_option(c("--resolution"), type = "double",
               help="Granularity of the clustering")
 )  
 

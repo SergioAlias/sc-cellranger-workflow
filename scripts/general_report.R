@@ -1,7 +1,7 @@
 #! /usr/bin/env Rscript
 
 # Sergio Alías, 20230627
-# Last modified 20230629
+# Last modified 20230630
 
 
 ################################################
@@ -58,7 +58,7 @@ option_list <- list(
               help="Experiment name"),
   make_option(c("--results_folder"), type = "character",
               help="Folder with the preprocessing results"),
-  make_option(c("--resolution"), type = "character",
+  make_option(c("--resolution"), type = "double",
               help="Granularity of the clustering")
 )  
 

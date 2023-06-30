@@ -1,12 +1,12 @@
 # Sergio Alías, 20230612
-# Last modified 20230628
+# Last modified 20230630
 
 ####################
 ### Preprocessing template. Parametres can be customized at config_deamon
 
 
 sc_preprocessing){
- resources: -c 2 -t 2-00:00:00 -m '5gb'
+ resources: -c 2 -t 2-00:00:00 -m '15gb'
  mkdir -p $RESULTS_FOLDER
  . ~soft_bio_267/initializes/init_R 
  echo [cpu]

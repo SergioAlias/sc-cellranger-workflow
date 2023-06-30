@@ -1,5 +1,5 @@
 # Sergio Alías, 20230606
-# Last modified 20230629
+# Last modified 20230630
 
 ##########################################################################
 ########################## PRE-PROCESSING LIBRARY ########################
@@ -86,6 +86,8 @@ do_qc <- function(name, experiment, seu, minqcfeats, percentmt){
   seu[['QC']] <- ifelse(seu@meta.data$percent.mt > percentmt & seu@meta.data$QC == 'Pass','High_MT',seu@meta.data$QC)
   seu[['QC']] <- ifelse(seu@meta.data$nFeature_scRNAseq < minqcfeats & seu@meta.data$QC != 'Pass' & seu@meta.data$QC != 'High_MT',paste('High_MT',seu@meta.data$QC,sep = ','),seu@meta.data$QC)
   table(seu[['QC']])
+  
+  subset(seu, subset = QC == 'Pass')
   
   return(seu)
 }

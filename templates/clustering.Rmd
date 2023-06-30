@@ -1,31 +1,15 @@
 ## Clustering
 
 <!-- Sergio Alías, 20230629 -->
-<!-- Last modified 20230629 -->
-
-<details>
-<summary>🛈 **What is dimensionality reduction?**</summary>
-
-If we had a scRNA-seq data set with two genes, we could make a two-dimensional plot where each axis represents the expression of one gene and each point in the plot represents a cell. But we don't have two genes, we have thousands of them. Dimensionality reduction aims to reduce this number of separate dimensions in the data. This is possible because different genes are correlated if they are affected by the same biological process. Thus, we do not need to store separate information for individual genes, but can instead compress multiple features into a single dimension, e.g., an "eigengene".<sup>1</sup>
-
-
-We can perform linear (PCA) and non-linear (UMAP, tSNE) dimensionality reduction. Oversimplifying for the sake of comprehensibility, one can think of the linear transformation as shifting and stretching the data, and the non-linear transformation as making more drastic changes to the data, such as making it "inside out".<sup>2</sup>
-
-*References:*
-
-1.  OSCA basics: [http://bioconductor.org/books/3.17/OSCA.basic/dimensionality-reduction.html](http://bioconductor.org/books/3.17/OSCA.basic/dimensionality-reduction.html)
-2. [https://stats.stackexchange.com/questions/319771/linear-versus-nonlinear-dimensionality-reduction-techniques](https://stats.stackexchange.com/questions/319771/linear-versus-nonlinear-dimensionality-reduction-techniques)
-
-</details>
-
-### Linear dimensionality reduction (PCA)
+<!-- Last modified 20230630 -->
 
 ```{r clustering_table, echo = FALSE}
-# TODO tables of clusters per sample
+table(seu[[]]$seurat_clusters)
 ```
 
 <details>
 <summary>🛈 **How to interpret**</summary>
+<br>
 
 - **Clustering resolution: `r resolution`** (Increased values lead to a greater number of clusters. Setting this parameter between 0.4-1.2 typically returns good results for single-cell datasets of around 3K cells. Optimal resolution often increases for larger datasets)
 
