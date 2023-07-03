@@ -73,7 +73,7 @@ library(patchwork)
 ```{r child="clustering.Rmd"}
 ```
 
-```{r child="dimensionality_reduction.Rmd"}
+```{r child="dimensionality_reduction.Rmd", eval=FALSE}
 ```
 
 

@@ -1,7 +1,7 @@
 ## Quality Control
 
 <!-- Sergio Alías, 20230616 -->
-<!-- Last modified 20230630 -->
+<!-- Last modified 20230703 -->
 
 ### Before filtering
 
@@ -64,28 +64,28 @@ Some notes on when we should filter cells:
 
 ```{r scatter1, echo = FALSE}
 
-#FeatureScatter(seu, feature1 = "nCount_scRNAseq", feature2 = "percent.mt")
+#FeatureScatter(before.seu, feature1 = "nCount_scRNAseq", feature2 = "percent.mt")
 ```
 
 #### Nº of features VS nº of reads
 
 ```{r scatter2, echo = FALSE}
 
-#FeatureScatter(seu, feature1 = "nCount_scRNAseq", feature2 = "nFeature_scRNAseq")
+#FeatureScatter(before.seu, feature1 = "nCount_scRNAseq", feature2 = "nFeature_scRNAseq")
 ```
 
 #### Ribosomal counts VS nº of reads
 
 ```{r scatter3, echo = FALSE}
 
-#FeatureScatter(seu, feature1 = "nCount_scRNAseq", feature2 = "percent.rb")
+#FeatureScatter(before.seu, feature1 = "nCount_scRNAseq", feature2 = "percent.rb")
 ```
 
 #### Mito counts VS ribosomal counts
 
 ```{r scatter4, echo = FALSE}
 
-#FeatureScatter(seu, feature1 = "percent.rb", feature2 = "percent.mt")
+#FeatureScatter(before.seu, feature1 = "percent.rb", feature2 = "percent.mt")
 ```
 
 
@@ -93,7 +93,7 @@ Some notes on when we should filter cells:
 
 ```{r qc_filter, echo = FALSE}
 
-table(seu[['QC']]) # TODO use package for nice table
+table(before.seu[['QC']]) # TODO use package for nice table
 
 ```
 

@@ -1,5 +1,5 @@
 # Sergio Alías, 20230606
-# Last modified 20230630
+# Last modified 20230703
 
 ##########################################################################
 ########################## PRE-PROCESSING LIBRARY ########################
@@ -73,10 +73,6 @@ do_qc <- function(name, experiment, seu, minqcfeats, percentmt){
   
   seu[["percent.rb"]] <- PercentageFeatureSet(seu, pattern = "^RP[SL]")
   
-  # Save before version
-  
-  saveRDS(seu, paste0(experiment, ".", name, ".before.seu.RDS"))
-
   ##### Filtering out cells #####
 
   # seu[['QC']] <- ifelse(seu@meta.data$Is_doublet == 'True','Doublet','Pass')
@@ -86,6 +82,10 @@ do_qc <- function(name, experiment, seu, minqcfeats, percentmt){
   seu[['QC']] <- ifelse(seu@meta.data$percent.mt > percentmt & seu@meta.data$QC == 'Pass','High_MT',seu@meta.data$QC)
   seu[['QC']] <- ifelse(seu@meta.data$nFeature_scRNAseq < minqcfeats & seu@meta.data$QC != 'Pass' & seu@meta.data$QC != 'High_MT',paste('High_MT',seu@meta.data$QC,sep = ','),seu@meta.data$QC)
   table(seu[['QC']])
+  
+  # Save before version
+  
+  saveRDS(seu, paste0(experiment, ".", name, ".before.seu.RDS"))
   
   seu <- subset(seu, subset = QC == 'Pass')
   

@@ -1,12 +1,12 @@
 #! /usr/bin/env bash
 
 # Sergio Alías, 20230627
-# Last modified 20230628
+# Last modified 20230703
 
 # STAGE 3 PREPROCESSING
 
 #SBATCH --cpus-per-task=2
-#SBATCH --mem=20gb
+#SBATCH --mem=50gb
 #SBATCH --constraint=cal
 #SBATCH --error=job.genrep.%J.err
 #SBATCH --output=job.genrep.%J.out
