@@ -1,14 +1,20 @@
 ## Clustering
 
 <!-- Sergio Alías, 20230629 -->
-<!-- Last modified 20230630 -->
+<!-- Last modified 20230704 -->
 
 ```{r clustering_table, echo = FALSE}
-table(seu[[]]$seurat_clusters)
+
+met_seu <- extract_metadata(seu)
+
+kable_styling(kbl(table(met_seu[["orig.ident"]], met_seu[["seurat_clusters"]])),
+              bootstrap_options = c("striped",
+                                    "hover")
+              )
 ```
 
 <details>
-<summary>🛈 **How to interpret**</summary>
+<summary>**How to interpret**</summary>
 <br>
 
 - **Clustering resolution: `r resolution`** (Increased values lead to a greater number of clusters. Setting this parameter between 0.4-1.2 typically returns good results for single-cell datasets of around 3K cells. Optimal resolution often increases for larger datasets)

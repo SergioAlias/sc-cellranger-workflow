@@ -63,6 +63,7 @@ Report of single-cell pre-processing using Seurat
 ```{r setup, echo = FALSE}
 library(ggplot2)
 library(patchwork)
+library(kableExtra)
 ```
 
 ```{r child="qc.Rmd"}
@@ -71,10 +72,10 @@ library(patchwork)
 ```{r child="feature_selection.Rmd"}
 ```
 
-```{r child="clustering.Rmd", eval=FALSE}
+```{r child="clustering.Rmd", eval = TRUE}
 ```
 
-```{r child="dimensionality_reduction.Rmd", eval=FALSE}
+```{r child="dimensionality_reduction.Rmd", eval = FALSE}
 ```
 
 

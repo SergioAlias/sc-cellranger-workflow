@@ -271,6 +271,27 @@ write_preprocessing_report <- function(name, experiment, template, outdir, inter
 
 ##########################################################################
 
+
+#' extract_metadata
+#' Extract metadata dataframe from Seurat objects
+#' 
+#' @param seu: Seurat object / list of Seurat objects
+#' 
+#' @keywords preprocessing, report, metadata
+#' 
+#' @return Dataframe with metadata
+extract_metadata <- function(seu){
+  if (!is.list(seu)){
+    seu <- seu[[]]
+  } else {
+    seu <- lapply(seu, "[[")
+    seu <- do.call(rbind, seu)
+    }
+return(seu)
+}
+
+##########################################################################
+
 #' make_vln
 #' Make Violin plot
 #' 
@@ -281,29 +302,25 @@ write_preprocessing_report <- function(name, experiment, template, outdir, inter
 #' 
 #' @return nothing
 make_vln <- function(seu, feature){
-  if (!is.list(seu)){
-    seu <- seu[[]]
-  } else {
-    seu <- lapply(seu, "[[")
-    seu <- do.call(rbind, seu)
-  }
-  
+  seu <- extract_metadata(seu)
   seu <- seu[, c("orig.ident", feature)]
   colnames(seu)[2] <- "values"
   ggplot() + 
-geom_point(seu,
-           mapping = aes(orig.ident, values, fill = orig.ident),
-           shape = 21,
-           colour = "white",
-           size = 2,
-           stroke = 0.5,
-           position = "jitter",
-           alpha = 0.3) +
-  geom_violin(seu,
-              mapping = aes(orig.ident, values, fill = orig.ident),
-              width = 0.5,
-              color = "black") +
-  xlab(NULL) +
-  ylab(feature) +
-  labs(fill = NULL)
+    geom_point(seu,
+               mapping = aes(orig.ident, values, fill = orig.ident),
+               shape = 21,
+               colour = "white",
+               size = 2,
+               stroke = 0.5,
+               position = "jitter",
+               alpha = 0.3) +
+    geom_violin(seu,
+                mapping = aes(orig.ident, values, fill = orig.ident),
+                width = 0.5,
+                color = "black") +
+    xlab(NULL) +
+    ylab(feature) +
+    labs(fill = NULL)
 }
+
+

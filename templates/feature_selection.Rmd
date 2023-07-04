@@ -1,7 +1,7 @@
 ## Feature selection
 
 <!-- Sergio Alías, 20230629 -->
-<!-- Last modified 20230629 -->
+<!-- Last modified 20230704 -->
 
 ```{r fsel_plot, echo = FALSE}
 
@@ -16,7 +16,7 @@
 ```
 
 <details>
-<summary>🛈 **How to interpret**</summary>
+<summary>**How to interpret**</summary>
 <br>
 
 High variable genes (HVGs) selected: **`r hvgs`**

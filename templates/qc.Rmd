@@ -27,7 +27,7 @@ make_vln(before.seu, 'percent.rb')
 </div>
 
 <details>
-<summary>🛈 **How to interpret**</summary>
+<summary>**How to interpret**</summary>
 <br>
 
 - **nFeature_scRNAseq**: number of expressed (detected) genes/features per cell
@@ -83,16 +83,13 @@ Some notes on when we should filter cells:
 ### Filtering parameters
 
 ```{r qc_filter, echo = FALSE}
-if (!is.list(seu)){
-    before.seu <- before.seu[[]]
-    table(before.seu[['QC']])
-  } else {
-    before.seu <- lapply(before.seu, "[[")
-    for (ind_seu in before.seu){
-      message(bind_eu[["orig.ident"]][[1]][1])
-      table(i[nd_seu['QC']])
-    }
-  }
+
+met_seu <- extract_metadata(before.seu)
+
+kable_styling(kbl(table(met_seu[["orig.ident"]], met_seu[["QC"]])),
+              bootstrap_options = c("striped",
+                                    "hover")
+              )
 
 ```
 
@@ -104,7 +101,6 @@ if (!is.list(seu)){
 
 <div class="superbigimage">
 ```{r violin_after_1, echo = FALSE}
-
 make_vln(seu, 'nFeature_scRNAseq')
 ```
 </div>
