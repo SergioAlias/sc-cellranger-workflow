@@ -89,8 +89,8 @@ if (!is.list(seu)){
   } else {
     before.seu <- lapply(before.seu, "[[")
     for (ind_seu in before.seu){
-      message(before.seu[["orig.ident"]][[1]][1])
-      table(i[['QC']])
+      message(bind_eu[["orig.ident"]][[1]][1])
+      table(i[nd_seu['QC']])
     }
   }
 
