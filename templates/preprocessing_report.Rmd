@@ -75,7 +75,7 @@ library(kableExtra)
 ```{r child="clustering.Rmd", eval = TRUE}
 ```
 
-```{r child="dimensionality_reduction.Rmd", eval = FALSE}
+```{r child="dimensionality_reduction.Rmd", eval = TRUE}
 ```
 
 

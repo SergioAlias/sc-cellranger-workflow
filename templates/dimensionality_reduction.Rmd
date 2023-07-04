@@ -20,11 +20,13 @@ We can perform linear (PCA) and non-linear (UMAP, tSNE) dimensionality reduction
 
 ### Principal Component Analysis (PCA)
 
-```{r pca, echo = FALSE}
+```{r pca, echo = FALSE, results = "asis"}
 
 list_seu <- ensure_list(seu)
 for (i in 1:length(list_seu)) {
-  DimPlot(list_seu[[i]], reduction = "pca")
+  seu_name <- list_seu[[i]]@project.name
+  cat(seu_name)
+  print(DimPlot(list_seu[[i]], reduction = "pca"))
 }
 ```
 
@@ -41,10 +43,12 @@ Principal component analysis (PCA) discovers axes in high-dimensional space that
 
 ### t-Distributed Stochastic Neighbor Embedding (t-SNE)
 
-```{r tsne, echo = FALSE}
+```{r tsne, echo = FALSE, results = "asis"}
 
 for (i in 1:length(list_seu)) {
-  DimPlot(list_seu[[i]], reduction = "tsne")
+  seu_name <- list_seu[[i]]@project.name
+  cat(seu_name)
+  print(DimPlot(list_seu[[i]], reduction = "tsne"))
 }
 ```
 
@@ -58,10 +62,12 @@ t-Distributed Stochastic Neighbor Embedding (t-SNE)
 
 ### Uniform Manifold Approximation and Projection (UMAP)
 
-```{r umap, echo = FALSE}
+```{r umap, echo = FALSE, results = "asis"}
 
 for (i in 1:length(list_seu)) {
-  DimPlot(list_seu[[i]], reduction = "umap")
+  seu_name <- list_seu[[i]]@project.name
+  cat(seu_name)
+  print(DimPlot(list_seu[[i]], reduction = "umap"))
 }
 ```
 

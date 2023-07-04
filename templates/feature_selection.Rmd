@@ -3,7 +3,7 @@
 <!-- Sergio Alías, 20230629 -->
 <!-- Last modified 20230704 -->
 
-```{r fsel_plot, echo = FALSE}
+```{r fsel_plot, echo = FALSE, warning = FALSE, results = "asis"}
 
 list_seu <- ensure_list(seu)
 
@@ -11,9 +11,11 @@ for (i in 1:length(list_seu)) {
   top10 <- head(VariableFeatures(list_seu[[i]]), 10)
   featsel1 <- VariableFeaturePlot(list_seu[[i]]) +
     theme(legend.position="top")
-  featsel2 <- LabelPoints(plot = featsel1, points = top10, repel = TRUE) + 
+  featsel2 <- LabelPoints(plot = featsel1, points = top10, repel = TRUE, xnudge = 0, ynudge = 0) + 
     theme(legend.position="none")
-  featsel1 + featsel2
+  seu_name <- list_seu[[i]]@project.name
+  cat(seu_name)
+  print(featsel1 + featsel2)
 }
 
 ```
