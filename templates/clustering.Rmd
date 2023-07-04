@@ -7,10 +7,11 @@
 
 met_seu <- extract_metadata(seu)
 
-kable_styling(kbl(table(met_seu[["orig.ident"]], met_seu[["seurat_clusters"]])),
-              bootstrap_options = c("striped",
-                                    "hover")
-              )
+scroll_box(kable_styling(kbl(table(met_seu[["orig.ident"]], met_seu[["seurat_clusters"]])),
+                         bootstrap_options = c("striped",
+                                               "hover")),
+           width = "100%"
+           )
 ```
 
 <details>

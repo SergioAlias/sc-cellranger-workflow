@@ -88,7 +88,8 @@ met_seu <- extract_metadata(before.seu)
 
 kable_styling(kbl(table(met_seu[["orig.ident"]], met_seu[["QC"]])),
               bootstrap_options = c("striped",
-                                    "hover")
+                                    "hover"),
+              full_width = FALSE
               )
 
 ```
