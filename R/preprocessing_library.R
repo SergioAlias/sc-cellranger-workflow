@@ -1,5 +1,5 @@
 # Sergio Alías, 20230606
-# Last modified 20230703
+# Last modified 20230704
 
 ##########################################################################
 ########################## PRE-PROCESSING LIBRARY ########################
@@ -266,4 +266,44 @@ write_preprocessing_report <- function(name, experiment, template, outdir, inter
                                                    "_preprocessing_report.html")), 
                     clean = TRUE,
                     intermediates_dir = int_files)
+}
+
+
+##########################################################################
+
+#' make_vln
+#' Make Violin plot
+#' 
+#' @param seu: Seurat object / list of Seurat objects
+#' @param feature: metadate feature to plot
+#' 
+#' @keywords preprocessing, report, plot, violin
+#' 
+#' @return nothing
+make_vln <- function(seu, feature){
+  if (!is.list(seu)){
+    seu <- seu[[]]
+  } else {
+    seu <- lapply(seu, "[[")
+    seu <- do.call(rbind, seu)
+  }
+  
+  seu <- seu[, c("orig.ident", feature)]
+  colnames(seu)[2] <- "values"
+  ggplot() + 
+geom_point(seu,
+           mapping = aes(orig.ident, values, fill = orig.ident),
+           shape = 21,
+           colour = "white",
+           size = 2,
+           stroke = 0.5,
+           position = "jitter",
+           alpha = 0.3) +
+  geom_violin(seu,
+              mapping = aes(orig.ident, values, fill = orig.ident),
+              width = 0.5,
+              color = "black") +
+  xlab(NULL) +
+  ylab(feature) +
+  labs(fill = NULL)
 }

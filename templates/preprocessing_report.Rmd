@@ -61,6 +61,7 @@ Error in parse(text = x, srcfile = src) : <text>:4:1: unexpected '<'
 Report of single-cell pre-processing using Seurat
 
 ```{r setup, echo = FALSE}
+library(ggplot2)
 library(patchwork)
 ```
 
@@ -70,7 +71,7 @@ library(patchwork)
 ```{r child="feature_selection.Rmd"}
 ```
 
-```{r child="clustering.Rmd"}
+```{r child="clustering.Rmd", eval=FALSE}
 ```
 
 ```{r child="dimensionality_reduction.Rmd", eval=FALSE}

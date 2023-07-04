@@ -97,26 +97,29 @@ for (name in rds_files) {
   raw_seu_list <- append(raw_seu_list, raw_object)
 }
 
-names(seu_list) <- rds_files
-names(raw_seu_list) <- rds_files
+# names(seu_list) <- rds_files
+# names(raw_seu_list) <- rds_files
+# 
+# while (length(seu_list) > 1){
+#   prov_seu <- merge(seu_list[[1]], seu_list[[2]], add.cell.ids = c(names(seu_list)[1], names(seu_list)[2]))
+#   seu_list <- seu_list[-c(1, 2)]
+#   seu_list <- c(prov_seu, seu_list)
+#   
+#   raw_prov_seu <- merge(raw_seu_list[[1]], raw_seu_list[[2]], add.cell.ids = c(names(raw_seu_list)[1], names(raw_seu_list)[2]))
+#   raw_seu_list <- raw_seu_list[-c(1, 2)]
+#   raw_seu_list <- c(raw_prov_seu, raw_seu_list)
+# }
+# 
+# seu <- seu_list[[1]]
+# rm(prov_seu)
+# rm(seu_list)
+# 
+# before.seu <- raw_seu_list[[1]]
+# rm(raw_prov_seu)
+# rm(raw_seu_list)
 
-while (length(seu_list) > 1){
-  prov_seu <- merge(seu_list[[1]], seu_list[[2]], add.cell.ids = c(names(seu_list)[1], names(seu_list)[2]))
-  seu_list <- seu_list[-c(1, 2)]
-  seu_list <- c(prov_seu, seu_list)
-  
-  raw_prov_seu <- merge(raw_seu_list[[1]], raw_seu_list[[2]], add.cell.ids = c(names(raw_seu_list)[1], names(raw_seu_list)[2]))
-  raw_seu_list <- raw_seu_list[-c(1, 2)]
-  raw_seu_list <- c(raw_prov_seu, raw_seu_list)
-}
-
-seu <- seu_list[[1]]
-rm(prov_seu)
-rm(seu_list)
-
-before.seu <- raw_seu_list[[1]]
-rm(raw_prov_seu)
-rm(raw_seu_list)
+seu <- seu_list
+before.seu <- raw_seu_list
 
 write_preprocessing_report(name = "All samples",
                            experiment = experiment_name,

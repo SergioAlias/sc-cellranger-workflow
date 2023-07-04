@@ -1,37 +1,28 @@
 ## Quality Control
 
 <!-- Sergio Alías, 20230616 -->
-<!-- Last modified 20230703 -->
+<!-- Last modified 20230704 -->
 
 ### Before filtering
 
 <div class="superbigimage">
 ```{r violin_before_1, echo = FALSE}
-
-VlnPlot(before.seu,
-        group.by= "orig.ident",
-        features = 'nFeature_scRNAseq')
+make_vln(before.seu, 'nFeature_scRNAseq')
 ```
 </div>
 <div class="superbigimage">
 ```{r violin_before_2, echo = FALSE}
-VlnPlot(before.seu,
-        group.by= "orig.ident",
-        features = 'nCount_scRNAseq')
+make_vln(before.seu, 'nCount_scRNAseq')
 ```
 </div>
 <div class="superbigimage">
 ```{r violin_before_3, echo = FALSE}
-VlnPlot(before.seu,
-        group.by= "orig.ident",
-        features = 'percent.mt')
+make_vln(before.seu, 'percent.mt')
 ```
 </div>
 <div class="superbigimage">
 ```{r violin_before_4, echo = FALSE}
-VlnPlot(before.seu,
-        group.by= "orig.ident",
-        features = 'percent.rb')
+make_vln(before.seu, 'percent.rb')
 ```
 </div>
 
@@ -92,8 +83,16 @@ Some notes on when we should filter cells:
 ### Filtering parameters
 
 ```{r qc_filter, echo = FALSE}
-
-table(before.seu[['QC']]) # TODO use package for nice table
+if (!is.list(seu)){
+    before.seu <- before.seu[[]]
+    table(before.seu[['QC']])
+  } else {
+    before.seu <- lapply(before.seu, "[[")
+    for (ind_seu in before.seu){
+      message(before.seu[["orig.ident"]][[1]][1])
+      table(i[['QC']])
+    }
+  }
 
 ```
 
@@ -106,30 +105,22 @@ table(before.seu[['QC']]) # TODO use package for nice table
 <div class="superbigimage">
 ```{r violin_after_1, echo = FALSE}
 
-VlnPlot(seu,
-        group.by= "orig.ident",
-        features = 'nFeature_scRNAseq')
+make_vln(seu, 'nFeature_scRNAseq')
 ```
 </div>
 <div class="superbigimage">
 ```{r violin_after_2, echo = FALSE}
-VlnPlot(seu,
-        group.by= "orig.ident",
-        features = 'nCount_scRNAseq')
+make_vln(seu, 'nCount_scRNAseq')
 ```
 </div>
 <div class="superbigimage">
 ```{r violin_after_3, echo = FALSE}
-VlnPlot(seu,
-        group.by= "orig.ident",
-        features = 'percent.mt')
+make_vln(seu, 'percent.mt')
 ```
 </div>
 <div class="superbigimage">
 ```{r violin_after_4, echo = FALSE}
-VlnPlot(seu,
-        group.by= "orig.ident",
-        features = 'percent.rb')
+make_vln(seu, 'percent.rb')
 ```
 </div>
 
