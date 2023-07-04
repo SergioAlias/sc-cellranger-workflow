@@ -5,14 +5,21 @@
 
 ```{r fsel_plot, echo = FALSE}
 
-# top10 <- head(VariableFeatures(seu), 10)
+list_seu <- ensure_list(seu)
 
-# plot variable features with and without labels
-# featsel1 <- VariableFeaturePlot(seu) + # TODO for loop with metadata to get 1 plot per sample
-#   theme(legend.position="top")
-# featsel2 <- LabelPoints(plot = featsel1, points = top10, repel = TRUE) + 
-#   theme(legend.position="none")
-# featsel1 + featsel2
+for (i in 1:length(list_seu)) {
+  top10 <- head(VariableFeatures(list_seu[[i]]), 10)
+  featsel1 <- VariableFeaturePlot(list_seu[[i]]) +
+    theme(legend.position="top")
+  featsel2 <- LabelPoints(plot = featsel1, points = top10, repel = TRUE) + 
+    theme(legend.position="none")
+  featsel1 + featsel2
+}
+
+```
+
+```{r fsel_removal, echo = FALSE}
+rm(list_seu)
 ```
 
 <details>

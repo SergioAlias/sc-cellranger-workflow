@@ -14,6 +14,10 @@ scroll_box(kable_styling(kbl(table(met_seu[["orig.ident"]], met_seu[["seurat_clu
            )
 ```
 
+```{r clus_removal, echo = FALSE}
+rm(met_seu)
+```
+
 <details>
 <summary>**How to interpret**</summary>
 <br>

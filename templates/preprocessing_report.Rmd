@@ -66,10 +66,10 @@ library(patchwork)
 library(kableExtra)
 ```
 
-```{r child="qc.Rmd"}
+```{r child="qc.Rmd", eval = TRUE}
 ```
 
-```{r child="feature_selection.Rmd"}
+```{r child="feature_selection.Rmd", eval = TRUE}
 ```
 
 ```{r child="clustering.Rmd", eval = TRUE}
@@ -85,13 +85,13 @@ library(kableExtra)
 <summary>**Code references**</summary>
 <br>
 
-1. [https://satijalab.org/seurat/](https://satijalab.org/seurat/)
+- [https://satijalab.org/seurat/](https://satijalab.org/seurat/)
 
-2. [https://nbisweden.github.io/workshop-scRNAseq/labs/compiled/seurat/seurat_01_qc.html](https://nbisweden.github.io/workshop-scRNAseq/labs/compiled/seurat/seurat_01_qc.html)
+- [https://nbisweden.github.io/workshop-scRNAseq/labs/compiled/seurat/seurat_01_qc.html](https://nbisweden.github.io/workshop-scRNAseq/labs/compiled/seurat/seurat_01_qc.html)
 
-3. [https://holab-hku.github.io/Fundamental-scRNA/downstream.html#standard-pre-processing-workflow](https://holab-hku.github.io/Fundamental-scRNA/downstream.html#standard-pre-processing-workflow)
+- [https://holab-hku.github.io/Fundamental-scRNA/downstream.html#standard-pre-processing-workflow](https://holab-hku.github.io/Fundamental-scRNA/downstream.html#standard-pre-processing-workflow)
 
-4. [https://www.singlecellcourse.org/single-cell-rna-seq-analysis-using-seurat.html#normalization-and-dimensionality-reduction](https://www.singlecellcourse.org/single-cell-rna-seq-analysis-using-seurat.html#normalization-and-dimensionality-reduction)
+- [https://www.singlecellcourse.org/single-cell-rna-seq-analysis-using-seurat.html#normalization-and-dimensionality-reduction](https://www.singlecellcourse.org/single-cell-rna-seq-analysis-using-seurat.html#normalization-and-dimensionality-reduction)
 
 </details>
 

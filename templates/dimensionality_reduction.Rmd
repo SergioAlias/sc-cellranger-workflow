@@ -4,7 +4,7 @@
 <!-- Last modified 20230704 -->
 
 <details>
-<summary>*What is dimensionality reduction?**</summary>
+<summary>**What is dimensionality reduction?**</summary>
 <br>
 If we had a scRNA-seq data set with two genes, we could make a two-dimensional plot where each axis represents the expression of one gene and each point in the plot represents a cell. But we don't have two genes, we have thousands of them. Dimensionality reduction aims to reduce this number of separate dimensions in the data. This is possible because different genes are correlated if they are affected by the same biological process. Thus, we do not need to store separate information for individual genes, but can instead compress multiple features into a single dimension, e.g., an "eigengene".<sup>1</sup>
 
@@ -22,11 +22,14 @@ We can perform linear (PCA) and non-linear (UMAP, tSNE) dimensionality reduction
 
 ```{r pca, echo = FALSE}
 
-DimPlot(seu, reduction = "pca")
+list_seu <- ensure_list(seu)
+for (i in 1:length(list_seu)) {
+  DimPlot(list_seu[[i]], reduction = "pca")
+}
 ```
 
 <details>
-<summary>🛈How to interpret**</summary>
+<summary>**How to interpret**</summary>
 <br>
 Principal component analysis (PCA) discovers axes in high-dimensional space that capture the largest amount of variation. Say we draw a line anywhere, and we move each cell in our data set onto the closest position on the line. The variance captured by this axis is defined as the variance in the positions of cells along that line. In PCA, the first axis (or "principal component", PC) is chosen such that it maximizes this variance. The next PC is chosen such that it is orthogonal to the first and captures the greatest remaining amount of variation, and so on. The top PCs capture the dominant factors of heterogeneity in the dataset. In the context of scRNA-seq, our assumption is that biological processes affect multiple genes in a coordinated manner. This means that the earlier PCs are likely to represent biological structure as more variation can be captured by considering the correlated behavior of many genes.<sup>1</sup>
 
@@ -38,13 +41,15 @@ Principal component analysis (PCA) discovers axes in high-dimensional space that
 
 ### t-Distributed Stochastic Neighbor Embedding (t-SNE)
 
-```{r pctsneecho = FALSE}
+```{r tsne, echo = FALSE}
 
-DimPlot(seu, reduction = "tsne")
+for (i in 1:length(list_seu)) {
+  DimPlot(list_seu[[i]], reduction = "tsne")
+}
 ```
 
 <details>
-<summary>🛈 ow to interpret**</summary>
+<summary>**How to interpret**</summary>
 <br>
 
 t-Distributed Stochastic Neighbor Embedding (t-SNE)
@@ -53,13 +58,19 @@ t-Distributed Stochastic Neighbor Embedding (t-SNE)
 
 ### Uniform Manifold Approximation and Projection (UMAP)
 
-```{r pcaumapcho = FALSE}
+```{r umap, echo = FALSE}
 
-DimPlot(seu, reduction = "umap")
+for (i in 1:length(list_seu)) {
+  DimPlot(list_seu[[i]], reduction = "umap")
+}
+```
+
+```{r dimred_removal, echo = FALSE}
+rm(list_seu)
 ```
 
 <details>
-<summary>🛈 *w to interpret**</summary>
+<summary>**How to interpret**</summary>
 <br>
 
 Uniform Manifold Approximation and Projection (UMAP)
