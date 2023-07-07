@@ -1,0 +1,65 @@
+---  
+title: "scRNA-seq: QC Report"
+author: "SysBioLab"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    df_print: paged
+    fig_width: 12
+---
+
+<!-- Sergio Alías, 20230706 -->
+<!-- Last modified 20230706 -->
+
+<style type='text/css'>
+    body .main-container {
+        max-width: 90%;
+
+    }
+
+    .plot_real_size {
+      overflow: scroll;
+      max-height: 600px;
+    }
+
+    .plot_real_size img{
+      max-width: none;
+      max-height: none;
+    }
+
+    embed {
+   
+  }   
+</style>
+
+<style>
+.dropdown-content {
+  display: none;
+}
+Error in parse(text = x, srcfile = src) : <text>:4:1: unexpected '<'
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
+<style>
+  .superbigimage{
+      overflow-x:scroll;
+      white-space: nowrap;
+  }
+
+  .superbigimage img{
+     max-width: none;
+  }
+
+
+</style>
+
+# `r name` of project `r experiment`
+
+Report of quality of FASTQ files using FastQC and Cell Ranger
+
+```{r setup, echo = FALSE}
+library(patchwork)
+```
