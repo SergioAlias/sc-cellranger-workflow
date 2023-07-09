@@ -1,5 +1,5 @@
 # Sergio Alías, 20230606
-# Last modified 20230704
+# Last modified 20230709
 
 ##########################################################################
 ########################## PRE-PROCESSING LIBRARY ########################
@@ -225,8 +225,8 @@ main_preprocessing_analysis <- function(name, experiment, input, filter, mincell
 #' @param minqcfeats: min number of features for which a cell is selected
 #' @param percentmt: max percentage of reads mapped to mitochondrial genes for which a cell is selected
 #' @param hvgs: Number of HVGs to be selected
-#' @param: resolution: Granularity of the downstream clustering (higher values -> greater number of clusters)
-#' @param all_seu: NULL if creating an indiviual report (daemon 3a). A list of 2 Seurat objects if creating a general report (daemon 3b)
+#' @param resolution: Granularity of the downstream clustering (higher values -> greater number of clusters)
+#' @param all_seu: NULL if creating an individual report (daemon 3a). A list of 2 Seurat objects if creating a general report (daemon 3b)
 #' 
 #' @keywords preprocessing, write, report
 #' 
@@ -264,6 +264,38 @@ write_preprocessing_report <- function(name, experiment, template, outdir, inter
                                                    "_",
                                                    name,
                                                    "_preprocessing_report.html")), 
+                    clean = TRUE,
+                    intermediates_dir = int_files)
+}
+
+
+##########################################################################
+
+
+#' write_qc_report
+#' Write QC HTML report
+#' 
+#' @param name: sample name
+#' @param expermient: experiment name
+#' @param template: Rmd template
+#' @param outdir: output directory
+#' @param intermediate_files: directory for saving intermediate files in case pandoc fails
+#' @param metrics: metrics file
+#' 
+#' @keywords QC, write, report
+#' 
+#' @return nothing
+write_qc_report <- function(name, experiment, template, outdir, intermediate_files, metrics){
+  int_files <- file.path(outdir, intermediate_files)
+  if (!file.exists(int_files)){
+    dir.create(int_files)
+  }
+  rmarkdown::render(template,
+                    output_file = file.path(outdir,
+                                            paste0(experiment,
+                                                   "_",
+                                                   name,
+                                                   "_QC_report.html")), 
                     clean = TRUE,
                     intermediates_dir = int_files)
 }
