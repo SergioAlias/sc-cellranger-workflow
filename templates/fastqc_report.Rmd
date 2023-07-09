@@ -62,10 +62,23 @@ Report of quality of FASTQ files using FastQC and Cell Ranger
 
 ```{r setup, echo = FALSE}
 library(patchwork)
+library(ggplot2)
+
+metric_df <- read.table(file = metrics, sep = '\t', header = TRUE)
 ```
 
-```{r length_before_trimming, eval=TRUE, results='asis', echo=FALSE, warning=FALSE, message=FALSE}
+<div class="superbigimage">
+```{r length_before_trimming, eval=TRUE, results='asis', echo=FALSE}
 
-	cat("\n\n## **Length distribution before trimming**\n\n")
+cat("\n\n## **Length distribution before trimming**\n\n")
+
+ggplot() +
+  geom_bar(metric_df,
+           mapping = aes(sample, initial_total_sequences, fill = sample),
+           width = 0.5,
+           color = "black",
+           stat = "identity")
+
 
 ```
+</div>
