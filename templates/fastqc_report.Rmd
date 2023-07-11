@@ -10,7 +10,7 @@ output:
 ---
 
 <!-- Sergio Alías, 20230706 -->
-<!-- Last modified 20230709 -->
+<!-- Last modified 20230710 -->
 
 <style type='text/css'>
     body .main-container {
@@ -65,20 +65,79 @@ library(patchwork)
 library(ggplot2)
 
 metric_df <- read.table(file = metrics, sep = '\t', header = TRUE)
+long_metric_df <- read.table(file = long_metrics, sep = '\t', header = FALSE)
 ```
 
 <div class="superbigimage">
-```{r length_before_trimming, eval=TRUE, results='asis', echo=FALSE}
+```{r initial_total_sequences, eval=TRUE, results='asis', echo=FALSE}
 
-cat("\n\n## **Length distribution before trimming**\n\n")
+cat("\n\n## **Number of sequences**\n\n")
 
-ggplot() +
-  geom_bar(metric_df,
-           mapping = aes(sample, initial_total_sequences, fill = sample),
-           width = 0.5,
-           color = "black",
-           stat = "identity")
+make_barplot(metric_df, "initial_total_sequences")
 
+```
+</div>
+
+<div class="superbigimage">
+```{r initial_read_max_length, eval=TRUE, results='asis', echo=FALSE}
+
+cat("\n\n## **Read maximum length**\n\n")
+
+make_barplot(metric_df, "initial_read_max_length")
+
+```
+</div>
+
+<div class="superbigimage">
+```{r initial_read_min_length, eval=TRUE, results='asis', echo=FALSE}
+
+cat("\n\n## **Read minimum length**\n\n")
+
+make_barplot(metric_df, "initial_read_min_length")
+
+```
+</div>
+
+<div class="superbigimage">
+```{r initial_gc, eval=TRUE, results='asis', echo=FALSE}
+
+cat("\n\n## **GC content**\n\n")
+
+make_barplot(metric_df, "initial_.gc")
+
+```
+</div>
+
+<div class="superbigimage">
+```{r quality_scores, eval=TRUE, results='asis', echo=FALSE}
+
+cat("\n\n## **Quality scores for samples - lowest scores (min/10th decile) and weighted average**\n\n")
+
+make_hplot(long_metric_df, 
+           c("initial_mean_qual_per_base",
+             "initial_min_qual_per_base_in_lower_quartile",
+             "initial_min_qual_per_base_in_10th_decile", 
+             "initial_weigthed_qual_per_sequence"))
+
+```
+</div>
+
+<div class="superbigimage">
+```{r initial_mean_indeterminations_per_base, eval=TRUE, results='asis', echo=FALSE}
+
+cat("\n\n## **Mean indeterminations per base**\n\n")
+
+make_barplot(metric_df, "initial_mean_indeterminations_per_base")
+
+```
+</div>
+
+<div class="superbigimage">
+```{r initial_weigthed_read_length, eval=TRUE, results='asis', echo=FALSE}
+
+cat("\n\n## **Weigthed read length**\n\n")
+
+make_barplot(metric_df, "initial_weigthed_read_length")
 
 ```
 </div>

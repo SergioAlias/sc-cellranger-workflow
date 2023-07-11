@@ -1,7 +1,7 @@
 #! /usr/bin/env Rscript
 
 # Sergio Alías, 20230707
-# Last modified 20230709
+# Last modified 20230710
 
 
 ######################################
@@ -22,7 +22,7 @@ library(Seurat)
 ###################
 
 root_path <- Sys.getenv("CODE_PATH") # daemon
-source(file.path(root_path, "R", "preprocessing_library.R"))
+source(file.path(root_path, "R", "qc_library.R"))
 
 
 ############
@@ -31,7 +31,9 @@ source(file.path(root_path, "R", "preprocessing_library.R"))
 
 option_list <- list(
   make_option(c("-m", "--metrics"), type = "character",
-              help="Metrics file"),
+              help="Metrics file in wide format"),
+  make_option(c("-l", "--long_metrics"), type = "character",
+              help="Metrics file in long format"),
   make_option(c("-o", "--output"), type = "character",
               help="Output folder"),
   make_option(c("-e", "--experiment_name"), type = "character",
@@ -52,4 +54,5 @@ write_qc_report(name = "All samples",
                                      "fastqc_report.Rmd"),
                 outdir = opt$output,
                 intermediate_files = "int_files",
-                metrics = opt$metrics)
+                metrics = opt$metrics,
+                long_metrics = opt$long_metrics)

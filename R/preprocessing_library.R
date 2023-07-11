@@ -1,5 +1,5 @@
 # Sergio Alías, 20230606
-# Last modified 20230709
+# Last modified 20230710
 
 ##########################################################################
 ########################## PRE-PROCESSING LIBRARY ########################
@@ -272,38 +272,6 @@ write_preprocessing_report <- function(name, experiment, template, outdir, inter
 ##########################################################################
 
 
-#' write_qc_report
-#' Write QC HTML report
-#' 
-#' @param name: sample name
-#' @param expermient: experiment name
-#' @param template: Rmd template
-#' @param outdir: output directory
-#' @param intermediate_files: directory for saving intermediate files in case pandoc fails
-#' @param metrics: metrics file
-#' 
-#' @keywords QC, write, report
-#' 
-#' @return nothing
-write_qc_report <- function(name, experiment, template, outdir, intermediate_files, metrics){
-  int_files <- file.path(outdir, intermediate_files)
-  if (!file.exists(int_files)){
-    dir.create(int_files)
-  }
-  rmarkdown::render(template,
-                    output_file = file.path(outdir,
-                                            paste0(experiment,
-                                                   "_",
-                                                   name,
-                                                   "_QC_report.html")), 
-                    clean = TRUE,
-                    intermediates_dir = int_files)
-}
-
-
-##########################################################################
-
-
 #' extract_metadata
 #' Extract metadata dataframe from Seurat objects
 #' 
@@ -328,7 +296,7 @@ return(seu)
 #' Make Violin plot
 #' 
 #' @param seu: Seurat object / list of Seurat objects
-#' @param feature: metadate feature to plot
+#' @param feature: metadata feature to plot
 #' 
 #' @keywords preprocessing, report, plot, violin
 #' 

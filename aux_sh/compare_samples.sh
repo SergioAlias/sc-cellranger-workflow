@@ -27,4 +27,5 @@ create_metric_table.rb $experiment_folder'/metrics' sample $experiment_folder'/m
 
 /usr/bin/time $CODE_PATH/scripts/compare_samples.R -o $report_folder \
                                                    -m $experiment_folder'/metric_table' \
+                                                   -l $experiment_folder'/metrics' \
                                                    -e $experiment_name
