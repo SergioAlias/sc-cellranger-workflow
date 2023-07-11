@@ -22,6 +22,7 @@ export experiment_folder=$project_folder"/"$experiment_name                 #---
 export COUNT_RESULTS_FOLDER=$experiment_folder"/count_results"              #-------#    Count execution path
 export QC_RESULTS_FOLDER=$experiment_folder"/QC_results"                    #-------#    QC execution path
 export PREPROC_RESULTS_FOLDER=$experiment_folder"/preprocessing_results"    #-------#    Pre-processing execution path
+export QMAP_RESULTS_FOLDER=$experiment_folder"/qualimap_results"            #-------#    QualiMap execution path
 export COUNT_TEMPLATE=$CODE_PATH"/autoflow/count_template.txt"              #-------#    AutoFlow count template. It is advisable not to modify this variable
 export QC_TEMPLATE=$CODE_PATH"/autoflow/QC_template.txt"                    #-------#    AutoFlow QC template. It is advisable not to modify this variable
 export PREPROC_TEMPLATE=$CODE_PATH"/autoflow/preprocessing_template.txt"    #-------#    AutoFlow pre-processing template. It is advisable not to modify this variable

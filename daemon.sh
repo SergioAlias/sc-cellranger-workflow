@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # Sergio Alías, 20230323
-# Last modified 20230627
+# Last modified 20230711
 
 # daemon.sh
 
@@ -47,6 +47,15 @@ elif [ "$module" == "2b" ] ; then
         compare_samples.sh
     else
         sbatch aux_sh/compare_samples.sh
+    fi
+
+elif [ "$module" == "2c" ] ; then
+    # STAGE 2 QUALIMAP
+    echo "Launching stage 2: QualiMap"
+    if [ $launch_login == TRUE ]; then  
+        qualimap.sh
+    else
+        sbatch aux_sh/qualimap.sh
     fi
 
 elif [ "$module" == "3a" ] ; then
