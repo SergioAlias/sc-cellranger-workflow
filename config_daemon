@@ -1,5 +1,5 @@
 # Sergio Alías, 20230323
-# Last modified 20230629
+# Last modified 20230716
 
 # config_daemon
 
@@ -32,7 +32,7 @@ export LAB_SCRIPTS="/mnt/home/soft/soft_bio_267/programs/x86_64/scripts"    #---
 ######  SAMPLES VARIABLES #######
 
 export SAMPLES_FILE=$CODE_PATH"/samples_to_process.lst"    #-------#    A list with sample names. File name must be unique and in must not include paired-end information or file extension. (e.g. For file "sample_ex_1.fastq.gz" and "sample_ex_2.fastq.gz", filename is "sample_ex")
-export read_path=$HOME"/test/lung/raw_data"                #-------#    New path where samples were linked and renamed
+export read_path=$CODE_PATH"/raw_data"                     #-------#    New path where samples were linked and renamed
 
 ######  REPORT VARIABLES #######
 

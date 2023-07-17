@@ -1,15 +1,15 @@
 #! /usr/bin/env bash
 
 # Sergio Alias, 20230711
-# Last modified 20230711
+# Last modified 20230717
 
 # STAGE 2 QUALIMAP
 
 #SBATCH -J qualimap.sh
-#SBATCH --cpus-per-task=3
-#SBATCH --mem='10gb'
+#SBATCH --cpus-per-task=10
+#SBATCH --mem='60gb'
 #SBATCH --constraint=cal
-#SBATCH --time=1-00:00:00
+#SBATCH --time=3-00:00:00
 #SBATCH --error=job.qmap.%J.err
 #SBATCH --output=job.qmap.%J.out
 
@@ -28,6 +28,8 @@ while IFS= read -r name; do
     echo -e "$name\t$COUNT_RESULTS_FOLDER/$name/cellranger_0000/$name/outs/possorted_genome_bam.bam" >> $QMAP_RESULTS_FOLDER"/qualimap_input_data"
   fi
 done < $SAMPLES_FILE
+
+unset DISPLAY
 
 # Main
 
