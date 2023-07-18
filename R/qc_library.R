@@ -1,5 +1,5 @@
 # Sergio Alías, 20230710
-# Last modified 20230710
+# Last modified 20230718
 
 ##############################################################
 ########################## QC LIBRARY ########################
@@ -60,6 +60,7 @@ make_barplot <- function(metric_df, feature){
     xlab(NULL) +
     ylab(feature) +
     labs(fill = NULL) +
+    scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
     theme_bw()
 }
 
@@ -88,6 +89,7 @@ make_hplot <- function(metric_df, features){
     ylab(NULL) +
     labs(fill = NULL) +
     theme_bw() +
+    scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
     scale_y_continuous(limits = c(0, NA)) +
     theme(legend.position="bottom",
           legend.title=element_blank())

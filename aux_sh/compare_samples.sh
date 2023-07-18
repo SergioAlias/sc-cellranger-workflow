@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # Sergio Alias, 20230530
-# Last modified 20230712
+# Last modified 20230718
 
 # STAGE 2 SAMPLES COMPARISON
 
@@ -40,7 +40,7 @@ END {
         }
         print str
     }
-}' | awk -v var="$name" 'BEGIN {FS=OFS="\t"} {print var, $0}' >> $experiment_folder'/metrics'
+}' | awk -v var="$name" 'BEGIN {FS=OFS="\t"} {print var, $0}' # >> $experiment_folder'/metrics'
   fi
 done < $SAMPLES_FILE
 
