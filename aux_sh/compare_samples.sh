@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # Sergio Alias, 20230530
-# Last modified 20230718
+# Last modified 20230720
 
 # STAGE 2 SAMPLES COMPARISON
 
@@ -24,7 +24,7 @@ mkdir -p $report_folder
 
 while IFS= read -r name; do
   if [ -d "$COUNT_RESULTS_FOLDER/$name" ]; then
-    input_file="$name\t$COUNT_RESULTS_FOLDER/$name/cellranger_0000/$name/outs/metrics_summary.csv"
+    input_file="$COUNT_RESULTS_FOLDER/$name/cellranger_0000/$name/outs/metrics_summary.csv"
     cat $input_file | perl -pe 's/(\d),(\d)/$1$2/g'| sed '1 s/ /_/g' | sed 's/%//g' | sed 's/"//g' | sed 's/ /\n/g' | sed 's/,/\t/g' | awk '
 { 
     for (i=1; i<=NF; i++)  {
@@ -40,7 +40,7 @@ END {
         }
         print str
     }
-}' | awk -v var="$name" 'BEGIN {FS=OFS="\t"} {print var, $0}' # >> $experiment_folder'/metrics'
+}' | awk -v var="$name" 'BEGIN {FS=OFS="\t"} {print var, $0}' | sed 's/ /\t/g' >> $experiment_folder'/cellranger_metrics'
   fi
 done < $SAMPLES_FILE
 
@@ -48,6 +48,7 @@ done < $SAMPLES_FILE
 . ~soft_bio_267/initializes/init_ruby
 . ~soft_bio_267/initializes/init_R
 create_metric_table.rb $experiment_folder'/metrics' sample $experiment_folder'/metric_table'
+create_metric_table.rb $experiment_folder'/cellranger_metrics' sample $experiment_folder'/cellranger_metric_table'
 
 # Main
 
