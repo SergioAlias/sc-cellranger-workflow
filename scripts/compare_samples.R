@@ -1,12 +1,12 @@
 #! /usr/bin/env Rscript
 
 # Sergio Alías, 20230707
-# Last modified 20230710
+# Last modified 20230721
 
 
 ######################################
 ###   STAGE 2 SAMPLES COMPARISON   ###
-###   preprocessing.R              ###
+###   compare_samples.R            ###
 ######################################
 
 #################
@@ -14,8 +14,6 @@
 #################
 
 library(optparse)
-library(Seurat)
-
 
 ###################
 ### Custom libs ###
@@ -34,6 +32,10 @@ option_list <- list(
               help="Metrics file in wide format"),
   make_option(c("-l", "--long_metrics"), type = "character",
               help="Metrics file in long format"),
+  make_option(c("--cellranger_metrics"), type = "character",
+              help="Cell Ranger metrics file in wide format"),
+  make_option(c("--cellranger_long_metrics"), type = "character",
+              help="Cell Ranger Metrics file in long format"),
   make_option(c("-o", "--output"), type = "character",
               help="Output folder"),
   make_option(c("-e", "--experiment_name"), type = "character",
@@ -55,4 +57,6 @@ write_qc_report(name = "All samples",
                 outdir = opt$output,
                 intermediate_files = "int_files",
                 metrics = opt$metrics,
-                long_metrics = opt$long_metrics)
+                long_metrics = opt$long_metrics,
+                cellranger_metrics = opt$cellranger_metrics,
+                cellranger_long_metrics = opt$cellranger_long_metrics)

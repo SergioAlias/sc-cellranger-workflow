@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # Sergio Alias, 20230530
-# Last modified 20230720
+# Last modified 20230721
 
 # STAGE 2 SAMPLES COMPARISON
 
@@ -55,4 +55,6 @@ create_metric_table.rb $experiment_folder'/cellranger_metrics' sample $experimen
 /usr/bin/time $CODE_PATH/scripts/compare_samples.R -o $report_folder \
                                                    -m $experiment_folder'/metric_table' \
                                                    -l $experiment_folder'/metrics' \
-                                                   -e $experiment_name
+                                                   -e $experiment_name \
+                                                   --cellranger_metrics $experiment_folder'/cellranger_metric_table' \
+                                                   --cellranger_long_metrics $experiment_folder'/cellranger_metrics'

@@ -10,7 +10,7 @@ output:
 ---
 
 <!-- Sergio Alías, 20230706 -->
-<!-- Last modified 20230720 -->
+<!-- Last modified 20230721 -->
 
 <style type='text/css'>
     body .main-container {
@@ -68,6 +68,8 @@ library(ggplot2)
 
 metric_df <- read.table(file = metrics, sep = '\t', header = TRUE)
 long_metric_df <- read.table(file = long_metrics, sep = '\t', header = FALSE)
+cellranger_metric_df <- read.table(file = cellranger_metrics, sep = '\t', header = TRUE)
+cellranger_long_metric_df <- read.table(file = cellranger_long_metrics, sep = '\t', header = FALSE)
 ```
 
 <div class="superbigimage">
@@ -145,3 +147,13 @@ make_barplot(metric_df, "initial_weigthed_read_length")
 </div>
 
 ## Cell Ranger metrics
+
+<div class="superbigimage">
+```{r Estimated_Number_of_Cells, eval=TRUE, results='asis', echo=FALSE}
+
+cat("\n\n### **Estimated Number of Cells**\n\n")
+
+make_barplot(cellranger_metric_df, "Estimated_Number_of_Cells")
+
+```
+</div>

@@ -1,6 +1,5 @@
 # Sergio Alías, 20230710
-# Last modified 20230718
-
+# Last modified 20230721
 ##############################################################
 ########################## QC LIBRARY ########################
 ##############################################################
@@ -20,7 +19,7 @@
 #' @keywords QC, write, report
 #' 
 #' @return nothing
-write_qc_report <- function(name, experiment, template, outdir, intermediate_files, metrics, long_metrics){
+write_qc_report <- function(name, experiment, template, outdir, intermediate_files, metrics, long_metrics, cellranger_metrics, cellranger_long_metrics){
   int_files <- file.path(outdir, intermediate_files)
   if (!file.exists(int_files)){
     dir.create(int_files)
