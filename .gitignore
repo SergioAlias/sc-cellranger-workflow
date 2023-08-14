@@ -7,3 +7,9 @@ refdata-gex-GRCh38-2020-A
 job.*
 CRR073022/
 deprecated/
+aux_sh/cellranger_count.sh
+aux_sh/preprocess.sh
+scripts/count_table.R
+scripts/raw_preprocessing
+templates/mapping_report.Rmd
+templates/test.Rmd
