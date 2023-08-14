@@ -1,10 +1,24 @@
 # sc-cellranger-workflow
 
+---
+
 ## Workflow to perform single-cell RNA-seq analysis
+
+---
 
 This repo will contain a Cell Ranger workflow for going from BCL/FASTQ/10x files to fully analyzed single-cell data (incomplete). More info will be available soon.
 
-### Workflow files and directories
+---
+
+### Usage
+
+#### Before you start
+
+
+
+---
+
+### List of files and directories
 
 - `daemon.sh`: Daemon file for controlling the whole workflow (incomplete)
 
