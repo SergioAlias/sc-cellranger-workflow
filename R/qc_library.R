@@ -1,5 +1,5 @@
 # Sergio Alías, 20230710
-# Last modified 20230721
+# Last modified 20230722
 ##############################################################
 ########################## QC LIBRARY ########################
 ##############################################################
@@ -71,7 +71,7 @@ make_barplot <- function(metric_df, feature){
 #' Make horizontal plot
 #' 
 #' @param df: DataFrame with the metric table in long format
-#' @param feature: metrics to plot
+#' @param features: metrics to plot
 #' 
 #' @keywords preprocessing, report, plot, horizontal
 #' 

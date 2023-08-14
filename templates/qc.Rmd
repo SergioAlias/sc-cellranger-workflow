@@ -1,25 +1,32 @@
 ## Quality Control
 
 <!-- Sergio Alías, 20230616 -->
-<!-- Last modified 20230704 -->
+<!-- Last modified 20230724 -->
 
 ### Before filtering
 
+#### Nº of features
 <div class="superbigimage">
 ```{r violin_before_1, echo = FALSE}
 make_vln(before.seu, 'nFeature_scRNAseq')
 ```
 </div>
+
+#### Nº of counts
 <div class="superbigimage">
 ```{r violin_before_2, echo = FALSE}
 make_vln(before.seu, 'nCount_scRNAseq')
 ```
 </div>
 <div class="superbigimage">
+
+#### Percentage of reads that map to mitochondrial genes
 ```{r violin_before_3, echo = FALSE}
 make_vln(before.seu, 'percent.mt')
 ```
 </div>
+
+#### Percentage of reads that map to ribosomal genes
 <div class="superbigimage">
 ```{r violin_before_4, echo = FALSE}
 make_vln(before.seu, 'percent.rb')
@@ -100,21 +107,29 @@ kable_styling(kbl(table(met_seu[["orig.ident"]], met_seu[["QC"]])),
 
 ### After filtering
 
+
+#### Nº of features
 <div class="superbigimage">
 ```{r violin_after_1, echo = FALSE}
 make_vln(seu, 'nFeature_scRNAseq')
 ```
 </div>
+
+#### Nº of counts
 <div class="superbigimage">
 ```{r violin_after_2, echo = FALSE}
 make_vln(seu, 'nCount_scRNAseq')
 ```
 </div>
+
+#### Percentage of reads that map to mitochondrial genes
 <div class="superbigimage">
 ```{r violin_after_3, echo = FALSE}
 make_vln(seu, 'percent.mt')
 ```
 </div>
+
+#### Percentage of reads that map to ribosomal genes
 <div class="superbigimage">
 ```{r violin_after_4, echo = FALSE}
 make_vln(seu, 'percent.rb')

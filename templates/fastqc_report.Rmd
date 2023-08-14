@@ -10,7 +10,7 @@ output:
 ---
 
 <!-- Sergio Alías, 20230706 -->
-<!-- Last modified 20230721 -->
+<!-- Last modified 20230723 -->
 
 <style type='text/css'>
     body .main-container {
@@ -154,6 +154,106 @@ make_barplot(metric_df, "initial_weigthed_read_length")
 cat("\n\n### **Estimated Number of Cells**\n\n")
 
 make_barplot(cellranger_metric_df, "Estimated_Number_of_Cells")
+
+```
+</div>
+
+<div class="superbigimage">
+```{r Mean_Reads_per_Cell, eval=TRUE, results='asis', echo=FALSE}
+
+cat("\n\n### **Mean Reads per Cell**\n\n")
+
+make_barplot(cellranger_metric_df, "Mean_Reads_per_Cell")
+
+```
+</div>
+
+<div class="superbigimage">
+```{r Median_Genes_per_Cell, eval=TRUE, results='asis', echo=FALSE}
+
+cat("\n\n### **Median Genes per Cell**\n\n")
+
+make_barplot(cellranger_metric_df, "Median_Genes_per_Cell")
+
+```
+</div>
+
+<div class="superbigimage">
+```{r Valid_Barcodes, eval=TRUE, results='asis', echo=FALSE}
+
+cat("\n\n### **Valid Barcodes percentage**\n\n")
+
+make_barplot(cellranger_metric_df, "Valid_Barcodes")
+
+```
+</div>
+
+<div class="superbigimage">
+```{r Sequencing_Saturation, eval=TRUE, results='asis', echo=FALSE}
+
+cat("\n\n### **Sequencing Saturation**\n\n")
+
+make_barplot(cellranger_metric_df, "Sequencing_Saturation")
+
+```
+</div>
+
+<div class="superbigimage">
+```{r q30_bases_metrics, eval=TRUE, results='asis', echo=FALSE}
+
+cat("\n\n### **Q30 Bases metrics**\n\n")
+
+make_hplot(cellranger_long_metric_df, 
+           c("Q30_Bases_in_Barcode",
+             "Q30_Bases_in_RNA_Read",
+             "Q30_Bases_in_UMI"))
+
+```
+</div>
+
+<div class="superbigimage">
+```{r mapped_reads_metrics, eval=TRUE, results='asis', echo=FALSE}
+
+cat("\n\n### **Mapped reads metrics**\n\n")
+
+make_hplot(cellranger_long_metric_df, 
+           c("Reads_Mapped_to_Genome",
+             "Reads_Mapped_Confidently_to_Genome",
+             "Reads_Mapped_Confidently_to_Intergenic_Regions",
+             "Reads_Mapped_Confidently_to_Intronic_Regions",
+             "Reads_Mapped_Confidently_to_Exonic_Regions",
+             "Reads_Mapped_Confidently_to_Transcriptome",
+             "Reads_Mapped_Antisense_to_Gene"))
+
+```
+</div>
+
+<div class="superbigimage">
+```{r Fraction_Reads_in_Cells, eval=TRUE, results='asis', echo=FALSE}
+
+cat("\n\n### **Fraction Reads in Cells**\n\n")
+
+make_barplot(cellranger_metric_df, "Fraction_Reads_in_Cells")
+
+```
+</div>
+
+<div class="superbigimage">
+```{r Total_Genes_Detected, eval=TRUE, results='asis', echo=FALSE}
+
+cat("\n\n### **Total Genes Detected**\n\n")
+
+make_barplot(cellranger_metric_df, "Total_Genes_Detected")
+
+```
+</div>
+
+<div class="superbigimage">
+```{r Median_UMI_Counts_per_Cell, eval=TRUE, results='asis', echo=FALSE}
+
+cat("\n\n### **Median UMI Counts per Cell**\n\n")
+
+make_barplot(cellranger_metric_df, "Median_UMI_Counts_per_Cell")
 
 ```
 </div>
