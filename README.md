@@ -104,3 +104,4 @@ Here you can find sub-sections useful for developers working on the workflow
     - `preprocessing_report.Rmd`: Template for pre-processing report
 
     - `qc.Rmd`: Child template used in `preprocessing_report.Rmd` that performs cells quality control
+
