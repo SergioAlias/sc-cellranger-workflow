@@ -1,5 +1,5 @@
 # Sergio Alías, 20230323
-# Last modified 20230716
+# Last modified 20230914
 
 # config_daemon
 
@@ -10,7 +10,7 @@
 
 ######  EXPERIMENT VARIABLES #######
 
-export experiment_name=LUAD    #-------#    Experiment name
+export experiment_name=NEURORG    #-------#    Experiment name
 
 
 ######  EXECUTION VARIABLES #######
@@ -55,7 +55,7 @@ if [ "$module" == "0" ] ; then
 ######  STAGE 1 OBTAINING COUNTS FROM FASTQ FILES #######
 
 elif [ "$module" == "1" ] ; then
-    export count_transcriptome=$HOME"/test/lung/sc-cellranger-workflow/refdata-gex-GRCh38-2020-A"    #-------#    Transcriptome for reference
+    export count_transcriptome=$CODE_PATH"/refdata-gex-GRCh38-2020-A"    #-------#    Transcriptome for reference
 
 ######  STAGE 3 PREPROCESSING #######
 
