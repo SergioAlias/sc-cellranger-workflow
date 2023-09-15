@@ -2,7 +2,7 @@
 
 ## Workflow to perform single-cell RNA-seq analysis
 
-*Last README update applies for v1.6.5*
+*Last README update applies for v1.6.7*
 
 This repo will contain a Cell Ranger workflow for going from BCL/FASTQ/10x files to fully analyzed single-cell data (incomplete). More info will be available soon.
 

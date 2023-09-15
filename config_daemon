@@ -1,5 +1,5 @@
 # Sergio Alías, 20230323
-# Last modified 20230716
+# Last modified 20230915
 
 # config_daemon
 
@@ -10,7 +10,7 @@
 
 ######  EXPERIMENT VARIABLES #######
 
-export experiment_name=LUAD    #-------#    Experiment name
+export experiment_name=NEURORG    #-------#    Experiment name
 
 
 ######  EXECUTION VARIABLES #######
@@ -28,6 +28,8 @@ export QC_TEMPLATE=$CODE_PATH"/autoflow/QC_template.txt"                    #---
 export PREPROC_TEMPLATE=$CODE_PATH"/autoflow/preprocessing_template.txt"    #-------#    AutoFlow pre-processing template. It is advisable not to modify this variable
 export TRIM_TEMPLATE="transcriptomics.txt"                                  #-------#    Trimming template
 export LAB_SCRIPTS="/mnt/home/soft/soft_bio_267/programs/x86_64/scripts"    #-------#    Folder with the lab scripts in Picasso (bio_267)
+export multi_lane=TRUE                                                      #-------#    TRUE if samples have more than one lane (e.g. L001 and L002), FALSE otherwise
+export number_of_lanes=2                                                    #-------#    Number of lanes per sample
 
 ######  SAMPLES VARIABLES #######
 
@@ -55,7 +57,7 @@ if [ "$module" == "0" ] ; then
 ######  STAGE 1 OBTAINING COUNTS FROM FASTQ FILES #######
 
 elif [ "$module" == "1" ] ; then
-    export count_transcriptome=$HOME"/test/lung/sc-cellranger-workflow/refdata-gex-GRCh38-2020-A"    #-------#    Transcriptome for reference
+    export count_transcriptome=$CODE_PATH"/refdata-gex-GRCh38-2020-A"    #-------#    Transcriptome for reference
 
 ######  STAGE 3 PREPROCESSING #######
 

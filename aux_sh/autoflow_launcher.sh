@@ -1,5 +1,5 @@
 # Sergio Alías, 20230516
-# Last modified 20230628
+# Last modified 20230915
 
 # Generic Autoflow launcher
 
@@ -21,12 +21,28 @@ mkdir -p $RESULTS_FOLDER
 
 PATH=$LAB_SCRIPTS:$PATH
 
+export S_NUMBER=1
+
 while IFS= read sample; do
-    
-    AF_VARS=`echo "
-    \\$sample=$sample
-    " | tr -d [:space:]`
-
-    AutoFlow -w $TEMPLATE -V "$AF_VARS" -o $RESULTS_FOLDER/$sample #$RESOURCES
-
+    if [ "$multi_lane" == "FALSE" ] ; then
+        AF_VARS=`echo "
+        \\$sample=$sample,
+        \\$s_num=$S_NUMBER,
+        \\$lane_num=1
+        " | tr -d [:space:]`
+        AutoFlow -w $TEMPLATE -V "$AF_VARS" -o $RESULTS_FOLDER/$sample #$RESOURCES
+    elif [ "$multi_lane" == "TRUE" ] ; then
+        for (( i = 1; i <= $number_of_lanes; i++ )) ; do
+            if [ "$sample" = "Undetermined" ] ; then
+                S_NUMBER=$(( S_NUMBER - S_NUMBER ))
+            fi
+            AF_VARS=`echo "
+            \\$sample=$sample,
+            \\$s_num=$S_NUMBER,
+            \\$lane_num=$i
+            " | tr -d [:space:]`
+            AutoFlow -w $TEMPLATE -V "$AF_VARS" -o $RESULTS_FOLDER/$sample #$RESOURCES
+        done
+        S_NUMBER=$(( S_NUMBER + 1 ))
+    fi
 done < $SAMPLES_FILE

@@ -1,5 +1,5 @@
 # Sergio Alías, 20230612
-# Last modified 20230614
+# Last modified 20230915
 
 ####################
 ### QC template. Parameters can be customized at config_deamon
@@ -11,7 +11,7 @@
  source ~soft_bio_267/initializes/init_stbb  
  ?
  seqtrimbb -t $TRIM_TEMPLATE \
-           -Q $read_path"/"$sample"_S1_L001_R1_001.fastq.gz,"$read_path"/"$sample"_S1_L001_R2_001.fastq.gz" \
+           -Q $read_path"/"$sample"_S"$s_num"_L00"$lane_num"_R1_001.fastq.gz,"$read_path"/"$sample"_S"$s_num"_L00"$lane_num"_R2_001.fastq.gz" \
            -P "minlength=65" \
            -w [cpu] \
            --full_throttle \
@@ -24,7 +24,7 @@ before_fastqc){
  module load fastqc/0.11.9
  ?
  fastqc --noextract \
-        $read_path"/"$sample"_S1_L001_R1_001.fastq.gz" $read_path"/"$sample"_S1_L001_R2_001.fastq.gz" \
+        $read_path"/"$sample"_S"$s_num"_L00"$lane_num"_R1_001.fastq.gz" $read_path"/"$sample"_S"$s_num"_L00"$lane_num"_R2_001.fastq.gz" \
         -o . \ # $QC_RESULTS_FOLDER/$sample
         -t [cpu]
 }
@@ -35,6 +35,6 @@ before_metrics){
  . ~soft_bio_267/initializes/init_ruby
  echo [cpu]
  ?
- get_fastqc_data.rb -i before_fastqc)"/"$sample"_S1_L001_R1_001_fastqc.zip" -T -H | awk '{print "$sample" "_R1" "\tinitial_" $0 }' >> $experiment_folder"/metrics"
- get_fastqc_data.rb -i before_fastqc)"/"$sample"_S1_L001_R2_001_fastqc.zip" -T -H | awk '{print "$sample" "_R2" "\tinitial_" $0 }' >> $experiment_folder"/metrics"
+ get_fastqc_data.rb -i before_fastqc)"/"$sample"_S"$s_num"_L00"$lane_num"_R1_001_fastqc.zip" -T -H | awk '{print "$sample" "_L00" "$lane_num" "_R1" "\tinitial_" $0 }' >> $experiment_folder"/metrics"
+ get_fastqc_data.rb -i before_fastqc)"/"$sample"_S"$s_num"_L00"$lane_num"_R2_001_fastqc.zip" -T -H | awk '{print "$sample" "_L00" "$lane_num" "_R2" "\tinitial_" $0 }' >> $experiment_folder"/metrics"
 }
