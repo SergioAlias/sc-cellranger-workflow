@@ -1,5 +1,5 @@
 # Sergio Alías, 20230516
-# Last modified 20230915
+# Last modified 20230918
 
 # Generic Autoflow launcher
 
@@ -24,7 +24,7 @@ PATH=$LAB_SCRIPTS:$PATH
 export S_NUMBER=1
 
 while IFS= read sample; do
-    if [ "$multi_lane" == "FALSE" ] ; then
+    if [ "$multi_lane" == "FALSE" ] || [ "$1" != "qc" ] ; then
         AF_VARS=`echo "
         \\$sample=$sample,
         \\$s_num=$S_NUMBER,
