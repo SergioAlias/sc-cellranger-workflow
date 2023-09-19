@@ -1,5 +1,5 @@
 # Sergio Alías, 20230323
-# Last modified 20230915
+# Last modified 20230919
 
 # config_daemon
 
@@ -10,7 +10,7 @@
 
 ######  EXPERIMENT VARIABLES #######
 
-export experiment_name=NEURORG    #-------#    Experiment name
+export experiment_name=MACULAR    #-------#    Experiment name
 
 
 ######  EXECUTION VARIABLES #######
@@ -29,12 +29,11 @@ export PREPROC_TEMPLATE=$CODE_PATH"/autoflow/preprocessing_template.txt"    #---
 export TRIM_TEMPLATE="transcriptomics.txt"                                  #-------#    Trimming template
 export LAB_SCRIPTS="/mnt/home/soft/soft_bio_267/programs/x86_64/scripts"    #-------#    Folder with the lab scripts in Picasso (bio_267)
 export multi_lane=TRUE                                                      #-------#    TRUE if samples have more than one lane (e.g. L001 and L002), FALSE otherwise
-export number_of_lanes=2                                                    #-------#    Number of lanes per sample
 
 ######  SAMPLES VARIABLES #######
 
-export SAMPLES_FILE=$CODE_PATH"/samples_to_process.lst"    #-------#    A list with sample names. File name must be unique and in must not include paired-end information or file extension. (e.g. For file "sample_ex_1.fastq.gz" and "sample_ex_2.fastq.gz", filename is "sample_ex")
-export read_path=$CODE_PATH"/raw_data"                     #-------#    New path where samples were linked and renamed
+export SAMPLES_FILE=$CODE_PATH"/macular_samples_to_process.lst"    #-------#    A list with sample names. File name must be unique and in must not include paired-end information or file extension. (e.g. For file "sample_ex_1.fastq.gz" and "sample_ex_2.fastq.gz", filename is "sample_ex")
+export read_path=$CODE_PATH"/macular_raw_data"                     #-------#    New path where samples were linked and renamed
 
 ######  REPORT VARIABLES #######
 
