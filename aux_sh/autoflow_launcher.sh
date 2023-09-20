@@ -1,5 +1,5 @@
 # Sergio Alías, 20230516
-# Last modified 20230919
+# Last modified 20230920
 
 # Generic Autoflow launcher
 
@@ -32,7 +32,7 @@ while IFS= read sample; do
         " | tr -d [:space:]`
         AutoFlow -w $TEMPLATE -V "$AF_VARS" -o $RESULTS_FOLDER/$sample #$RESOURCES
     elif [ "$multi_lane" == "TRUE" ] ; then
-        total_fastq_files=$(ls -1 "$sample"* | wc -l)
+        total_fastq_files=$(ls $read_path -1 | grep $sample | wc -l)
         number_of_lanes=$((total_fastq_files / 2))
         for (( i = 1; i <= $number_of_lanes; i++ )) ; do
             if [ "$sample" = "Undetermined" ] ; then

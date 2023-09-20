@@ -1,5 +1,5 @@
 # Sergio Alías, 20230516
-# Last modified 20230612
+# Last modified 20230920
 
 ####################
 ### Count template. Parameters can be customized at config_deamon
@@ -15,4 +15,5 @@ run_count){
                   --fastqs=$read_path \
                   --localcores=[cpu] \
                   --localmem=30
+ find -name "possorted_genome_bam.bam" -exec rm {} \;
 }
