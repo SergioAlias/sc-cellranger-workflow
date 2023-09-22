@@ -1,5 +1,5 @@
 # Sergio Alías, 20230323
-# Last modified 20230920
+# Last modified 20230921
 
 # config_daemon
 
@@ -10,7 +10,7 @@
 
 ######  EXPERIMENT VARIABLES #######
 
-export experiment_name=MACULAR    #-------#    Experiment name
+export experiment_name=NEURORG    #-------#    Experiment name
 
 
 ######  EXECUTION VARIABLES #######
@@ -32,8 +32,8 @@ export multi_lane=TRUE                                                      #---
 
 ######  SAMPLES VARIABLES #######
 
-export SAMPLES_FILE=$CODE_PATH"/macular_samples_to_process.lst"    #-------#    A list with sample names. File name must be unique and in must not include paired-end information or file extension. (e.g. For file "sample_ex_1.fastq.gz" and "sample_ex_2.fastq.gz", filename is "sample_ex")
-export read_path=$CODE_PATH"/macular_raw_data"                     #-------#    New path where samples were linked and renamed
+export SAMPLES_FILE=$CODE_PATH"/samples_to_process.lst"    #-------#    A list with sample names. File name must be unique and in must not include paired-end information or file extension. (e.g. For file "sample_ex_1.fastq.gz" and "sample_ex_2.fastq.gz", filename is "sample_ex")
+export read_path=$CODE_PATH"/raw_data"                     #-------#    New path where samples were linked and renamed
 
 ######  REPORT VARIABLES #######
 

@@ -1,5 +1,5 @@
 # Sergio Alías, 20230606
-# Last modified 20230710
+# Last modified 20230922
 
 ##########################################################################
 ########################## PRE-PROCESSING LIBRARY ########################
@@ -87,7 +87,7 @@ do_qc <- function(name, experiment, seu, minqcfeats, percentmt){
   
   saveRDS(seu, paste0(experiment, ".", name, ".before.seu.RDS"))
   
-  seu <- subset(seu, subset = QC == 'Pass')
+  seu <- subset(seu, subset = QC != 'High_MT,Low_nFeature')
   
   return(seu)
 }
