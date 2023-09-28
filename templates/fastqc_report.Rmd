@@ -10,7 +10,7 @@ output:
 ---
 
 <!-- Sergio Alías, 20230706 -->
-<!-- Last modified 20230723 -->
+<!-- Last modified 20230928 -->
 
 <style type='text/css'>
     body .main-container {
@@ -72,6 +72,23 @@ cellranger_metric_df <- read.table(file = cellranger_metrics, sep = '\t', header
 cellranger_long_metric_df <- read.table(file = cellranger_long_metrics, sep = '\t', header = FALSE)
 ```
 
+<details>
+<summary>**How to interpret**</summary>
+<br>
+
+Metrics from the FASTQ files:
+
+- **Number of sequences**: Total number of sequences in the FASTQ file. More sequences means more sequencing depth.
+- **Read maximum length**: Maximum read length. It is usual that R2 reads have more length than R1.
+- **Read minimum length**: Minimum read legnth. They do not have to be the same as the maximum reading lengths, but they should be consistent with them.
+- **GC content**: Guanine-cytosine content. Percentage of nitrogenous bases that are either guanine (G) or cytosine (C). We expect values around 50%.
+- **Quality scores - mean quality per base**: Quality is measured with the Phred score (Q), which is typically in the range 2 - 40, but higher and lower values are sometimes used. The higher the Phred score, the higher the quality.
+- **Quality scores - mean quality per base in lower quartile**: Same as the previous one, but focusing in the lower quartile.
+- **Quality scores - mean quality per base in 10th decile**: Same as the previous one, but focusing in the tenth decile.
+- **Quality scores - weigthed quality per sequence**: 
+
+</details>
+
 <div class="superbigimage">
 ```{r initial_total_sequences, eval=TRUE, results='asis', echo=FALSE}
 
@@ -126,15 +143,15 @@ make_hplot(long_metric_df,
 ```
 </div>
 
-<div class="superbigimage">
-```{r initial_mean_indeterminations_per_base, eval=TRUE, results='asis', echo=FALSE}
+<!-- <div class="superbigimage"> -->
+<!-- ```{r initial_mean_indeterminations_per_base, eval=TRUE, results='asis', echo=FALSE} -->
 
-cat("\n\n### **Mean indeterminations per base**\n\n")
+<!-- cat("\n\n### **Mean indeterminations per base**\n\n") -->
 
-make_barplot(metric_df, "initial_mean_indeterminations_per_base")
+<!-- make_barplot(metric_df, "initial_mean_indeterminations_per_base") -->
 
-```
-</div>
+<!-- ``` -->
+<!-- </div> -->
 
 <div class="superbigimage">
 ```{r initial_weigthed_read_length, eval=TRUE, results='asis', echo=FALSE}

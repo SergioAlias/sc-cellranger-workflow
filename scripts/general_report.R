@@ -1,12 +1,12 @@
 #! /usr/bin/env Rscript
 
 # Sergio Alías, 20230627
-# Last modified 20230630
+# Last modified 20230926
 
 
 ################################################
 ###   STAGE 3 GENERAL PREPROCESSING REPORT   ###
-###   preprocessing.R                        ###
+###   general_report.R                       ###
 ################################################
 
 #################
@@ -59,7 +59,9 @@ option_list <- list(
   make_option(c("--results_folder"), type = "character",
               help="Folder with the preprocessing results"),
   make_option(c("--resolution"), type = "double",
-              help="Granularity of the clustering")
+              help="Granularity of the clustering"),
+  make_option(c("--integrative_analysis"), type = "character",
+              help="TRUE if we want to integrate samples, FALSE otherwise")
 )  
 
 opt <- parse_args(OptionParser(option_list = option_list))
@@ -77,15 +79,16 @@ main_folder <- opt$results_folder
 experiment_name <- opt$experiment_name
 
 for (name in rds_files) {
-  rds_object <- readRDS(file.path(main_folder,
-                                  name,
-                                  "preprocessing.R_0000",
-                                  paste0(experiment_name,
-                                         ".",
-                                         name,
-                                         ".seu.RDS")))
-  seu_list <- append(seu_list, rds_object)
-  
+  if (opt$integrative_analysis == "FALSE") { # We don't need preprocessed objects if we do integrative analysis
+      rds_object <- readRDS(file.path(main_folder,
+                                      name,
+                                      "preprocessing.R_0000",
+                                      paste0(experiment_name,
+                                             ".",
+                                             name,
+                                             ".seu.RDS")))
+      seu_list <- append(seu_list, rds_object)
+  }
   
   raw_object <- readRDS(file.path(main_folder,
                                   name,
@@ -97,31 +100,31 @@ for (name in rds_files) {
   raw_seu_list <- append(raw_seu_list, raw_object)
 }
 
-# names(seu_list) <- rds_files
-# names(raw_seu_list) <- rds_files
-# 
-# while (length(seu_list) > 1){
-#   prov_seu <- merge(seu_list[[1]], seu_list[[2]], add.cell.ids = c(names(seu_list)[1], names(seu_list)[2]))
-#   seu_list <- seu_list[-c(1, 2)]
-#   seu_list <- c(prov_seu, seu_list)
-#   
-#   raw_prov_seu <- merge(raw_seu_list[[1]], raw_seu_list[[2]], add.cell.ids = c(names(raw_seu_list)[1], names(raw_seu_list)[2]))
-#   raw_seu_list <- raw_seu_list[-c(1, 2)]
-#   raw_seu_list <- c(raw_prov_seu, raw_seu_list)
-# }
-# 
-# seu <- seu_list[[1]]
-# rm(prov_seu)
-# rm(seu_list)
-# 
-# before.seu <- raw_seu_list[[1]]
-# rm(raw_prov_seu)
-# rm(raw_seu_list)
+if (opt$integrative_analysis == "FALSE") { # Same reason as line 82
+  seu <- seu_list
+  before.seu <- raw_seu_list
+  report_name <- "All samples"
+} else { # "If we want an integrative analysis"
+  report_name <- "Integrated samples"
+  main_preprocessing_analysis(name = report_name,
+                              experiment = experiment_name,
+                              input = opt$input,
+                              filter = opt$filter,
+                              mincells = opt$mincells,
+                              minfeats = opt$minfeats,
+                              minqcfeats = opt$minqcfeats,
+                              percentmt = opt$percentmt,
+                              normalmethod = opt$normalmethod,
+                              scalefactor = opt$scalefactor,
+                              hvgs = opt$hvgs,
+                              ndims = opt$ndims,
+                              resolution = opt$resolution,
+                              integrate = opt$integrative_analysis)
+  seu <- readRDS(file.path(Sys.getenv(PREPROC_RESULTS_FOLDER), paste0(experiment_name, ".", report_name, ".seu.RDS")))
+}
 
-seu <- seu_list
-before.seu <- raw_seu_list
 
-write_preprocessing_report(name = "All samples",
+write_preprocessing_report(name = report_name,
                            experiment = experiment_name,
                            template = file.path(root_path, 
                                                 "templates",
@@ -132,4 +135,5 @@ write_preprocessing_report(name = "All samples",
                            percentmt = opt$percentmt,
                            hvgs = opt$hvgs,
                            resolution = opt$resolution,
-                           all_seu = list(seu, before.seu))
+                           all_seu = list(seu, before.seu),
+                           integrate = opt$integrative_analysis)

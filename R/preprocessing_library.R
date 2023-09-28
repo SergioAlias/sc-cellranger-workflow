@@ -1,5 +1,5 @@
 # Sergio Alías, 20230606
-# Last modified 20230922
+# Last modified 20230927
 
 ##########################################################################
 ########################## PRE-PROCESSING LIBRARY ########################
@@ -54,13 +54,14 @@ read_input <- function(name, input, mincells, minfeats){
 #' @param name: sample name
 #' @param expermient: experiment name
 #' @param seu: Seurat object
-#' @param minqcfeats: min number of features for which a cell is selected
-#' @param percentmt: max percentage of reads mapped to mitochondrial genes for which a cell is selected
-#' 
+#' @param minqcfeats: Min number of features for which a cell is selected
+#' @param percentmt: Max percentage of reads mapped to mitochondrial genes for which a cell is selected
+#' @param save_before_seu: Whether to save Seurat object before QC
+#'
 #' @keywords preprocessing, qc
 #' 
 #' @return Seurat object
-do_qc <- function(name, experiment, seu, minqcfeats, percentmt){
+do_qc <- function(name, experiment, seu, minqcfeats, percentmt, save_before_seu = TRUE){
   #### QC ####
   
   ##### Reads mapped to mitochondrial genes #####
@@ -85,7 +86,9 @@ do_qc <- function(name, experiment, seu, minqcfeats, percentmt){
   
   # Save before version
   
-  saveRDS(seu, paste0(experiment, ".", name, ".before.seu.RDS"))
+  if (save_before_seu){
+    saveRDS(seu, paste0(experiment, ".", name, ".before.seu.RDS"))
+  }
   
   seu <- subset(seu, subset = QC != 'High_MT,Low_nFeature')
   
@@ -121,7 +124,7 @@ do_dimred <- function(seu, ndims){
 #'
 #' @param seu: Seurat object
 #' @param ndims: Number of PC to be used for clustering
-#' @param: resolution: Granularity of the downstream clustering (higher values -> greater number of clusters)
+#' @param resolution: Granularity of the downstream clustering (higher values -> greater number of clusters)
 #' 
 #' @keywords preprocessing, clustering
 #' 
@@ -136,9 +139,48 @@ do_clustering <- function(seu, ndims, resolution){
 ##########################################################################
 
 
+#' do_integration
+#' Perform integration of multiple samples
+#'
+#' @param names: List of sample names
+#' @param experiment: Experiment name
+#' @param normalmethod: Normalization method
+#' @param scalefactor: Scale factor for cell-level normalization
+#' @param hvgs: Number of HVGs to be selected
+#' @param inlcude_undetermined: Whether Undetermined sample should be included (default: FALSE)
+#' 
+#' @keywords preprocessing, integration
+#' 
+#' @return Multi-sample integrated Seurat object
+do_integration <- function(names, experiment, normalmethod, scalefactor, hvgs, inlcude_undetermined = FALSE){
+  main_folder <- Sys.getenv("PREPROC_RESULTS_FOLDER")
+  if (identical(inlcude_undetermined, FALSE)){
+    names <- names[names != "Undetermined"]
+  }
+  seu.list <- lapply(X = names, FUN = function(x) { # Load, normalize and identify variable features for each sample independently
+    x <- readRDS(file.path(main_folder,
+                                    x,
+                                    "preprocessing.R_0000",
+                                    paste0(experiment,
+                                           ".",
+                                           x,
+                                           ".before.seu.RDS")))
+    x <- NormalizeData(x, normalization.method = normalmethod, scale.factor = scalefactor)
+    x <- FindVariableFeatures(x, nfeatures = hvgs)
+    })
+  features <- SelectIntegrationFeatures(object.list = seu.list) # Select features that are repeatedly variable across samples for integration
+  anchors <- FindIntegrationAnchors(object.list = seu.list, anchor.features = features, reference = 1) # Identify anchors
+  seu <- IntegrateData(anchorset = anchors) # Create an integrated data assay
+  DefaultAssay(seu) <- "integrated" # Set integrated data as default assay
+  return(seu)
+}
+
+
+##########################################################################
+
 
 #' main_preprocessing_analysis
-#' Main preprocessing function that performs all the analyses
+#' Main preprocessing function that performs all the analyses (individually or combining all samples with and without integration)
 #'
 #' @param name: sample name
 #' @param expermient: experiment name
@@ -149,15 +191,17 @@ do_clustering <- function(seu, ndims, resolution){
 #' @param minqcfeats: min number of features for which a cell is selected
 #' @param percentmt: max percentage of reads mapped to mitochondrial genes for which a cell is selected
 #' @param normalmethod: Normalization method
+#' @param scalefactor: Scale factor for cell-level normalization
 #' @param hvgs: Number of HVGs to be selected
 #' @param ndims: Number of PC to be used for clustering / UMAP / tSNE
-#' @param: resolution: Granularity of the downstream clustering (higher values -> greater number of clusters)
+#' @param resolution: Granularity of the downstream clustering (higher values -> greater number of clusters)
+#' @param integrate: FALSE if we don't run integrative analysis, TRUE otherwise
 #' 
 #' @keywords preprocessing, main
 #' 
 #' @return Seurat object
 main_preprocessing_analysis <- function(name, experiment, input, filter, mincells, minfeats, minqcfeats,
-                                        percentmt, normalmethod, scalefactor, hvgs, ndims, resolution){
+                                        percentmt, normalmethod, scalefactor, hvgs, ndims, resolution, integrate = FALSE){
 
   # Input selection
   
@@ -167,12 +211,22 @@ main_preprocessing_analysis <- function(name, experiment, input, filter, mincell
     input <- file.path(input, "raw_feature_bc_matrix")
   }
   
-  # Input reading
-  
-  seu <- read_input(name = name, 
-                    input = input,
-                    mincells = mincells,
-                    minfeats = minfeats)
+  # Input reading and integration 
+  if (identical(integrate, FALSE)) {
+    seu <- read_input(name = name, 
+                      input = input,
+                      mincells = mincells,
+                      minfeats = minfeats)
+    save_before_seu = TRUE
+  } else {
+    sample_names <- scan(Sys.getenv("SAMPLES_FILE"), what = character())
+    seu <- do_integration(names = sample_names,
+                          experiment = experiment,
+                          normalmethod = normalmethod,
+                          scalefactor = scalefactor,
+                          hvgs = hvgs)
+    save_before_seu = FALSE # For QC (we should already have the Seurat objects before QC)
+  }
   
   # QC
   
@@ -180,15 +234,20 @@ main_preprocessing_analysis <- function(name, experiment, input, filter, mincell
                experiment = experiment,
                seu = seu,
                minqcfeats = minqcfeats, 
-               percentmt = percentmt)
+               percentmt = percentmt,
+               save_before_seu = save_before_seu)
   
   # Normalization
-  
-  seu <- NormalizeData(seu, normalization.method = normalmethod, scale.factor = scalefactor)
-  
+
+  if (integrate == FALSE) {
+    seu <- NormalizeData(seu, normalization.method = normalmethod, scale.factor = scalefactor)
+  }
+
   # Feature selection
   
-  seu <- FindVariableFeatures(seu, nfeatures = hvgs)
+  if (integrate == FALSE) {
+    seu <- FindVariableFeatures(seu, nfeatures = hvgs)
+  }
   
   # Data scaling
   
@@ -207,7 +266,11 @@ main_preprocessing_analysis <- function(name, experiment, input, filter, mincell
   
   # Save final Seurat object
   
-  saveRDS(seu, paste0(experiment, ".", name, ".seu.RDS"))
+  if (identical(integrate, FALSE)){
+    saveRDS(seu, paste0(experiment, ".", name, ".seu.RDS"))
+  } else {
+    saveRDS(seu, file.path(Sys.getenv(PREPROC_RESULTS_FOLDER), paste0(experiment, ".", name, ".seu.RDS")))
+  }
 }
 
 
@@ -231,7 +294,7 @@ main_preprocessing_analysis <- function(name, experiment, input, filter, mincell
 #' @keywords preprocessing, write, report
 #' 
 #' @return nothing
-write_preprocessing_report <- function(name, experiment, template, outdir, intermediate_files, minqcfeats, percentmt, hvgs, resolution, all_seu = NULL){
+write_preprocessing_report <- function(name, experiment, template, outdir, intermediate_files, minqcfeats, percentmt, hvgs, resolution, all_seu = NULL, integrate = FALSE){
   int_files <- file.path(outdir, intermediate_files)
   if (!file.exists(int_files)){
     dir.create(int_files)
@@ -253,7 +316,6 @@ write_preprocessing_report <- function(name, experiment, template, outdir, inter
                                            ".",
                                            name,
                                            ".before.seu.RDS")))
-    
   } else {
     seu <- all_seu[[1]]
     before.seu <- all_seu[[2]]

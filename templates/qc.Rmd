@@ -1,7 +1,7 @@
 ## Quality Control
 
 <!-- Sergio Alías, 20230616 -->
-<!-- Last modified 20230724 -->
+<!-- Last modified 20230928 -->
 
 ### Before filtering
 
@@ -55,31 +55,31 @@ Some notes on when we should filter cells:
 
 </details>
 
-### Metadata features correlation
+<!-- ### Metadata features correlation -->
 
 
-#### Mito counts VS nº of reads
+<!-- #### Mito counts VS nº of reads -->
 
 ```{r scatter1, echo = FALSE}
 
 #FeatureScatter(before.seu, feature1 = "nCount_scRNAseq", feature2 = "percent.mt")
 ```
 
-#### Nº of features VS nº of reads
+<!-- #### Nº of features VS nº of reads -->
 
 ```{r scatter2, echo = FALSE}
 
 #FeatureScatter(before.seu, feature1 = "nCount_scRNAseq", feature2 = "nFeature_scRNAseq")
 ```
 
-#### Ribosomal counts VS nº of reads
+<!-- #### Ribosomal counts VS nº of reads -->
 
 ```{r scatter3, echo = FALSE}
 
 #FeatureScatter(before.seu, feature1 = "nCount_scRNAseq", feature2 = "percent.rb")
 ```
 
-#### Mito counts VS ribosomal counts
+<!-- #### Mito counts VS ribosomal counts -->
 
 ```{r scatter4, echo = FALSE}
 

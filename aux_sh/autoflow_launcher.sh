@@ -21,7 +21,7 @@ mkdir -p $RESULTS_FOLDER
 
 PATH=$LAB_SCRIPTS:$PATH
 
-export S_NUMBER=1
+export S_NUMBER=6
 
 while IFS= read sample; do
     if [ "$multi_lane" == "FALSE" ] || [ "$1" != "qc" ] ; then

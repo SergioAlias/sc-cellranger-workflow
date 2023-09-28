@@ -1,12 +1,12 @@
 #! /usr/bin/env bash
 
 # Sergio Alías, 20230627
-# Last modified 20230703
+# Last modified 20230925
 
 # STAGE 3 PREPROCESSING
 
 #SBATCH --cpus-per-task=2
-#SBATCH --mem=50gb
+#SBATCH --mem=500gb
 #SBATCH --constraint=cal
 #SBATCH --error=job.genrep.%J.err
 #SBATCH --output=job.genrep.%J.out
@@ -31,4 +31,5 @@ mkdir -p $PREPROC_RESULTS_FOLDER
                                --dimheatmapcells $preproc_pca_n_cells \
                                --experiment_name $experiment_name \
                                --results_folder $PREPROC_RESULTS_FOLDER \
-                               --resolution $preproc_resolution
+                               --resolution $preproc_resolution \
+                               --integrative_analysis $integrative_analysis

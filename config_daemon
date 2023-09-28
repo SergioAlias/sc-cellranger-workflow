@@ -1,5 +1,5 @@
 # Sergio Alías, 20230323
-# Last modified 20230921
+# Last modified 20230925
 
 # config_daemon
 
@@ -72,4 +72,5 @@ elif [ "$module" == "3a" ] || [ "$module" == "3b" ]; then
     export preproc_pca_n_dims=20               #-------#    Number of PC to use for clustering / UMAP / tSNE
     export preproc_resolution=0.5              #-------#    Granularity of the clustering (higher values -> greater number of clusters)
     export preproc_pca_n_cells=500             #-------#    Heatmap plots the 'extreme' cells on both ends of the spectrum -> dramatically speeds plotting for large datasets
+    export integrative_analysis=FALSE           #-------#    TRUE for all samples integration, FALSE otherwise
 fi
