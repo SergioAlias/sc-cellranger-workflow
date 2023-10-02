@@ -71,19 +71,19 @@ opt <- parse_args(OptionParser(option_list = option_list))
 ### Main ###
 ############
 
-main_preprocessing_analysis(name = opt$name,
-                            experiment = opt$experiment_name,
-                            input = opt$input,
-                            filter = opt$filter,
-                            mincells = opt$mincells,
-                            minfeats = opt$minfeats,
-                            minqcfeats = opt$minqcfeats,
-                            percentmt = opt$percentmt,
-                            normalmethod = opt$normalmethod,
-                            scalefactor = opt$scalefactor,
-                            hvgs = opt$hvgs,
-                            ndims = opt$ndims,
-                            resolution = opt$resolution)
+# main_preprocessing_analysis(name = opt$name,
+#                             experiment = opt$experiment_name,
+#                             input = opt$input,
+#                             filter = opt$filter,
+#                             mincells = opt$mincells,
+#                             minfeats = opt$minfeats,
+#                             minqcfeats = opt$minqcfeats,
+#                             percentmt = opt$percentmt,
+#                             normalmethod = opt$normalmethod,
+#                             scalefactor = opt$scalefactor,
+#                             hvgs = opt$hvgs,
+#                             ndims = opt$ndims,
+#                             resolution = opt$resolution)
 
 write_preprocessing_report(name = opt$name,
                            experiment = opt$experiment_name,

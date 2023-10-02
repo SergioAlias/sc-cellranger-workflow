@@ -1,0 +1,39 @@
+## Marker gene selection
+
+<!-- Sergio Alías, 20230928 -->
+<!-- Last modified 20230928 -->
+
+```{r marker_gene_setup, echo = FALSE}
+  if (isTRUE(inherits(markers, "data.frame"))){
+    markers <- list(markers)
+  }
+```
+
+```{r marker_gene_table, echo = FALSE, results = 'asis'}
+
+for (i in 1:length(markers)) {
+  print(scroll_box(kable_styling(kbl(markers[[i]]),
+                         bootstrap_options = c("striped",
+                                               "hover")),
+           width = "100%",
+           height = "500px"
+           ))
+  cat("\n")
+}
+```
+
+<details>
+<summary>**How to interpret**</summary>
+<br>
+
+We find markers that define clusters via differential expression. The table has the following columns:
+
+- **p_val**: P-value
+- **avg_logFC**: Average differential expression (log fold-change).
+- **pct.1**: Percentage of cells in the cluster where the gene is detected. Here we desire values close to 1.
+- **pct.2**: Percentage of cells on average in all the other clusters where the gene is detected. Here we desire values close to 0.
+- **p_val_adj**: Adjusted p-value based on Bonferroni correction.
+- **cluster**: Cluster number.
+- **gene**: Gene name.
+
+</details>

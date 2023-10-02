@@ -1,7 +1,7 @@
 #! /usr/bin/env Rscript
 
 # Sergio Alías, 20230627
-# Last modified 20230926
+# Last modified 20230929
 
 
 ################################################
@@ -73,6 +73,7 @@ opt <- parse_args(OptionParser(option_list = option_list))
 
 seu_list <- list()
 raw_seu_list <- list()
+marker_gene_list <- list()
 rds_files <- scan(opt$input,
                   what = character())
 main_folder <- opt$results_folder
@@ -98,6 +99,15 @@ for (name in rds_files) {
                                          name,
                                          ".before.seu.RDS")))
   raw_seu_list <- append(raw_seu_list, raw_object)
+
+  marker_genes <- readRDS(file.path(main_folder,
+                                    name,
+                                    "preprocessing.R_0000",
+                                    paste0(experiment_name,
+                                           ".",
+                                           name,
+                                           ".markers.RDS")))
+  marker_gene_list <- append(marker_gene_list, marker_genes)
 }
 
 if (opt$integrative_analysis == "FALSE") { # Same reason as line 82
@@ -135,5 +145,5 @@ write_preprocessing_report(name = report_name,
                            percentmt = opt$percentmt,
                            hvgs = opt$hvgs,
                            resolution = opt$resolution,
-                           all_seu = list(seu, before.seu),
+                           all_seu = list(seu, before.seu, marker_gene_list),
                            integrate = opt$integrative_analysis)

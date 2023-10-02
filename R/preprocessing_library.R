@@ -1,5 +1,5 @@
 # Sergio Alías, 20230606
-# Last modified 20230927
+# Last modified 20230928
 
 ##########################################################################
 ########################## PRE-PROCESSING LIBRARY ########################
@@ -138,6 +138,25 @@ do_clustering <- function(seu, ndims, resolution){
 
 ##########################################################################
 
+#' do_marker_gene_selection
+#' Perform marker gene selection
+#' TODO this function is harcoded - make proper variables
+#'
+#' @param seu: Seurat object
+#' @param name: sample name
+#' @param expermient: experiment name
+#' 
+#' @keywords preprocessing, marker, gene
+#' 
+#' @return Nothing
+do_marker_gene_selection <- function(seu, name, experiment){
+  markers <- FindAllMarkers(seu, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+  saveRDS(markers, paste0(experiment, ".", name, ".markers.RDS"))
+}
+
+
+##########################################################################
+
 
 #' do_integration
 #' Perform integration of multiple samples
@@ -263,6 +282,12 @@ main_preprocessing_analysis <- function(name, experiment, input, filter, mincell
   seu <- do_clustering(seu = seu,
                        ndims = ndims,
                        resolution = resolution)
+                       
+  # Marker gene selection
+  
+  do_marker_gene_selection(seu = seu,
+                           name = name,
+                           experiment = experiment)
   
   # Save final Seurat object
   
@@ -289,7 +314,7 @@ main_preprocessing_analysis <- function(name, experiment, input, filter, mincell
 #' @param percentmt: max percentage of reads mapped to mitochondrial genes for which a cell is selected
 #' @param hvgs: Number of HVGs to be selected
 #' @param resolution: Granularity of the downstream clustering (higher values -> greater number of clusters)
-#' @param all_seu: NULL if creating an individual report (daemon 3a). A list of 2 Seurat objects if creating a general report (daemon 3b)
+#' @param all_seu: NULL if creating an individual report (daemon 3a). A list of 2 Seurat objects and a matrix of markers if creating a general report (daemon 3b)
 #' 
 #' @keywords preprocessing, write, report
 #' 
@@ -316,9 +341,17 @@ write_preprocessing_report <- function(name, experiment, template, outdir, inter
                                            ".",
                                            name,
                                            ".before.seu.RDS")))
+    markers <- readRDS(file.path(main_folder,
+                                 name,
+                                 "preprocessing.R_0000",
+                                 paste0(experiment,
+                                        ".",
+                                        name,
+                                        ".markers.RDS")))
   } else {
     seu <- all_seu[[1]]
     before.seu <- all_seu[[2]]
+    markers <- all_seu[[3]]
   }  
   rmarkdown::render(template,
                     output_file = file.path(outdir,

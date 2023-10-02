@@ -10,7 +10,7 @@ output:
 ---
 
 <!-- Sergio Alías, 20230606 -->
-<!-- Last modified 20230630 -->
+<!-- Last modified 20230928 -->
 
 <style type='text/css'>
     body .main-container {
@@ -37,7 +37,7 @@ output:
 .dropdown-content {
   display: none;
 }
-Error in parse(text = x, srcfile = src) : <text>:4:1: unexpected '<'
+
 .dropdown:hover .dropdown-content {
   display: block;
 }
@@ -78,6 +78,8 @@ library(kableExtra)
 ```{r child="dimensionality_reduction.Rmd", eval = TRUE}
 ```
 
+```{r child="marker_gene_selection.Rmd", eval = TRUE}
+```
 
 ---
 

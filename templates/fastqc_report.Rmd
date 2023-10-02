@@ -85,7 +85,9 @@ Metrics from the FASTQ files:
 - **Quality scores - mean quality per base**: Quality is measured with the Phred score (Q), which is typically in the range 2 - 40, but higher and lower values are sometimes used. The higher the Phred score, the higher the quality.
 - **Quality scores - mean quality per base in lower quartile**: Same as the previous one, but focusing in the lower quartile.
 - **Quality scores - mean quality per base in 10th decile**: Same as the previous one, but focusing in the tenth decile.
-- **Quality scores - weigthed quality per sequence**: 
+- **Quality scores - weigthed quality per sequence**: Same as the previous one, but the mean is calculated by sequence and weighted by sequence length.
+- **Mean indeterminations per base**: Mean of the percent of bases at each position with no base call (N).
+- **Weigthed read length**: Weighted mean of read length.
 
 </details>
 
@@ -164,6 +166,33 @@ make_barplot(metric_df, "initial_weigthed_read_length")
 </div>
 
 ## Cell Ranger metrics
+
+<details>
+<summary>**How to interpret**</summary>
+<br>
+
+Metrics from the Cell Ranger alignment/single-cell matrix:
+
+- **Estimated Number of Cells**: Number of barcodes associated with at least one cell.
+- **Mean Reads per Cell**: Total number of sequenced reads divided by the number of barcodes associated with cell-containing partitions.
+- **Median Genes per Cell**: Median number of genes detected per cell-associated barcode. Detection is defined as the presence of at least 1 UMI count.
+- **Valid Barcodes percentage**: Fraction of reads with barcodes that match the whitelist after barcode correction.
+- **Sequencing Saturation**: Fraction of reads originating from an already-observed UMI. This is a function of library complexity and sequencing depth. More specifically, this is the fraction of confidently mapped, valid cell-barcode, valid UMI reads that had a non-unique (cell-barcode, UMI, gene).
+- **Q30 Bases in Barcode**: Fraction of cell barcode bases with Q-score >= 30, excluding very low quality/no-call (Q <= 2) bases from the denominator.
+- **Q30 Bases in RNA Read**: Fraction of RNA read bases with Q-score >= 30, excluding very low quality/no-call (Q <= 2) bases from the denominator. 
+- **Q30 Bases in UMI**: Fraction of UMI bases with Q-score >= 30, excluding very low quality/no-call (Q <= 2) bases from the denominator.
+- **Reads Mapped to Genome**: Fraction of reads that mapped to the genome.
+- **Reads Mapped Confidently to Genome**: Fraction of reads that mapped uniquely to the genome. If a gene mapped to exonic loci from a single gene and also to non-exonic loci, it is considered uniquely mapped to one of the exonic loci.
+- **Reads Mapped Confidently to Intergenic Regions**: Fraction of reads that mapped uniquely to an intergenic region of the genome.
+- **Reads Mapped Confidently to Intronic Regions**: Fraction of reads that mapped uniquely to an intronic region of the genome.
+- **Reads Mapped Confidently to Exonic Regions**: Fraction of reads that mapped uniquely to an exonic region of the genome.
+- **Reads Mapped Confidently to Transcriptome**: Fraction of reads that mapped to a unique gene in the transcriptome. The read must be consistent with annotated splice junctions. These reads are considered for UMI counting.
+- **Reads Mapped Antisense to Gene**: Fraction of reads confidently mapped to the transcriptome, but on the opposite strand of their annotated gene. A read is counted as antisense if it has any alignments that are consistent with an exon of a transcript but antisense to it, and has no sense alignments. Ideal < 20%. Rates of up to 40% are common for single nuclei samples. Higher fraction of antisense reads may indicate use of an incorrect chemistry type, or an issue with the reference transcriptome.
+- **Fraction Reads in Cells**: Fraction of valid-barcode, confidently-mapped reads with cell-associated barcodes.
+- **Total Genes Detected**: Number of genes with at least one UMI count in any cell.
+- **Median UMI Counts per Cell**: The median number of UMI counts per %s cell-associated barcode.
+
+</details>
 
 <div class="superbigimage">
 ```{r Estimated_Number_of_Cells, eval=TRUE, results='asis', echo=FALSE}
