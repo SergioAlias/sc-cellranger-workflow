@@ -1,5 +1,5 @@
 # Sergio Alías, 20230323
-# Last modified 20230925
+# Last modified 20231003
 
 # config_daemon
 
@@ -34,6 +34,7 @@ export multi_lane=TRUE                                                      #---
 
 export SAMPLES_FILE=$CODE_PATH"/samples_to_process.lst"    #-------#    A list with sample names. File name must be unique and in must not include paired-end information or file extension. (e.g. For file "sample_ex_1.fastq.gz" and "sample_ex_2.fastq.gz", filename is "sample_ex")
 export read_path=$CODE_PATH"/raw_data"                     #-------#    New path where samples were linked and renamed
+export exp_design=$CODE_PATH"/experiment_design.tbl"       #-------#    CSV file with experiment design details 8useful for integration)
 
 ######  REPORT VARIABLES #######
 
