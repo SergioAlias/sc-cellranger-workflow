@@ -1,5 +1,5 @@
 # Sergio Alías, 20230606
-# Last modified 20230928
+# Last modified 20231004
 
 ##########################################################################
 ########################## PRE-PROCESSING LIBRARY ########################
@@ -138,6 +138,7 @@ do_clustering <- function(seu, ndims, resolution){
 
 ##########################################################################
 
+
 #' do_marker_gene_selection
 #' Perform marker gene selection
 #' TODO this function is harcoded - make proper variables
@@ -152,6 +153,26 @@ do_clustering <- function(seu, ndims, resolution){
 do_marker_gene_selection <- function(seu, name, experiment){
   markers <- FindAllMarkers(seu, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
   saveRDS(markers, paste0(experiment, ".", name, ".markers.RDS"))
+}
+
+
+##########################################################################
+
+
+#' do_subsetting
+#' Subset samples according to experimental condition
+#' TODO this function is harcoded - make proper variables
+#'
+#' @param exp_design: Experiment design table in CSV format
+#' @param column: Column with the condition used for subsetting
+#' 
+#' @keywords preprocessing, subsetting, integration
+#' 
+#' @return List of vectors with sample names
+do_subsetting <- function(exp_design, column){
+  exp_design <- read.csv(exp_design)
+  subsets <- split(exp_design$code, exp_design$genotype)
+  return(subsets)
 }
 
 
