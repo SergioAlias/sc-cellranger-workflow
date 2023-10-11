@@ -1,5 +1,5 @@
 # Sergio Alías, 20230606
-# Last modified 20231004
+# Last modified 20231006
 
 ##########################################################################
 ########################## PRE-PROCESSING LIBRARY ########################
@@ -171,7 +171,7 @@ do_marker_gene_selection <- function(seu, name, experiment){
 #' @return List of vectors with sample names
 do_subsetting <- function(exp_design, column){
   exp_design <- read.csv(exp_design)
-  subsets <- split(exp_design$code, exp_design$genotype)
+  subsets <- split(exp_design$code, exp_design[[column]])
   return(subsets)
 }
 
@@ -187,16 +187,12 @@ do_subsetting <- function(exp_design, column){
 #' @param normalmethod: Normalization method
 #' @param scalefactor: Scale factor for cell-level normalization
 #' @param hvgs: Number of HVGs to be selected
-#' @param inlcude_undetermined: Whether Undetermined sample should be included (default: FALSE)
 #' 
 #' @keywords preprocessing, integration
 #' 
 #' @return Multi-sample integrated Seurat object
-do_integration <- function(names, experiment, normalmethod, scalefactor, hvgs, inlcude_undetermined = FALSE){
+do_integration <- function(names, experiment, normalmethod, scalefactor, hvgs){
   main_folder <- Sys.getenv("PREPROC_RESULTS_FOLDER")
-  if (identical(inlcude_undetermined, FALSE)){
-    names <- names[names != "Undetermined"]
-  }
   seu.list <- lapply(X = names, FUN = function(x) { # Load, normalize and identify variable features for each sample independently
     x <- readRDS(file.path(main_folder,
                                     x,
@@ -222,7 +218,7 @@ do_integration <- function(names, experiment, normalmethod, scalefactor, hvgs, i
 #' main_preprocessing_analysis
 #' Main preprocessing function that performs all the analyses (individually or combining all samples with and without integration)
 #'
-#' @param name: sample name
+#' @param name: sample name, or condition if integrate is TRUE
 #' @param expermient: experiment name
 #' @param input: directory with the single-cell data
 #' @param filter: TRUE for using only detected cell-associated barcodes, FALSE for using all detected barcodes
@@ -236,12 +232,14 @@ do_integration <- function(names, experiment, normalmethod, scalefactor, hvgs, i
 #' @param ndims: Number of PC to be used for clustering / UMAP / tSNE
 #' @param resolution: Granularity of the downstream clustering (higher values -> greater number of clusters)
 #' @param integrate: FALSE if we don't run integrative analysis, TRUE otherwise
-#' 
+#' @param column: TODO remove var ---- Column with the condition used for subsetting, default NULL just in case integrate is FALSE
+#' @param subset: vector of sample names, default NULL just in case integrate is FALSE
+#'
 #' @keywords preprocessing, main
 #' 
 #' @return Seurat object
 main_preprocessing_analysis <- function(name, experiment, input, filter, mincells, minfeats, minqcfeats,
-                                        percentmt, normalmethod, scalefactor, hvgs, ndims, resolution, integrate = FALSE){
+                                        percentmt, normalmethod, scalefactor, hvgs, ndims, resolution, integrate = FALSE, column = NULL, subset = NULL){
 
   # Input selection
   
@@ -259,7 +257,8 @@ main_preprocessing_analysis <- function(name, experiment, input, filter, mincell
                       minfeats = minfeats)
     save_before_seu = TRUE
   } else {
-    sample_names <- scan(Sys.getenv("SAMPLES_FILE"), what = character())
+    subsets <- do_subsetting(exp_design = Sys.getenv("exp_design"),
+                             column = column)
     seu <- do_integration(names = sample_names,
                           experiment = experiment,
                           normalmethod = normalmethod,

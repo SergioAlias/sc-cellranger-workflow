@@ -1,5 +1,5 @@
 # Sergio Alías, 20230323
-# Last modified 20231003
+# Last modified 20231010
 
 # config_daemon
 
@@ -23,6 +23,7 @@ export COUNT_RESULTS_FOLDER=$experiment_folder"/count_results"              #---
 export QC_RESULTS_FOLDER=$experiment_folder"/QC_results"                    #-------#    QC execution path
 export PREPROC_RESULTS_FOLDER=$experiment_folder"/preprocessing_results"    #-------#    Pre-processing execution path
 export QMAP_RESULTS_FOLDER=$experiment_folder"/qualimap_results"            #-------#    QualiMap execution path
+export INTEGRATE_RESULTS_FOLDER=$experiment_folder"/integrate_results"      #-------#    Integrative analysis execution path
 export COUNT_TEMPLATE=$CODE_PATH"/autoflow/count_template.txt"              #-------#    AutoFlow count template. It is advisable not to modify this variable
 export QC_TEMPLATE=$CODE_PATH"/autoflow/QC_template.txt"                    #-------#    AutoFlow QC template. It is advisable not to modify this variable
 export PREPROC_TEMPLATE=$CODE_PATH"/autoflow/preprocessing_template.txt"    #-------#    AutoFlow pre-processing template. It is advisable not to modify this variable
@@ -73,5 +74,6 @@ elif [ "$module" == "3a" ] || [ "$module" == "3b" ]; then
     export preproc_pca_n_dims=20               #-------#    Number of PC to use for clustering / UMAP / tSNE
     export preproc_resolution=0.5              #-------#    Granularity of the clustering (higher values -> greater number of clusters)
     export preproc_pca_n_cells=500             #-------#    Heatmap plots the 'extreme' cells on both ends of the spectrum -> dramatically speeds plotting for large datasets
-    export integrative_analysis=FALSE           #-------#    TRUE for all samples integration, FALSE otherwise
+    export integrative_analysis=TRUE           #-------#    TRUE for samples integration, FALSE otherwise
+    export subset_column=Genotype              #-------#    Integration condition
 fi

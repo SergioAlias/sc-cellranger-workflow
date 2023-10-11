@@ -1,5 +1,5 @@
 # Sergio Alías, 20230516
-# Last modified 20230920
+# Last modified 20231011
 
 # Generic Autoflow launcher
 
@@ -7,21 +7,30 @@
 
 
 if [ "$1" == "count" ] ; then # STAGE 1 OBTAINING COUNTS FROM FASTQ FILES
-    export RESULTS_FOLDER=$COUNT_RESULTS_FOLDER
     export TEMPLATE=$COUNT_TEMPLATE
+    export RESULTS_FOLDER=$COUNT_RESULTS_FOLDER
 elif [ "$1" == "qc" ] ; then # STAGE 2 QUALITY CONTROL AND TRIMMING
-    export RESULTS_FOLDER=$QC_RESULTS_FOLDER
     export TEMPLATE=$QC_TEMPLATE
-elif [ "$1" == "preproc" ] ; then # STAGE 3 PREPROCESSING
-    export RESULTS_FOLDER=$PREPROC_RESULTS_FOLDER
+    export RESULTS_FOLDER=$QC_RESULTS_FOLDER
+elif [ "$1" == "preproc" ] ; then # STAGE 3a PREPROCESSING  
     export TEMPLATE=$PREPROC_TEMPLATE
+    if [ "$integrative_analysis" == "TRUE" ] ; then
+        export RESULTS_FOLDER=$INTEGRATE_RESULTS_FOLDER"/"$subset_column
+    else
+        export RESULTS_FOLDER=$PREPROC_RESULTS_FOLDER
+    fi
 fi
 
 mkdir -p $RESULTS_FOLDER
 
+if [ "$integrative_analysis" == "TRUE" ] ; then
+    Rscript 
+    SAMPLES_FILE=
+fi
+
 PATH=$LAB_SCRIPTS:$PATH
 
-export S_NUMBER=6
+export S_NUMBER=1
 
 while IFS= read sample; do
     if [ "$multi_lane" == "FALSE" ] || [ "$1" != "qc" ] ; then
