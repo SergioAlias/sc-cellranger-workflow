@@ -1,5 +1,5 @@
 # Sergio Alías, 20230606
-# Last modified 20231006
+# Last modified 20231127
 
 ##########################################################################
 ########################## PRE-PROCESSING LIBRARY ########################
@@ -179,7 +179,36 @@ do_subsetting <- function(exp_design, column){
 ##########################################################################
 
 
-#' do_integration
+##########################################################################
+
+
+#' merge_condition
+#' Merge samples sharing an experimental condition
+#'
+#' @param exp_cond: Experimental condition
+#' @param samples: Vector of samples with that experimental condition
+#' 
+#' @keywords preprocessing, merging, integration
+#' 
+#' @return Merged Seurat object
+do_subsetting <- function(exp_cond, samples){ # (TODO Finsih this and add secondary condition)
+  seu.list.48 <- sapply(ids.48, function(i){ # Loading
+    d10x <- Read10X(file.path(dataset_loc,i,"cellranger_0000",i,"outs/filtered_feature_bc_matrix"))
+    colnames(d10x) <- paste(sapply(strsplit(colnames(d10x),split="-"),'[[',1L),i,sep="-")
+    seu <- CreateSeuratObject(counts = d10x, project = "neurorg", min.cells = 1, min.features = 1)
+    seu@meta.data$samplename <- c(rep(i, nrow(seu@meta.data)))
+    seu[["percent.mt"]] <- PercentageFeatureSet(seu, pattern = "^MT-")
+    seu <- subset(seu, subset = nFeature_RNA > 500 & nCount_RNA > 1000 & percent.mt < 20)
+    seu
+  })
+  return(seu)
+}
+
+
+##########################################################################
+
+
+#' do_seu_integration (DEPRECATED, USE do_harmony INSTEAD)
 #' Perform integration of multiple samples
 #'
 #' @param names: List of sample names
@@ -191,7 +220,7 @@ do_subsetting <- function(exp_design, column){
 #' @keywords preprocessing, integration
 #' 
 #' @return Multi-sample integrated Seurat object
-do_integration <- function(names, experiment, normalmethod, scalefactor, hvgs){
+do_seu_integration <- function(names, experiment, normalmethod, scalefactor, hvgs){
   main_folder <- Sys.getenv("PREPROC_RESULTS_FOLDER")
   seu.list <- lapply(X = names, FUN = function(x) { # Load, normalize and identify variable features for each sample independently
     x <- readRDS(file.path(main_folder,
@@ -256,7 +285,7 @@ main_preprocessing_analysis <- function(name, experiment, input, filter, mincell
                       mincells = mincells,
                       minfeats = minfeats)
     save_before_seu = TRUE
-  } else {
+  } else { # TODO this is supposed to be executed before so it's not needed here
     subsets <- do_subsetting(exp_design = Sys.getenv("exp_design"),
                              column = column)
     seu <- do_integration(names = sample_names,

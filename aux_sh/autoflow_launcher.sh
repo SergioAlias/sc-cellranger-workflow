@@ -1,5 +1,5 @@
 # Sergio Alías, 20230516
-# Last modified 20231011
+# Last modified 20231019
 
 # Generic Autoflow launcher
 
@@ -24,7 +24,7 @@ fi
 mkdir -p $RESULTS_FOLDER
 
 if [ "$integrative_analysis" == "TRUE" ] ; then
-    Rscript 
+    Rscript subset.R # TODO add args
     SAMPLES_FILE=
 fi
 
