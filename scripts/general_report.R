@@ -80,17 +80,16 @@ main_folder <- opt$results_folder
 experiment_name <- opt$experiment_name
 
 for (name in rds_files) {
-  if (opt$integrative_analysis == "FALSE") { # We don't need preprocessed objects if we do integrative analysis
-      rds_object <- readRDS(file.path(main_folder,
-                                      name,
-                                      "preprocessing.R_0000",
-                                      paste0(experiment_name,
-                                             ".",
-                                             name,
-                                             ".seu.RDS")))
-      seu_list <- append(seu_list, rds_object)
-  }
-  
+      
+  rds_object <- readRDS(file.path(main_folder,
+                                  name,
+                                  "preprocessing.R_0000",
+                                   paste0(experiment_name,
+                                          ".",
+                                         name,
+                                         ".seu.RDS")))
+  seu_list <- append(seu_list, rds_object)
+
   raw_object <- readRDS(file.path(main_folder,
                                   name,
                                   "preprocessing.R_0000",
@@ -110,28 +109,15 @@ for (name in rds_files) {
   marker_gene_list <- append(marker_gene_list, marker_genes)
 }
 
-if (opt$integrative_analysis == "FALSE") { # Same reason as line 82
-  seu <- seu_list
-  before.seu <- raw_seu_list
-  report_name <- "All samples"
-} else { # "If we want an integrative analysis"
+
+seu <- seu_list
+before.seu <- raw_seu_list
+if (isTRUE(opt$integrative_analysis)){
+  report_name <- "All integrated samples"
+} else {
   report_name <- "Integrated samples"
-  main_preprocessing_analysis(name = report_name,
-                              experiment = experiment_name,
-                              input = opt$input,
-                              filter = opt$filter,
-                              mincells = opt$mincells,
-                              minfeats = opt$minfeats,
-                              minqcfeats = opt$minqcfeats,
-                              percentmt = opt$percentmt,
-                              normalmethod = opt$normalmethod,
-                              scalefactor = opt$scalefactor,
-                              hvgs = opt$hvgs,
-                              ndims = opt$ndims,
-                              resolution = opt$resolution,
-                              integrate = opt$integrative_analysis)
-  seu <- readRDS(file.path(Sys.getenv(PREPROC_RESULTS_FOLDER), paste0(experiment_name, ".", report_name, ".seu.RDS")))
-}
+  }
+
 
 
 write_preprocessing_report(name = report_name,

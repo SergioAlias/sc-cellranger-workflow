@@ -1,5 +1,5 @@
 # Sergio Alías, 20230516
-# Last modified 20231019
+# Last modified 20231201
 
 # Generic Autoflow launcher
 
@@ -14,18 +14,19 @@ elif [ "$1" == "qc" ] ; then # STAGE 2 QUALITY CONTROL AND TRIMMING
     export RESULTS_FOLDER=$QC_RESULTS_FOLDER
 elif [ "$1" == "preproc" ] ; then # STAGE 3a PREPROCESSING  
     export TEMPLATE=$PREPROC_TEMPLATE
-    if [ "$integrative_analysis" == "TRUE" ] ; then
-        export RESULTS_FOLDER=$INTEGRATE_RESULTS_FOLDER"/"$subset_column
-    else
-        export RESULTS_FOLDER=$PREPROC_RESULTS_FOLDER
-    fi
+    export RESULTS_FOLDER=$PREPROC_RESULTS_FOLDER
+
 fi
 
 mkdir -p $RESULTS_FOLDER
 
-if [ "$integrative_analysis" == "TRUE" ] ; then
-    Rscript subset.R # TODO add args
-    SAMPLES_FILE=
+if [ "$1" == "preproc" ] && [ "$integrative_analysis" == "TRUE" ] ; then
+    Rscript prior_integration.R --exp_design $exp_design \
+                                --output $RESULTS_FOLDER \
+                                --condition $subset_column \
+                                --integration_file $integration_file \
+                                --experiment_name $experiment_name
+    export SAMPLES_FILE=$integration_file
 fi
 
 PATH=$LAB_SCRIPTS:$PATH

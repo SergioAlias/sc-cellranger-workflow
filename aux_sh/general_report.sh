@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # Sergio Alías, 20230627
-# Last modified 20230925
+# Last modified 20231204
 
 # STAGE 3 PREPROCESSING
 
@@ -14,6 +14,10 @@
 
 mkdir -p $PREPROC_RESULTS_FOLDER
 . ~soft_bio_267/initializes/init_R
+
+if [ "$integrative_analysis" == "TRUE" ] ; then
+    export SAMPLES_FILE=$integration_file
+fi
 
 # Main
 

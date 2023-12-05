@@ -1,7 +1,7 @@
 #! /usr/bin/env Rscript
 
 # Sergio Alías, 20230606
-# Last modified 20230630
+# Last modified 20231201
 
 
 #################################
@@ -15,7 +15,7 @@
 
 library(optparse)
 library(Seurat)
-
+library(scCustomize)
 
 ###################
 ### Custom libs ###
@@ -60,7 +60,9 @@ option_list <- list(
   make_option(c("--experiment_name"), type = "character",
               help="Experiment name"),
   make_option(c("--resolution"), type = "double",
-              help="Granularity of the clustering")
+              help="Granularity of the clustering"),
+  make_option(c("--integrate"), type = "character",
+              help="TRUE if integrative analysis, FALSE otherwise")
 )  
 
 
@@ -74,6 +76,7 @@ opt <- parse_args(OptionParser(option_list = option_list))
 main_preprocessing_analysis(name = opt$name,
                             experiment = opt$experiment_name,
                             input = opt$input,
+                            output = opt$output,
                             filter = opt$filter,
                             mincells = opt$mincells,
                             minfeats = opt$minfeats,
@@ -83,7 +86,8 @@ main_preprocessing_analysis(name = opt$name,
                             scalefactor = opt$scalefactor,
                             hvgs = opt$hvgs,
                             ndims = opt$ndims,
-                            resolution = opt$resolution)
+                            resolution = opt$resolution,
+                            integrate = as.logical(opt$integrate)
 
 write_preprocessing_report(name = opt$name,
                            experiment = opt$experiment_name,

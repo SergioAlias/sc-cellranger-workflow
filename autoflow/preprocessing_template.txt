@@ -1,5 +1,5 @@
 # Sergio Alías, 20230612
-# Last modified 20230929
+# Last modified 20231201
 
 ####################
 ### Preprocessing template. Parametres can be customized at config_deamon
@@ -26,5 +26,5 @@ sc_preprocessing){
                  --dimheatmapcells $preproc_pca_n_cells \
                  --report_folder $report_folder \
                  --experiment_name $experiment_name \
-                 --resolution $preproc_resolution
-}
+                 --resolution $preproc_resolution \
+                 --integrate $integrative_analysis

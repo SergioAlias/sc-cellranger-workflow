@@ -1,13 +1,13 @@
-code,time,genotype,replicate
-SAMPLE_A,48,mutant,1
-SAMPLE_B,48,WT,1
-SAMPLE_C,48,WT,2
-SAMPLE_D,48,mutant,2
-SAMPLE_E,48,WT,3
-SAMPLE_F,48,mutant,3
-SAMPLE_G,62,mutant,1
-SAMPLE_H,62,WT,1
-SAMPLE_I,62,WT,2
-SAMPLE_J,62,mutant,2
-SAMPLE_K,62,WT,3
-SAMPLE_L,62,mutant,3
+code	time	genotype	replicate	merged_condition
+SAMPLE_A	48	mutant	1	mutant48
+SAMPLE_B	48	WT	1	WT48
+SAMPLE_C	48	WT	2	WT48
+SAMPLE_D	48	mutant	2	mutant48
+SAMPLE_E	48	WT	3	WT48
+SAMPLE_F	48	mutant	3	mutant48
+SAMPLE_G	62	mutant	1	mutant62
+SAMPLE_H	62	WT	1	WT62
+SAMPLE_I	62	WT	2	WT62
+SAMPLE_J	62	mutant	2	mutant62
+SAMPLE_K	62	WT	3	WT62
+SAMPLE_L	62	mutant	3	mutant62

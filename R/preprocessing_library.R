@@ -1,5 +1,5 @@
 # Sergio Alías, 20230606
-# Last modified 20231127
+# Last modified 20231204
 
 ##########################################################################
 ########################## PRE-PROCESSING LIBRARY ########################
@@ -104,14 +104,22 @@ do_qc <- function(name, experiment, seu, minqcfeats, percentmt, save_before_seu 
 #'
 #' @param seu: Seurat object
 #' @param ndims: Number of PC to be used for UMAP / tSNE
-#' 
+#' @param dimreds: character vector with the dimensional reductions to perform. E.g. c("pca", "tsne", "umap")
+#' @param reduction: Dimensional reduction to use for UMAP /tSNE. "pca" if no integration, or "harmony" if integration
+#'
 #' @keywords preprocessing, dimensionality, reduction, PCA, UMAP, tSNE
 #' 
 #' @return Seurat object
-do_dimred <- function(seu, ndims){
-  seu <- RunPCA(seu, features = VariableFeatures(object = seu))
-  seu <- RunUMAP(seu, dims = 1:ndims)
-  seu <- RunTSNE(seu, dims = 1:ndims)
+do_dimred <- function(seu, ndims, dimreds, reduction = "pca"){
+  if ("pca" %in% dimreds){
+    seu <- RunPCA(seu, features = VariableFeatures(object = seu))
+  }
+  if ("umap" %in% dimreds){
+    seu <- RunUMAP(seu, dims = 1:ndims, reduction = reduction)
+  }
+  if ("tsne" %in% dimreds){
+    seu <- RunTSNE(seu, dims = 1:ndims, reduction = reduction)
+  }
   return(seu)
 }
 
@@ -125,12 +133,13 @@ do_dimred <- function(seu, ndims){
 #' @param seu: Seurat object
 #' @param ndims: Number of PC to be used for clustering
 #' @param resolution: Granularity of the downstream clustering (higher values -> greater number of clusters)
+#' @param reduction: Dimensional reduction to use for clustering. "pca" if no integration, or "harmony" if integration
 #' 
 #' @keywords preprocessing, clustering
 #' 
 #' @return Seurat object
-do_clustering <- function(seu, ndims, resolution){
-  seu <- FindNeighbors(seu, dims = 1:ndims)
+do_clustering <- function(seu, ndims, resolution, reduction){
+  seu <- FindNeighbors(seu, dims = 1:ndims, reduction = reduction)
   seu <- FindClusters(seu, resolution = resolution)
   return(seu)
 }
@@ -161,7 +170,6 @@ do_marker_gene_selection <- function(seu, name, experiment){
 
 #' do_subsetting
 #' Subset samples according to experimental condition
-#' TODO this function is harcoded - make proper variables
 #'
 #' @param exp_design: Experiment design table in CSV format
 #' @param column: Column with the condition used for subsetting
@@ -170,13 +178,33 @@ do_marker_gene_selection <- function(seu, name, experiment){
 #' 
 #' @return List of vectors with sample names
 do_subsetting <- function(exp_design, column){
-  exp_design <- read.csv(exp_design)
+  exp_design <- read.csv(exp_design, sep = "\t")
   subsets <- split(exp_design$code, exp_design[[column]])
   return(subsets)
 }
 
 
 ##########################################################################
+
+
+#' add_exp_design
+#' Add experimental condition to Seurat metadata
+#'
+#' @param seu: Seurat object
+#' @param name: Sample name
+#' @param exp_design: Experiment design table in CSV format
+#' 
+#' @keywords preprocessing, subsetting, integration
+#' 
+#' @return Seurat object with the experimental conditions added as metadata
+add_exp_design <- function(seu, name, exp_design){
+  exp_design <- read.csv(exp_design, sep = "\t")
+  exp_design <- as.list(exp_design[exp_design$code == name,])
+  for (i in names(exp_design)){
+    seu@meta.data[[i]] <- c(rep(exp_design[[i]], nrow(seu@meta.data)))
+  }
+  return(seu)
+}
 
 
 ##########################################################################
@@ -187,56 +215,41 @@ do_subsetting <- function(exp_design, column){
 #'
 #' @param exp_cond: Experimental condition
 #' @param samples: Vector of samples with that experimental condition
+#' @param exp_design: Experiment design table in CSV format
+#' @param count_path: Directory with count results
 #' 
 #' @keywords preprocessing, merging, integration
 #' 
 #' @return Merged Seurat object
-do_subsetting <- function(exp_cond, samples){ # (TODO Finsih this and add secondary condition)
-  seu.list.48 <- sapply(ids.48, function(i){ # Loading
-    d10x <- Read10X(file.path(dataset_loc,i,"cellranger_0000",i,"outs/filtered_feature_bc_matrix"))
-    colnames(d10x) <- paste(sapply(strsplit(colnames(d10x),split="-"),'[[',1L),i,sep="-")
-    seu <- CreateSeuratObject(counts = d10x, project = "neurorg", min.cells = 1, min.features = 1)
-    seu@meta.data$samplename <- c(rep(i, nrow(seu@meta.data)))
-    seu[["percent.mt"]] <- PercentageFeatureSet(seu, pattern = "^MT-")
-    seu <- subset(seu, subset = nFeature_RNA > 500 & nCount_RNA > 1000 & percent.mt < 20)
-    seu
+merge_condition <- function(exp_cond, samples, exp_design, count_path){ # (TODO finish writing)
+  seu.list <- sapply(samples, function(i){ # Loading
+    d10x <- Read10X(file.path(count_path, i, "cellranger_0000", i, "outs", "filtered_feature_bc_matrix"))
+    colnames(d10x) <- paste(sapply(strsplit(colnames(d10x),split="-"),'[[',1L),i,sep="-") # Adds sample same at the end of cell names
+    seu <- CreateSeuratObject(counts = d10x, project = i, min.cells = 1, min.features = 1)
+    seu <- add_exp_design(seu = seu,
+                          name = i,
+                          exp_design = exp_design)
+    return(seu)
   })
-  return(seu)
+  merged_seu <- scCustomize::Merge_Seurat_List(list_seurat = seu.list)
+  return(merged_seu)
 }
 
 
 ##########################################################################
 
 
-#' do_seu_integration (DEPRECATED, USE do_harmony INSTEAD)
-#' Perform integration of multiple samples
+#' do_harmony
+#' Perform integration of a merged Seurat object with Harmony
 #'
-#' @param names: List of sample names
-#' @param experiment: Experiment name
-#' @param normalmethod: Normalization method
-#' @param scalefactor: Scale factor for cell-level normalization
-#' @param hvgs: Number of HVGs to be selected
+#' @param seu: Merged Seurat object
+#' @param exp_cond: Experimental condition
 #' 
 #' @keywords preprocessing, integration
 #' 
-#' @return Multi-sample integrated Seurat object
-do_seu_integration <- function(names, experiment, normalmethod, scalefactor, hvgs){
-  main_folder <- Sys.getenv("PREPROC_RESULTS_FOLDER")
-  seu.list <- lapply(X = names, FUN = function(x) { # Load, normalize and identify variable features for each sample independently
-    x <- readRDS(file.path(main_folder,
-                                    x,
-                                    "preprocessing.R_0000",
-                                    paste0(experiment,
-                                           ".",
-                                           x,
-                                           ".before.seu.RDS")))
-    x <- NormalizeData(x, normalization.method = normalmethod, scale.factor = scalefactor)
-    x <- FindVariableFeatures(x, nfeatures = hvgs)
-    })
-  features <- SelectIntegrationFeatures(object.list = seu.list) # Select features that are repeatedly variable across samples for integration
-  anchors <- FindIntegrationAnchors(object.list = seu.list, anchor.features = features, reference = 1) # Identify anchors
-  seu <- IntegrateData(anchorset = anchors) # Create an integrated data assay
-  DefaultAssay(seu) <- "integrated" # Set integrated data as default assay
+#' @return Multi-sample integrated Seurat object with Harmony embeddings available
+do_harmony <- function(seu, exp_cond){
+  seu <- RunHarmony(seu, exp_cond)
   return(seu)
 }
 
@@ -250,6 +263,7 @@ do_seu_integration <- function(names, experiment, normalmethod, scalefactor, hvg
 #' @param name: sample name, or condition if integrate is TRUE
 #' @param expermient: experiment name
 #' @param input: directory with the single-cell data
+#' @param output: directory (used when integrate is TRUE)
 #' @param filter: TRUE for using only detected cell-associated barcodes, FALSE for using all detected barcodes
 #' @param mincells: min number of cells for which a feature is recorded
 #' @param minfeats: min number of features for which a cell is recorded
@@ -261,14 +275,13 @@ do_seu_integration <- function(names, experiment, normalmethod, scalefactor, hvg
 #' @param ndims: Number of PC to be used for clustering / UMAP / tSNE
 #' @param resolution: Granularity of the downstream clustering (higher values -> greater number of clusters)
 #' @param integrate: FALSE if we don't run integrative analysis, TRUE otherwise
-#' @param column: TODO remove var ---- Column with the condition used for subsetting, default NULL just in case integrate is FALSE
-#' @param subset: vector of sample names, default NULL just in case integrate is FALSE
 #'
 #' @keywords preprocessing, main
 #' 
 #' @return Seurat object
-main_preprocessing_analysis <- function(name, experiment, input, filter, mincells, minfeats, minqcfeats,
-                                        percentmt, normalmethod, scalefactor, hvgs, ndims, resolution, integrate = FALSE, column = NULL, subset = NULL){
+main_preprocessing_analysis <- function(name, experiment, input, output, filter, mincells, minfeats, minqcfeats,
+                                        percentmt, normalmethod, scalefactor, hvgs, ndims, resolution,
+                                        integrate = FALSE){
 
   # Input selection
   
@@ -278,22 +291,21 @@ main_preprocessing_analysis <- function(name, experiment, input, filter, mincell
     input <- file.path(input, "raw_feature_bc_matrix")
   }
   
-  # Input reading and integration 
+  # Input reading and integration variables setup
+
   if (identical(integrate, FALSE)) {
     seu <- read_input(name = name, 
                       input = input,
                       mincells = mincells,
                       minfeats = minfeats)
-    save_before_seu = TRUE
-  } else { # TODO this is supposed to be executed before so it's not needed here
-    subsets <- do_subsetting(exp_design = Sys.getenv("exp_design"),
-                             column = column)
-    seu <- do_integration(names = sample_names,
-                          experiment = experiment,
-                          normalmethod = normalmethod,
-                          scalefactor = scalefactor,
-                          hvgs = hvgs)
-    save_before_seu = FALSE # For QC (we should already have the Seurat objects before QC)
+    save_before_seu = TRUE # For QC
+    dimreds_to_do <- c("pca") # For dimensionality reduction
+    embeddings_to_use <- "pca"
+  } else {
+    seu <- readRDS(file.path(output, paste0(experiment, ".", name, ".before.seu.RDS")))
+    save_before_seu = FALSE # For QC (we already have the Seurat object before QC)
+    dimreds_to_do <- c("pca", "tsne", "umap") # For dimensionality reduction
+    embeddings_to_use <- "harmony"
   }
   
   # QC
@@ -307,15 +319,11 @@ main_preprocessing_analysis <- function(name, experiment, input, filter, mincell
   
   # Normalization
 
-  if (integrate == FALSE) {
-    seu <- NormalizeData(seu, normalization.method = normalmethod, scale.factor = scalefactor)
-  }
-
+  seu <- NormalizeData(seu, normalization.method = normalmethod, scale.factor = scalefactor)
+  
   # Feature selection
   
-  if (integrate == FALSE) {
-    seu <- FindVariableFeatures(seu, nfeatures = hvgs)
-  }
+  seu <- FindVariableFeatures(seu, nfeatures = hvgs)
   
   # Data scaling
   
@@ -324,13 +332,26 @@ main_preprocessing_analysis <- function(name, experiment, input, filter, mincell
   # Dimensionality reduction (PCA/UMAP/tSNE)
   
   seu <- do_dimred(seu = seu,
-                   ndims = ndims)
+                   ndims = ndims,
+                   dimreds = dimreds_to_do)
   
+
+  # Harmony integration and remaining dimreds (only for integrative analysis)
+
+  if (isTRUE(integrate)){
+    seu <- do_harmony(seu)
+    seu <- do_dimred(seu = seu,
+                     ndims = ndims,
+                     dimreds = c("tsne", "umap"),
+                     reduction = embeddings_to_use)
+  }
+
   # Clustering
   
   seu <- do_clustering(seu = seu,
                        ndims = ndims,
-                       resolution = resolution)
+                       resolution = resolution,
+                       reduction = embeddings_to_use)
                        
   # Marker gene selection
   
@@ -339,13 +360,17 @@ main_preprocessing_analysis <- function(name, experiment, input, filter, mincell
                            experiment = experiment)
   
   # Save final Seurat object
-  
-  if (identical(integrate, FALSE)){
-    saveRDS(seu, paste0(experiment, ".", name, ".seu.RDS"))
-  } else {
-    saveRDS(seu, file.path(Sys.getenv(PREPROC_RESULTS_FOLDER), paste0(experiment, ".", name, ".seu.RDS")))
+
+  saveRDS(seu, paste0(experiment, ".", name, ".seu.RDS"))
+
+
+  # Move the before.seu objects to the directory created by Autoflow (only for integrative analysis)
+
+  if (isTRUE(integrate)){
+    file.copy(from = file.path(folder_name, paste0(experiment, ".", name, ".before.seu.RDS")),
+              to   = getwd())
+    file.remove(file.path(folder_name, paste0(experiment, ".", name, ".before.seu.RDS")))
   }
-}
 
 
 ##########################################################################

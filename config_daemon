@@ -1,5 +1,5 @@
 # Sergio Alías, 20230323
-# Last modified 20231107
+# Last modified 20231201
 
 # config_daemon
 
@@ -63,17 +63,18 @@ elif [ "$module" == "1" ] ; then
 ######  STAGE 3 PREPROCESSING #######
 
 elif [ "$module" == "3a" ] || [ "$module" == "3b" ]; then
-    export preproc_filter=TRUE                 #-------#    TRUE for using only detected cell-associated barcodes, FALSE for using all detected barcodes
-    export preproc_init_min_cells=1            #-------#    Min number of cells for which a feature is recorded. Used when creating the Seurat object (recommended 3 for raw data)
-    export preproc_init_min_feats=1            #-------#    Min number of features for which a cell is recorded. Used when creating the Seurat object (recommended 200 for raw data)
-    export preproc_qc_min_feats=500            #-------#    Min number of features for which a cell is selected. Used when applying QC filters
-    export preproc_max_percent_mt=5            #-------#    Max percentage of reads mapped to mitochondrial genes for which a cell is selected
-    export preproc_norm_method=LogNormalize    #-------#    Seurat normalization method: LogNormalize, CLR, RC
-    export preproc_scale_factor=10000          #-------#    Seurat scale factor for cell-level normalization
-    export preproc_select_hvgs=2000            #-------#    Number of HVG to be selected (feature selection)
-    export preproc_pca_n_dims=20               #-------#    Number of PC to use for clustering / UMAP / tSNE
-    export preproc_resolution=0.5              #-------#    Granularity of the clustering (higher values -> greater number of clusters)
-    export preproc_pca_n_cells=500             #-------#    Heatmap plots the 'extreme' cells on both ends of the spectrum -> dramatically speeds plotting for large datasets
-    export integrative_analysis=TRUE           #-------#    TRUE for samples integration, FALSE otherwise
-    export subset_column=Genotype              #-------#    Integration condition
+    export preproc_filter=TRUE                            #-------#    TRUE for using only detected cell-associated barcodes, FALSE for using all detected barcodes
+    export preproc_init_min_cells=1                       #-------#    Min number of cells for which a feature is recorded. Used when creating the Seurat object (recommended 3 for raw data)
+    export preproc_init_min_feats=1                       #-------#    Min number of features for which a cell is recorded. Used when creating the Seurat object (recommended 200 for raw data)
+    export preproc_qc_min_feats=500                       #-------#    Min number of features for which a cell is selected. Used when applying QC filters
+    export preproc_max_percent_mt=5                       #-------#    Max percentage of reads mapped to mitochondrial genes for which a cell is selected
+    export preproc_norm_method=LogNormalize               #-------#    Seurat normalization method: LogNormalize, CLR, RC
+    export preproc_scale_factor=10000                     #-------#    Seurat scale factor for cell-level normalization
+    export preproc_select_hvgs=2000                       #-------#    Number of HVG to be selected (feature selection)
+    export preproc_pca_n_dims=20                          #-------#    Number of PC to use for clustering / UMAP / tSNE
+    export preproc_resolution=0.5                         #-------#    Granularity of the clustering (higher values -> greater number of clusters)
+    export preproc_pca_n_cells=500                        #-------#    Heatmap plots the 'extreme' cells on both ends of the spectrum -> dramatically speeds plotting for large datasets
+    export integrative_analysis=TRUE                      #-------#    TRUE for samples integration, FALSE otherwise
+    export subset_column=Time                             #-------#    Integration condition
+    export integration_file=$CODE_PATH"/int_names.lst"    #-------#    Integration subset names file, will be created if integrative_analysis=TRUE
 fi
