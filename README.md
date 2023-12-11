@@ -2,7 +2,7 @@
 
 ## Workflow to perform single-cell RNA-seq analysis
 
-*Last README update applies for v1.6.8*
+*Last README update applies for v1.7.1*
 
 This repo will contain a Cell Ranger workflow for going from BCL/FASTQ/10x files to fully analyzed single-cell data (incomplete). More info will be available soon.
 
@@ -16,9 +16,11 @@ This repo will contain a Cell Ranger workflow for going from BCL/FASTQ/10x files
 
 1. Edit `manage_input_files.sh` manually, from which all raw samples must be linked with a suitable name to another custom folder (e.g. `raw_data`). After editing the source folder, the output folder and the link commands, run the script and make sure everything is alright. This step must be performed for customizate samples according to the experiment and keep original sample names in order to facilitate sample backtracking (in case of failure) at same time. New sample names must follow [Illumina's naming convention](https://support.illumina.com/help/BaseSpace_OLH_009008/Content/Source/Informatics/BS/NamingConvention_FASTQ-files-swBS.htm) (`SampleName_S1_L001_R1_001.fastq.gz`). The first part of the name should be easy to interpret and it is recommended to use short and non redundant names.
 
-2. Edit `samples_to_process.lst` adding sample names, one per line. **IMPORTANT:** Sample name must not include paired-end related information and file extension. If your sample name is `SampleName_S1_L001_R1_001.fastq.gz`, add a line with "SampleName" written in it. **MORE IMPORTANT:** Leave one empty line after all samples names. For instance, if you have 4 samples, your file sohuld have 5 lines, being the last one an empty line. Most text editors provides you with the line number so this should be easy to ensure.
+2. Edit `samples_to_process.lst` adding sample names, one per line. **IMPORTANT:** Sample name must not include paired-end related information and file extension. If your sample name is `SampleName_S1_L001_R1_001.fastq.gz`, add a line with "SampleName" written in it. **MORE IMPORTANT:** Leave one empty line after all samples names. For instance, if you have 4 samples, your file should have 5 lines, being the last one an empty line. Most text editors provides you with the line number so this should be easy to ensure. Please, if you have an "Undetermined" sample, place its name (Undetermined) at the end, so the workflow can identify it as Undetermined correctly and assign it the sample number 0.
 
 3. Edit `config_daemon` and set the variables to the desired values. The config file already contains sensible values for the variables so you can do a first analysis with the default values and come back later to fine-tune.
+
+4. If you are running an integrative analysis, prepare `experiment_design.tbl`, a TSV file containing the experimental conditions for each sample. This should contain a column named `code`, with the sample names (as in `samples_to_process.lst`).
 
 ---
 
@@ -49,6 +51,54 @@ Being N the stage number. You can use one of the following:
 ### Developer section
 
 Here you can find sub-sections useful for developers working on the workflow
+
+#### Problems/nonsense things you may encounter
+
+- **When the daemon calls sbatch, we use the path to the script even though that directory is added to the PATH some lines above**: Yes, I'm aware of that. I can not figure out what is happening there, all I know is that without the path it doesn't work.
+- **The Autoflow launcher assumes FASTQ files have all S1 in the name (even though they are different samples), but only if there are not multiple lanes**: Yes, that is because I thought that the S(n) part was another invariable part of the Illumina naming convention (apart from the _001 at the end). So when I received my first multilane dataset I also added the variablility in the S(n) part.
+
+#### Execution trace per stage
+
+Here you can find the files that are being executed when you run a daemon stage.
+
+- **0 - BCL to FASTQ**: After running `./daemon.sh 0`:
+    - (`daemon.sh`): Source `config_daemon`
+    - (`daemon.sh`): Run `aux_sh/cellranger_mkfastq.sh`
+
+- **1 - FASTQ to counts**: After running `./daemon.sh 1`:
+    - (`daemon.sh`): Source `config_daemon`
+    - (`daemon.sh`): Run `aux_sh/autoflow_launcher.sh`
+    - (`autoflow_launcher.sh`): Autoflow runs `autoflow/count_template.txt`
+
+- **2a - FastQC**: After running `./daemon.sh 2a`:
+    - (`daemon.sh`): Source `config_daemon`
+    - (`daemon.sh`): Run `aux_sh/autoflow_launcher.sh`
+    - (`autoflow_launcher.sh`): Autoflow runs `autoflow/QC_template.txt`
+
+- **2b - QC report**: After running `./daemon.sh 2b`:
+    - (`daemon.sh`): Source `config_daemon`
+    - (`daemon.sh`): Run `aux_sh/compare_samples.sh`
+    - (`compare_samples.sh`): Run `scripts/compare_samples.R`
+    - (`compare_samples.R`): Source `R/qc_library.R`
+
+- **2c - QualiMap**: After running `./daemon.sh 2c`:
+    - (`daemon.sh`): Source `config_daemon`
+    - (`daemon.sh`): Run `aux_sh/qualimap.sh`
+    
+- **3a - Preprocessing**: After running `./daemon.sh 3a`:
+    - (`daemon.sh`): Source `config_daemon`
+    - (`daemon.sh`): Run `aux_sh/autoflow_launcher.sh`
+    - (`autoflow_launcher.sh`): If integration, run `scripts/prior_integration.R`
+    - (`autoflow_launcher.sh`): Run AutoFlow with template `autoflow/preprocessing_template.txt`
+    - (AutoFlow - `preprocessing_template.txt`): Run `scripts/preprocessing.R`
+    - (AutoFlow - `preprocessing.R`): Source `R/preprocessing_library.R`
+    
+- **3b - General preprocessing report**: After running `./daemon.sh 3b`:
+    - (`daemon.sh`): Source `config_daemon`
+    - (`daemon.sh`): Run `aux_sh/general_report.sh`
+    - (`general_report.sh`): Run `scripts/general_report.R`
+    - (`general_report.R`): Source `R/preprocessing_library.R`
+
 
 #### List of files and directories
 
@@ -91,6 +141,8 @@ Here you can find sub-sections useful for developers working on the workflow
 
     - `preprocessing.R`: R script for applying `Seurat` preprocessing and creating a report
 
+    - `prior_integration.R`: R script for preparing samples for integration
+
 - `templates/` -> R Markdown templates for reports
 
     - `clustering.Rmd`: Child template used in `preprocessing_report.Rmd` that performs clustering
@@ -100,6 +152,8 @@ Here you can find sub-sections useful for developers working on the workflow
     - `fastqc_report.Rmd`: Template for QC report (name will be changed soon to better represent the file function)
 
     - `feature_selection.Rmd`: Child template used in `preprocessing_report.Rmd` that performs feature selection
+
+    - `marker_gene_selection.Rmd`: Child template used in `preprocessing_report.Rmd` that performs marker gene selection
 
     - `preprocessing_report.Rmd`: Template for pre-processing report
 

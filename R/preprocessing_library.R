@@ -1,5 +1,5 @@
 # Sergio Alías, 20230606
-# Last modified 20231204
+# Last modified 20231211
 
 ##########################################################################
 ########################## PRE-PROCESSING LIBRARY ########################
@@ -299,12 +299,12 @@ main_preprocessing_analysis <- function(name, experiment, input, output, filter,
                       mincells = mincells,
                       minfeats = minfeats)
     save_before_seu = TRUE # For QC
-    dimreds_to_do <- c("pca") # For dimensionality reduction
+    dimreds_to_do <- c("pca", "tsne", "umap") # For dimensionality reduction
     embeddings_to_use <- "pca"
   } else {
     seu <- readRDS(file.path(output, paste0(experiment, ".", name, ".before.seu.RDS")))
     save_before_seu = FALSE # For QC (we already have the Seurat object before QC)
-    dimreds_to_do <- c("pca", "tsne", "umap") # For dimensionality reduction
+    dimreds_to_do <- c("pca") # For dimensionality reduction
     embeddings_to_use <- "harmony"
   }
   

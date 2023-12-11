@@ -37,7 +37,7 @@ output:
 .dropdown-content {
   display: none;
 }
-Error in parse(text = x, srcfile = src) : <text>:4:1: unexpected '<'
+
 .dropdown:hover .dropdown-content {
   display: block;
 }
