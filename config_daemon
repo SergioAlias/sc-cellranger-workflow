@@ -1,5 +1,5 @@
 # Sergio Alías, 20230323
-# Last modified 20231201
+# Last modified 20231212
 
 # config_daemon
 
@@ -10,7 +10,7 @@
 
 ######  EXPERIMENT VARIABLES #######
 
-export experiment_name=MOUSE    #-------#    Experiment name
+export experiment_name=NEURORG    #-------#    Experiment name
 
 
 ######  EXECUTION VARIABLES #######
@@ -33,8 +33,8 @@ export multi_lane=TRUE                                                      #---
 
 ######  SAMPLES VARIABLES #######
 
-export SAMPLES_FILE=$CODE_PATH"/mouse_samples_to_process.lst"    #-------#    A list with sample names. File name must be unique and in must not include paired-end information or file extension. (e.g. For file "sample_ex_1.fastq.gz" and "sample_ex_2.fastq.gz", filename is "sample_ex")
-export read_path=$CODE_PATH"/mouse_raw_data"                     #-------#    New path where samples were linked and renamed
+export SAMPLES_FILE=$CODE_PATH"/samples_to_process.lst"    #-------#    A list with sample names. File name must be unique and in must not include paired-end information or file extension. (e.g. For file "sample_ex_1.fastq.gz" and "sample_ex_2.fastq.gz", filename is "sample_ex")
+export read_path=$CODE_PATH"/raw_data"                     #-------#    New path where samples were linked and renamed
 export exp_design=$CODE_PATH"/experiment_design.tbl"       #-------#    CSV file with experiment design details 8useful for integration)
 
 ######  REPORT VARIABLES #######
@@ -58,7 +58,7 @@ if [ "$module" == "0" ] ; then
 ######  STAGE 1 OBTAINING COUNTS FROM FASTQ FILES #######
 
 elif [ "$module" == "1" ] ; then
-    export count_transcriptome=$CODE_PATH"/refdata-gex-mm10-2020-A"    #-------#    Transcriptome for reference (MOUSE -> mm10, HUMAN -> GRCh38)
+    export count_transcriptome=$CODE_PATH"/refdata-gex-GRCh38-2020-A"    #-------#    Transcriptome for reference (MOUSE -> mm10, HUMAN -> GRCh38)
 
 ######  STAGE 3 PREPROCESSING #######
 
