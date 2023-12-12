@@ -1,5 +1,5 @@
 # Sergio Alías, 20230516
-# Last modified 20231201
+# Last modified 20231212
 
 # Generic Autoflow launcher
 
@@ -31,30 +31,15 @@ fi
 
 PATH=$LAB_SCRIPTS:$PATH
 
-export S_NUMBER=1
-
 while IFS= read sample; do
-    if [ "$multi_lane" == "FALSE" ] || [ "$1" != "qc" ] ; then
+    total_fastq_files=$(ls $read_path -1 | grep $sample | wc -l)
+    number_of_lanes=$((total_fastq_files / 2))
+    for (( i = 1; i <= $number_of_lanes; i++ )) ; do
         AF_VARS=`echo "
         \\$sample=$sample,
-        \\$s_num=$S_NUMBER,
-        \\$lane_num=1
+        \\$lane_num=$i
         " | tr -d [:space:]`
         AutoFlow -w $TEMPLATE -V "$AF_VARS" -o $RESULTS_FOLDER/$sample #$RESOURCES
-    elif [ "$multi_lane" == "TRUE" ] ; then
-        total_fastq_files=$(ls $read_path -1 | grep $sample | wc -l)
-        number_of_lanes=$((total_fastq_files / 2))
-        for (( i = 1; i <= $number_of_lanes; i++ )) ; do
-            if [ "$sample" = "Undetermined" ] ; then
-                S_NUMBER=$(( S_NUMBER - S_NUMBER ))
-            fi
-            AF_VARS=`echo "
-            \\$sample=$sample,
-            \\$s_num=$S_NUMBER,
-            \\$lane_num=$i
-            " | tr -d [:space:]`
-            AutoFlow -w $TEMPLATE -V "$AF_VARS" -o $RESULTS_FOLDER/$sample #$RESOURCES
-        done
-        S_NUMBER=$(( S_NUMBER + 1 ))
-    fi
+    done
+    S_NUMBER=$(( S_NUMBER + 1 ))
 done < $SAMPLES_FILE

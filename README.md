@@ -2,7 +2,7 @@
 
 ## Workflow to perform single-cell RNA-seq analysis
 
-*Last README update applies for v1.7.1*
+*Last README update applies for v1.7.2*
 
 This repo will contain a Cell Ranger workflow for going from BCL/FASTQ/10x files to fully analyzed single-cell data (incomplete). More info will be available soon.
 
@@ -16,8 +16,7 @@ This repo will contain a Cell Ranger workflow for going from BCL/FASTQ/10x files
 
 1. Edit `manage_input_files.sh` manually, from which all raw samples must be linked with a suitable name to another custom folder (e.g. `raw_data`). After editing the source folder, the output folder and the link commands, run the script and make sure everything is alright. This step must be performed for customizate samples according to the experiment and keep original sample names in order to facilitate sample backtracking (in case of failure) at same time. New sample names must follow [Illumina's naming convention](https://support.illumina.com/help/BaseSpace_OLH_009008/Content/Source/Informatics/BS/NamingConvention_FASTQ-files-swBS.htm) (`SampleName_S1_L001_R1_001.fastq.gz`). The first part of the name should be easy to interpret and it is recommended to use short and non redundant names.
 
-2. Edit `samples_to_process.lst` adding sample names, one per line. **IMPORTANT:** Sample name must not include paired-end related information and file extension. If your sample name is `SampleName_S1_L001_R1_001.fastq.gz`, add a line with "SampleName" written in it. **MORE IMPORTANT:** Leave one empty line after all samples names. For instance, if you have 4 samples, your file should have 5 lines, being the last one an empty line. Most text editors provides you with the line number so this should be easy to ensure. Please, if you have an "Undetermined" sample, place its name (Undetermined) at the end, so the workflow can identify it as Undetermined correctly and assign it the sample number 0.
-
+2. Edit `samples_to_process.lst` adding sample names, one per line. **IMPORTANT:** Sample name must not include paired-end related information and file extension. If your sample name is `SampleName_S1_L001_R1_001.fastq.gz`, add a line with "SampleName" written in it. **MORE IMPORTANT:** Leave one empty line after all samples names. For instance, if you have 4 samples, your file should have 5 lines, being the last one an empty line. Most text editors provides you with the line number so this should be easy to ensure.
 3. Edit `config_daemon` and set the variables to the desired values. The config file already contains sensible values for the variables so you can do a first analysis with the default values and come back later to fine-tune.
 
 4. If you are running an integrative analysis, prepare `experiment_design.tbl`, a TSV file containing the experimental conditions for each sample. This should contain a column named `code`, with the sample names (as in `samples_to_process.lst`).
@@ -55,7 +54,6 @@ Here you can find sub-sections useful for developers working on the workflow
 #### Problems/nonsense things you may encounter
 
 - **When the daemon calls sbatch, we use the path to the script even though that directory is added to the PATH some lines above**: Yes, I'm aware of that. I can not figure out what is happening there, all I know is that without the path it doesn't work.
-- **The Autoflow launcher assumes FASTQ files have all S1 in the name (even though they are different samples), but only if there are not multiple lanes**: Yes, that is because I thought that the S(n) part was another invariable part of the Illumina naming convention (apart from the _001 at the end). So when I received my first multilane dataset I also added the variablility in the S(n) part.
 
 #### Execution trace per stage
 

@@ -29,7 +29,6 @@ export QC_TEMPLATE=$CODE_PATH"/autoflow/QC_template.txt"                    #---
 export PREPROC_TEMPLATE=$CODE_PATH"/autoflow/preprocessing_template.txt"    #-------#    AutoFlow pre-processing template. It is advisable not to modify this variable
 export TRIM_TEMPLATE="transcriptomics.txt"                                  #-------#    Trimming template
 export LAB_SCRIPTS="/mnt/home/soft/soft_bio_267/programs/x86_64/scripts"    #-------#    Folder with the lab scripts in Picasso (bio_267)
-export multi_lane=TRUE                                                      #-------#    TRUE if samples have more than one lane (e.g. L001 and L002), FALSE otherwise
 
 ######  SAMPLES VARIABLES #######
 
