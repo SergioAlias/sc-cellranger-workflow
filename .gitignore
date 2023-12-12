@@ -13,3 +13,8 @@ scripts/count_table.R
 scripts/raw_preprocessing
 templates/mapping_report.Rmd
 templates/test.Rmd
+macular_samples_to_process.lst
+manage_input_files_macular.sh
+manage_input_files_mouse.sh
+mouse_samples_to_process.lst
+refdata-gex-mm10-2020-A
