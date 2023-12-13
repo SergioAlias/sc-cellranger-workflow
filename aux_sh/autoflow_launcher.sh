@@ -1,5 +1,5 @@
 # Sergio Alías, 20230516
-# Last modified 20231212
+# Last modified 20231213
 
 # Generic Autoflow launcher
 
@@ -32,14 +32,18 @@ fi
 PATH=$LAB_SCRIPTS:$PATH
 
 while IFS= read sample; do
-    total_fastq_files=$(ls $read_path -1 | grep $sample | wc -l)
-    number_of_lanes=$((total_fastq_files / 2))
+    if [ "$1" == "qc" ] ; then # we need to iterate just in case we use FASTQC with multiple lanes (that means more FASTQ per sample)
+        number_of_lanes=$(ls $read_path -1 | grep $sample | grep '_R1_001.fastq.gz' | wc -l)
+    else # when not using the FASTQ files we set the iteration variable to 1 so we run Autoflow once per sample
+        number_of_lanes=1
+    fi
+    s_num=$(ls $read_path -1 | grep $sample | grep -Eo "_S._" | cut -f 2 -d "_" | sort -u) # Extract sample number (Sn being n the number)
     for (( i = 1; i <= $number_of_lanes; i++ )) ; do
         AF_VARS=`echo "
         \\$sample=$sample,
+        \\$SNUM=$s_num,
         \\$lane_num=$i
         " | tr -d [:space:]`
         AutoFlow -w $TEMPLATE -V "$AF_VARS" -o $RESULTS_FOLDER/$sample #$RESOURCES
     done
-    S_NUMBER=$(( S_NUMBER + 1 ))
 done < $SAMPLES_FILE
