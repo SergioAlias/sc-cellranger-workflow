@@ -1,7 +1,7 @@
 #! /usr/bin/env Rscript
 
 # Sergio Alías, 20230606
-# Last modified 20231201
+# Last modified 20231226
 
 
 #################################
@@ -87,7 +87,7 @@ main_preprocessing_analysis(name = opt$name,
                             hvgs = opt$hvgs,
                             ndims = opt$ndims,
                             resolution = opt$resolution,
-                            integrate = as.logical(opt$integrate)
+                            integrate = as.logical(opt$integrate))
 
 write_preprocessing_report(name = opt$name,
                            experiment = opt$experiment_name,

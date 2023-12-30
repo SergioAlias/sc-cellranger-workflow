@@ -1,5 +1,5 @@
 # Sergio Alías, 20230323
-# Last modified 20231212
+# Last modified 20231230
 
 # config_daemon
 
@@ -73,7 +73,8 @@ elif [ "$module" == "3a" ] || [ "$module" == "3b" ]; then
     export preproc_pca_n_dims=20                          #-------#    Number of PC to use for clustering / UMAP / tSNE
     export preproc_resolution=0.5                         #-------#    Granularity of the clustering (higher values -> greater number of clusters)
     export preproc_pca_n_cells=500                        #-------#    Heatmap plots the 'extreme' cells on both ends of the spectrum -> dramatically speeds plotting for large datasets
-    export integrative_analysis=TRUE                      #-------#    TRUE for samples integration, FALSE otherwise
-    export subset_column=Time                             #-------#    Integration condition
+    export integrative_analysis=FALSE                     #-------#    TRUE for samples integration, FALSE otherwise
+    export subset_column=All                              #-------#    Integration condition
     export integration_file=$CODE_PATH"/int_names.lst"    #-------#    Integration subset names file, will be created if integrative_analysis=TRUE
+    export int_sec_cond=Genotype                          #-------#    Integration secondary condition for grouped /splitted UMAPs
 fi

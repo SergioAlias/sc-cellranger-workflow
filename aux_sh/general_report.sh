@@ -36,4 +36,5 @@ fi
                                --experiment_name $experiment_name \
                                --results_folder $PREPROC_RESULTS_FOLDER \
                                --resolution $preproc_resolution \
-                               --integrative_analysis $integrative_analysis
+                               --integrative_analysis $integrative_analysis \
+                               --int_sec_cond $int_sec_cond

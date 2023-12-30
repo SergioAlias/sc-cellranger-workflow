@@ -1,5 +1,5 @@
 # Sergio Alías, 20230606
-# Last modified 20231211
+# Last modified 20231228
 
 ##########################################################################
 ########################## PRE-PROCESSING LIBRARY ########################
@@ -90,6 +90,8 @@ do_qc <- function(name, experiment, seu, minqcfeats, percentmt, save_before_seu 
     saveRDS(seu, paste0(experiment, ".", name, ".before.seu.RDS"))
   }
   
+  table(seu[['QC']])
+
   seu <- subset(seu, subset = QC != 'High_MT,Low_nFeature')
   
   return(seu)
@@ -171,7 +173,7 @@ do_marker_gene_selection <- function(seu, name, experiment){
 #' do_subsetting
 #' Subset samples according to experimental condition
 #'
-#' @param exp_design: Experiment design table in CSV format
+#' @param exp_design: Experiment design table in TSV format
 #' @param column: Column with the condition used for subsetting
 #' 
 #' @keywords preprocessing, subsetting, integration
@@ -221,17 +223,17 @@ add_exp_design <- function(seu, name, exp_design){
 #' @keywords preprocessing, merging, integration
 #' 
 #' @return Merged Seurat object
-merge_condition <- function(exp_cond, samples, exp_design, count_path){ # (TODO finish writing)
+merge_condition <- function(exp_cond, samples, exp_design, count_path){
   seu.list <- sapply(samples, function(i){ # Loading
     d10x <- Read10X(file.path(count_path, i, "cellranger_0000", i, "outs", "filtered_feature_bc_matrix"))
     colnames(d10x) <- paste(sapply(strsplit(colnames(d10x),split="-"),'[[',1L),i,sep="-") # Adds sample same at the end of cell names
-    seu <- CreateSeuratObject(counts = d10x, project = i, min.cells = 1, min.features = 1)
+    seu <- CreateSeuratObject(counts = d10x, project = i, min.cells = 1, min.features = 1, assay = "scRNAseq")
     seu <- add_exp_design(seu = seu,
                           name = i,
                           exp_design = exp_design)
     return(seu)
   })
-  merged_seu <- scCustomize::Merge_Seurat_List(list_seurat = seu.list)
+  merged_seu <- scCustomize::Merge_Seurat_List(list_seurat = seu.list, project = exp_cond)
   return(merged_seu)
 }
 
@@ -243,13 +245,13 @@ merge_condition <- function(exp_cond, samples, exp_design, count_path){ # (TODO 
 #' Perform integration of a merged Seurat object with Harmony
 #'
 #' @param seu: Merged Seurat object
-#' @param exp_cond: Experimental condition
+#' @param exp_cond: Seurat metadata column with the sample names
 #' 
 #' @keywords preprocessing, integration
 #' 
 #' @return Multi-sample integrated Seurat object with Harmony embeddings available
 do_harmony <- function(seu, exp_cond){
-  seu <- RunHarmony(seu, exp_cond)
+  seu <- harmony::RunHarmony(seu, exp_cond)
   return(seu)
 }
 
@@ -263,7 +265,7 @@ do_harmony <- function(seu, exp_cond){
 #' @param name: sample name, or condition if integrate is TRUE
 #' @param expermient: experiment name
 #' @param input: directory with the single-cell data
-#' @param output: directory (used when integrate is TRUE)
+#' @param output: output directory (used when integrate is TRUE)
 #' @param filter: TRUE for using only detected cell-associated barcodes, FALSE for using all detected barcodes
 #' @param mincells: min number of cells for which a feature is recorded
 #' @param minfeats: min number of features for which a cell is recorded
@@ -298,12 +300,10 @@ main_preprocessing_analysis <- function(name, experiment, input, output, filter,
                       input = input,
                       mincells = mincells,
                       minfeats = minfeats)
-    save_before_seu = TRUE # For QC
     dimreds_to_do <- c("pca", "tsne", "umap") # For dimensionality reduction
     embeddings_to_use <- "pca"
   } else {
-    seu <- readRDS(file.path(output, paste0(experiment, ".", name, ".before.seu.RDS")))
-    save_before_seu = FALSE # For QC (we already have the Seurat object before QC)
+    seu <- readRDS(file.path(output, name, paste0(experiment, ".", name, ".before.seu.RDS")))
     dimreds_to_do <- c("pca") # For dimensionality reduction
     embeddings_to_use <- "harmony"
   }
@@ -314,8 +314,7 @@ main_preprocessing_analysis <- function(name, experiment, input, output, filter,
                experiment = experiment,
                seu = seu,
                minqcfeats = minqcfeats, 
-               percentmt = percentmt,
-               save_before_seu = save_before_seu)
+               percentmt = percentmt)
   
   # Normalization
 
@@ -339,7 +338,8 @@ main_preprocessing_analysis <- function(name, experiment, input, output, filter,
   # Harmony integration and remaining dimreds (only for integrative analysis)
 
   if (isTRUE(integrate)){
-    seu <- do_harmony(seu)
+    seu <- do_harmony(seu = seu,
+                      exp_cond = "code")
     seu <- do_dimred(seu = seu,
                      ndims = ndims,
                      dimreds = c("tsne", "umap"),
@@ -367,10 +367,9 @@ main_preprocessing_analysis <- function(name, experiment, input, output, filter,
   # Move the before.seu objects to the directory created by Autoflow (only for integrative analysis)
 
   if (isTRUE(integrate)){
-    file.copy(from = file.path(folder_name, paste0(experiment, ".", name, ".before.seu.RDS")),
-              to   = getwd())
-    file.remove(file.path(folder_name, paste0(experiment, ".", name, ".before.seu.RDS")))
+    file.remove(file.path(output, name, paste0(experiment, ".", name, ".before.seu.RDS")))
   }
+}
 
 
 ##########################################################################
@@ -393,7 +392,7 @@ main_preprocessing_analysis <- function(name, experiment, input, output, filter,
 #' @keywords preprocessing, write, report
 #' 
 #' @return nothing
-write_preprocessing_report <- function(name, experiment, template, outdir, intermediate_files, minqcfeats, percentmt, hvgs, resolution, all_seu = NULL, integrate = FALSE){
+write_preprocessing_report <- function(name, experiment, template, outdir, intermediate_files, minqcfeats, percentmt, hvgs, resolution, all_seu = NULL){
   int_files <- file.path(outdir, intermediate_files)
   if (!file.exists(int_files)){
     dir.create(int_files)

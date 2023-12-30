@@ -1,7 +1,7 @@
 #! /usr/bin/env Rscript
 
 # Sergio Alías, 20230627
-# Last modified 20230929
+# Last modified 20231216
 
 
 ################################################
@@ -61,7 +61,9 @@ option_list <- list(
   make_option(c("--resolution"), type = "double",
               help="Granularity of the clustering"),
   make_option(c("--integrative_analysis"), type = "character",
-              help="TRUE if we want to integrate samples, FALSE otherwise")
+              help="TRUE if we want to integrate samples, FALSE otherwise"),
+  make_option(c("--int_sec_cond"), type = "character",
+              help="Secondary condition for splitted / grouped UMAPs, FALSE if not desired")
 )  
 
 opt <- parse_args(OptionParser(option_list = option_list))
@@ -115,7 +117,7 @@ before.seu <- raw_seu_list
 if (isTRUE(opt$integrative_analysis)){
   report_name <- "All integrated samples"
 } else {
-  report_name <- "Integrated samples"
+  report_name <- "All samples"
   }
 
 
@@ -132,4 +134,5 @@ write_preprocessing_report(name = report_name,
                            hvgs = opt$hvgs,
                            resolution = opt$resolution,
                            all_seu = list(seu, before.seu, marker_gene_list),
-                           integrate = opt$integrative_analysis)
+                           integrate = opt$integrative_analysis,
+                           sec_cond = opt$int_sec_cond)

@@ -1,5 +1,5 @@
 # Sergio Alías, 20230516
-# Last modified 20231213
+# Last modified 20231226
 
 # Generic Autoflow launcher
 
@@ -20,12 +20,14 @@ fi
 
 mkdir -p $RESULTS_FOLDER
 
-if [ "$1" == "preproc" ] && [ "$integrative_analysis" == "TRUE" ] ; then
-    Rscript prior_integration.R --exp_design $exp_design \
-                                --output $RESULTS_FOLDER \
-                                --condition $subset_column \
-                                --integration_file $integration_file \
-                                --experiment_name $experiment_name
+if [ "$1" == "preproc" ] && [ "$integrative_analysis" == "TRUE" ] ; then # TODO uncomment below
+    . ~soft_bio_267/initializes/init_R
+    Rscript scripts/prior_integration.R --exp_design $exp_design \
+                                        --output $RESULTS_FOLDER \
+                                        --condition $subset_column \
+                                        --integration_file $integration_file \
+                                        --experiment_name $experiment_name \
+                                        --count_folder $COUNT_RESULTS_FOLDER
     export SAMPLES_FILE=$integration_file
 fi
 

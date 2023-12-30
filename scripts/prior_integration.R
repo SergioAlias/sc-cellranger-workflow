@@ -1,7 +1,7 @@
 #! /usr/bin/env Rscript
 
 # Sergio Alías, 20231011
-# Last modified 20231201
+# Last modified 20231226
 
 
 #################################
@@ -41,6 +41,8 @@ option_list <- list(
               help="Name of file that will contain integration subset names"),
   make_option(c("-e", "--experiment_name"), type = "character",
               help="Experiment name"),
+  make_option(c("--count_folder"), type = "character",
+              help="Count results folder")
 )  
 
 
@@ -55,7 +57,7 @@ opt <- parse_args(OptionParser(option_list = option_list))
 # Divide sample names by the condition
 
 exp_subsets <- do_subsetting(exp_design = opt$exp_design,
-	                           column = opt$column)
+	                           column = opt$condition)
 
 
 # Add them to a file so we pass it to the SAMPLES_FILE variable in autoflow_launcher.sh
@@ -67,7 +69,7 @@ if (file.exists(opt$integration_file)) { # Integration subsets file creation (mu
   file.create(opt$integration_file)
 }
 
-cat(names(exp_subsets), "", file = opt$integration_file, sep = "\n", append = FALSE) # the second quotes are for having an extra empty line at the end (see README in Github for details)
+cat(names(exp_subsets), file = opt$integration_file, sep = "\n", append = FALSE) # the second quotes are for having an extra empty line at the end (see README in Github for details)
 
 
 # Create and save the "before" (with no preprocessing) Seurat object
@@ -79,6 +81,7 @@ for (cond in names(exp_subsets)){
   }
   seu <- merge_condition(exp_cond = cond,
                          samples = exp_subsets[[cond]],
-                         exp_design = opt$exp_design)
+                         exp_design = opt$exp_design,
+                         count_path = opt$count_folder)
   saveRDS(seu, file = file.path(folder_name, paste0(opt$experiment_name, ".", cond, ".before.seu.RDS")))
 }
